@@ -124,26 +124,26 @@ export const needLoginPages: string[] = getAllPages('needLogin').map((page) => p
  */
 export const getEnvBaseUrl = () => {
   // 请求基准地址
-  let baseUrl = import.meta.env.VITE_SERVER_BASEURL
+  const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 
   // 小程序端环境区分
-  if (isMp) {
-    const {
-      miniProgram: { envVersion },
-    } = uni.getAccountInfoSync()
+  // if (isMp) {
+  //   const {
+  //     miniProgram: { envVersion },
+  //   } = uni.getAccountInfoSync()
 
-    switch (envVersion) {
-      case 'develop':
-        baseUrl = 'https://ukw0y1.laf.run'
-        break
-      case 'trial':
-        baseUrl = 'https://ukw0y1.laf.run'
-        break
-      case 'release':
-        baseUrl = 'https://ukw0y1.laf.run'
-        break
-    }
-  }
+  //   switch (envVersion) {
+  //     case 'develop':
+  //       baseUrl = 'https://ukw0y1.laf.run'
+  //       break
+  //     case 'trial':
+  //       baseUrl = 'https://ukw0y1.laf.run'
+  //       break
+  //     case 'release':
+  //       baseUrl = 'https://ukw0y1.laf.run'
+  //       break
+  //   }
+  // }
 
   return baseUrl
 }
@@ -153,26 +153,26 @@ export const getEnvBaseUrl = () => {
  */
 export const getEnvBaseUploadUrl = () => {
   // 请求基准地址
-  let baseUploadUrl = import.meta.env.VITE_UPLOAD_BASEURL
+  const baseUploadUrl = import.meta.env.VITE_UPLOAD_BASEURL
 
   // 小程序端环境区分
-  if (isMp) {
-    const {
-      miniProgram: { envVersion },
-    } = uni.getAccountInfoSync()
+  // if (isMp) {
+  //   const {
+  //     miniProgram: { envVersion },
+  //   } = uni.getAccountInfoSync()
 
-    switch (envVersion) {
-      case 'develop':
-        baseUploadUrl = 'https://ukw0y1.laf.run/upload'
-        break
-      case 'trial':
-        baseUploadUrl = 'https://ukw0y1.laf.run/upload'
-        break
-      case 'release':
-        baseUploadUrl = 'https://ukw0y1.laf.run/upload'
-        break
-    }
-  }
+  //   switch (envVersion) {
+  //     case 'develop':
+  //       baseUploadUrl = 'https://ukw0y1.laf.run/upload'
+  //       break
+  //     case 'trial':
+  //       baseUploadUrl = 'https://ukw0y1.laf.run/upload'
+  //       break
+  //     case 'release':
+  //       baseUploadUrl = 'https://ukw0y1.laf.run/upload'
+  //       break
+  //   }
+  // }
 
   return baseUploadUrl
 }

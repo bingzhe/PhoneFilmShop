@@ -27,16 +27,22 @@ export default defineUniPages({
     spacing: '3px',
     list: [
       {
-        iconPath: 'static/tabbar/home.png',
-        selectedIconPath: 'static/tabbar/homeHL.png',
+        iconPath: 'static/tabbar/home-off.png',
+        selectedIconPath: 'static/tabbar/home-on.png',
         pagePath: 'pages/index/index',
         text: '首页',
       },
       {
-        iconPath: 'static/tabbar/example.png',
-        selectedIconPath: 'static/tabbar/exampleHL.png',
-        pagePath: 'pages/about/about',
-        text: '关于',
+        iconPath: 'static/tabbar/video-off.png',
+        selectedIconPath: 'static/tabbar/video-on.png',
+        pagePath: 'pages/video-course/video-course',
+        text: '教程',
+      },
+      {
+        iconPath: 'static/tabbar/feedback-off.png',
+        selectedIconPath: 'static/tabbar/feedback-on.png',
+        pagePath: 'pages/feedback/feedback',
+        text: '反馈',
       },
     ],
   },

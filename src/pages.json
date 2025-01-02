@@ -24,16 +24,22 @@
     "spacing": "3px",
     "list": [
       {
-        "iconPath": "static/tabbar/home.png",
-        "selectedIconPath": "static/tabbar/homeHL.png",
+        "iconPath": "static/tabbar/home-off.png",
+        "selectedIconPath": "static/tabbar/home-on.png",
         "pagePath": "pages/index/index",
         "text": "首页"
       },
       {
-        "iconPath": "static/tabbar/example.png",
-        "selectedIconPath": "static/tabbar/exampleHL.png",
-        "pagePath": "pages/about/about",
-        "text": "关于"
+        "iconPath": "static/tabbar/video-off.png",
+        "selectedIconPath": "static/tabbar/video-on.png",
+        "pagePath": "pages/video-course/video-course",
+        "text": "教程"
+      },
+      {
+        "iconPath": "static/tabbar/feedback-off.png",
+        "selectedIconPath": "static/tabbar/feedback-on.png",
+        "pagePath": "pages/feedback/feedback",
+        "text": "反馈"
       }
     ]
   },
@@ -43,7 +49,7 @@
       "type": "home",
       "style": {
         "navigationStyle": "custom",
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": "科迪亚"
       }
     },
     {
@@ -51,6 +57,21 @@
       "type": "page",
       "style": {
         "navigationBarTitleText": "关于"
+      }
+    },
+    {
+      "path": "pages/feedback/feedback",
+      "type": "page",
+      "style": {
+        "navigationBarTitleText": "反馈",
+        "backgroundColor": "#f9f9f9"
+      }
+    },
+    {
+      "path": "pages/video-course/video-course",
+      "type": "page",
+      "style": {
+        "navigationBarTitleText": "教程"
       }
     }
   ],
