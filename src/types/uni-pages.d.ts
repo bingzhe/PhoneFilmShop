@@ -7,12 +7,18 @@ interface NavigateToOptions {
   url: "/pages/index/index" |
        "/pages/about/about" |
        "/pages/feedback/feedback" |
+       "/pages/member/member-audit" |
+       "/pages/member/member-purchase" |
+       "/pages/personal/personal" |
+       "/pages/shop/shop-edit" |
+       "/pages/shop/shop" |
+       "/pages/shop-info/shop-info" |
        "/pages/video-course/video-course";
 }
 interface RedirectToOptions extends NavigateToOptions {}
 
 interface SwitchTabOptions {
-  url: "/pages/index/index" | "/pages/video-course/video-course" | "/pages/feedback/feedback"
+  url: "/pages/index/index" | "/pages/video-course/video-course" | "/pages/feedback/feedback" | "/pages/personal/personal"
 }
 
 type ReLaunchOptions = NavigateToOptions | SwitchTabOptions;

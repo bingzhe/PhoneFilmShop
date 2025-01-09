@@ -253,7 +253,7 @@ const getGoodsList = async (init?: boolean) => {
 
   const params: { [key: string]: any } = {
     page: page.value,
-    size: 10,
+    size: 50,
   }
 
   if (secondCateId.value) {

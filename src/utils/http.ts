@@ -73,6 +73,9 @@ export const httpPost = <T>(
     query,
     data,
     method: 'POST',
+    header: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
   })
 }
 

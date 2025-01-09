@@ -44,6 +44,12 @@ export default defineUniPages({
         pagePath: 'pages/feedback/feedback',
         text: '反馈',
       },
+      {
+        iconPath: 'static/tabbar/feedback-off.png',
+        selectedIconPath: 'static/tabbar/feedback-on.png',
+        pagePath: 'pages/personal/personal',
+        text: '我',
+      },
     ],
   },
 })

@@ -40,6 +40,12 @@
         "selectedIconPath": "static/tabbar/feedback-on.png",
         "pagePath": "pages/feedback/feedback",
         "text": "反馈"
+      },
+      {
+        "iconPath": "static/tabbar/feedback-off.png",
+        "selectedIconPath": "static/tabbar/feedback-on.png",
+        "pagePath": "pages/personal/personal",
+        "text": "我"
       }
     ]
   },
@@ -65,6 +71,63 @@
       "style": {
         "navigationBarTitleText": "反馈",
         "backgroundColor": "#f9f9f9"
+      }
+    },
+    {
+      "path": "pages/member/member-audit",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "会员审核",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/member/member-purchase",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "申请会员"
+      }
+    },
+    {
+      "path": "pages/personal/personal",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "我",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/shop/shop-edit",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "编辑店铺"
+      }
+    },
+    {
+      "path": "pages/shop/shop",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": true,
+        "mp-weixin": {
+          "homeButton": false
+        }
+      }
+    },
+    {
+      "path": "pages/shop-info/shop-info",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": ""
       }
     },
     {
