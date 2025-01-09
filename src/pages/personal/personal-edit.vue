@@ -11,8 +11,8 @@
 
 <template>
   <view class="">
-    <view class="pb-64rpx">
-      <view class="flex items-center justify-center pl-32rpx pr-32rpx pt-64rpx pb-24rpx">
+    <view class="pb-128rpx">
+      <view class="flex items-center justify-center pl-32rpx pr-32rpx pt-128rpx pb-24rpx">
         <button class="bg-#fff h-128rpx" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
           <wd-img width="64" height="64" round :src="avatarUrl">
             <template #error>
@@ -36,21 +36,77 @@
         label-width="25%"
       />
     </view>
+
+    <view class="fixed bottom-400rpx left-50rpx right-50rpx">
+      <wd-button block size="large" @click="onSave">保存</wd-button>
+    </view>
   </view>
 </template>
 
 <script lang="ts" setup>
-const baseUrl = import.meta.env.VITE_SERVER_BASEURL
+import { useToast } from 'wot-design-uni'
+import { useUserStore } from '@/store'
+import { httpPost } from '@/utils/http'
 
-const nickname = ref('')
-const avatar = ref('')
+const baseUrl = import.meta.env.VITE_SERVER_BASEURL
+const uploadUrl = import.meta.env.VITE_UPLOAD_BASEURL
+const toast = useToast()
+
+const userStore = useUserStore()
+
+const userInfo = computed(() => {
+  return userStore.userInfo
+})
+
+const nickname = ref(userInfo.value.nickname)
+const avatar = ref(userInfo.value.avatar)
 
 const avatarUrl = computed(() => {
   return `${baseUrl}${avatar.value}`
 })
 
 const onChooseAvatar = (e) => {
-  console.log(e)
+  const { avatarUrl } = e.detail
+  toast.loading('加载中...')
+
+  uni.uploadFile({
+    url: uploadUrl,
+    filePath: avatarUrl,
+    name: 'file',
+    formData: {},
+    success: (uploadFileRes) => {
+      const uploadData = JSON.parse(uploadFileRes.data)
+      avatar.value = uploadData.data
+    },
+    fail: (err) => {
+      console.error('uni.uploadFile err->', err)
+    },
+    complete: () => {
+      toast.close()
+    },
+  })
+}
+
+const onSave = () => {
+  const token = userStore.getToken()
+
+  const params: any = {
+    token,
+  }
+  if (nickname.value) {
+    params.nikename = nickname.value
+  }
+
+  if (avatar.value) {
+    params.avatar = avatar.value
+  }
+
+  httpPost('/api/UsersInfo/saveUserInfo', params).then((res) => {
+    toast.success('保存成功')
+    setTimeout(() => {
+      uni.navigateBack()
+    }, 1000)
+  })
 }
 </script>
 

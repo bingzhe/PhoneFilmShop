@@ -113,10 +113,13 @@ const message = useMessage()
 // weapp_openid: "oT0Hy63pryxuZiq2ISm-8acWq5N4"
 
 const userStore = useUserStore()
-const userInfo = userStore.userInfo
+
+const userInfo = computed(() => {
+  return userStore.userInfo
+})
 
 const avatarUrl = computed(() => {
-  return `${baseUrl}${userInfo.avatar}`
+  return `${baseUrl}${userStore.userInfo.avatar}`
 })
 
 onShow(() => {
@@ -130,7 +133,7 @@ const logout = () => {
 }
 
 const isPhoneBind = () => {
-  const isBind = !!userInfo.phone
+  const isBind = !!userInfo.value.phone
   if (!isBind) {
     message.alert('绑定手机号后继续使用')
     return false
@@ -165,8 +168,12 @@ const goPersonalEdit = () => {
 }
 
 const getUserInfo = () => {
-  getUserInfoAPI().then((res) => {
-    userStore.setUserInfo(res.data as IUserInfo)
+  getUserInfoAPI().then((res: any) => {
+    const userInfo = {
+      ...res.data,
+      nickname: res.data.nikename,
+    }
+    userStore.setUserInfo(userInfo as IUserInfo)
   })
 }
 
@@ -176,7 +183,6 @@ const getPhoneNumber = (e: any) => {
 
   if (code) {
     httpPost('/api/WxLogin/savePhone', { code, token }).then((res) => {
-      console.log(res)
       uni.showToast({
         icon: 'none',
         title: '绑定成功',
