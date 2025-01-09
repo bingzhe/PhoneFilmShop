@@ -25,7 +25,7 @@ export const http = <T>(options: CustomRequestOptions) => {
           !options.hideErrorToast &&
             uni.showToast({
               icon: 'none',
-              title: (res.data as IResData<T>).msg || '请求错误',
+              title: (res.data as IResData<T>).meg || '请求错误',
             })
           reject(res)
         }

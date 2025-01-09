@@ -9,6 +9,7 @@ interface NavigateToOptions {
        "/pages/feedback/feedback" |
        "/pages/member/member-audit" |
        "/pages/member/member-purchase" |
+       "/pages/personal/personal-edit" |
        "/pages/personal/personal" |
        "/pages/shop/shop-edit" |
        "/pages/shop/shop" |
@@ -18,7 +19,7 @@ interface NavigateToOptions {
 interface RedirectToOptions extends NavigateToOptions {}
 
 interface SwitchTabOptions {
-  url: "/pages/index/index" | "/pages/video-course/video-course" | "/pages/feedback/feedback" | "/pages/personal/personal"
+  url: "/pages/index/index" | "/pages/video-course/video-course" | "/pages/personal/personal"
 }
 
 type ReLaunchOptions = NavigateToOptions | SwitchTabOptions;

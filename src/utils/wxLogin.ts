@@ -1,6 +1,5 @@
-// api/WxLogin/wxOpenidLogin
-
 import { httpPost } from './http'
+import { useUserStore } from '@/store/user'
 
 interface WxLoginRes {
   code: string
@@ -16,7 +15,7 @@ interface LoginResult {
  * @returns Promise<LoginResult>
  */
 export const wxOpenidLogin = (code: string) => {
-  return httpPost<LoginResult>('/api/WxLogin/wxOpenidLogin', { code })
+  return httpPost<string>('/api/WxLogin/wxOpenidLogin', { code })
 }
 
 /**
@@ -43,6 +42,10 @@ export const wxLogin = async () => {
     const { code } = await getWxLoginCode()
     // 使用凭证登录
     const loginResult = await wxOpenidLogin(code)
+
+    // 设置token
+    const userStore = useUserStore()
+    userStore.setToken(loginResult.data)
 
     return loginResult
   } catch (error) {
