@@ -15,14 +15,22 @@
 
 <template>
   <view class="">
-    <view class="bg-#00A3FF pl-32rpx pr-32rpx pb-16rpx flex w-750rpx">
+    <view class="bg-#00A3FF pl-32rpx pr-32rpx pb-16rpx flex w-750rpx box-border">
       <view class="mr-32rpx">
-        <wd-img width="60" height="60" round :src="shopLogo"></wd-img>
+        <view class="h-140rpx w-140rpx bg-#fff rounded-70rpx flex justify-center items-center">
+          <wd-img width="64" height="64" round :src="shopLogoUrl">
+            <template #error>
+              <view class="w-100% h-100% flex justify-center items-center">
+                <view class="i-ic:twotone-storefront text-64rpx text-#00A3FF"></view>
+              </view>
+            </template>
+          </wd-img>
+        </view>
       </view>
       <view class="flex-1">
-        <view class="text-white text-32rpx font-bold mb-16rpx">店铺名称</view>
-        <view class="text-white text-28rpx">联系电话：13800138000</view>
-        <view class="text-white text-28rpx mb-16rpx">地址：北京市海淀区</view>
+        <view class="text-white text-32rpx font-bold mb-16rpx">{{ shopInfo.shop_name }}</view>
+        <view class="text-white text-28rpx">联系电话：{{ shopInfo.phone }}</view>
+        <view class="text-white text-28rpx mb-16rpx">地址：{{ fullAddress }}</view>
 
         <view class="flex justify-between items-center">
           <view class="flex">
@@ -105,37 +113,41 @@
       <view
         class="flex justify-between items-center text-32rpx text-#666 mb-16rpx pl-16rpx pr-16rpx"
       >
-        <view>品类</view>
-        <view>会员价</view>
+        <view class="w-300rpx">套餐名称</view>
+        <view>单价</view>
+        <view class="flex-1 text-right">会员价</view>
       </view>
 
       <view
-        class="flex justify-between items-center bg-#FFEAEA rounded-16rpx h-88rpx pl-16rpx pr-16rpx mb-8rpx text-32rpx"
-        v-for="(item, i) in shopGoods"
+        class="flex justify-between items-center bg-#FFEAEA rounded-16rpx h-88rpx pl-16rpx pr-16rpx mb-8rpx text-28rpx"
+        v-for="(item, i) in comboList"
         :key="i"
       >
-        <view class="flex justify-center items-center">
+        <view class="flex items-center w-300rpx">
           <view
-            class="rounded-16rpx w-50rpx h-50rpx bg-#fff text-red font-bold text-28rpx flex items-center justify-center mr-8rpx"
+            class="flex-shrink-0 rounded-16rpx w-50rpx h-50rpx bg-#fff text-red font-bold text-28rpx flex items-center justify-center mr-8rpx"
           >
             {{ i + 1 }}
           </view>
-          <view>{{ item.name }}</view>
+          <view>{{ item.combo_name }}</view>
         </view>
-        <view>
-          <text class="font-bold">{{ item.price }}</text>
+        <view>{{ item.unit_price }}</view>
+        <view class="flex-1 text-right">
+          <text class="font-bold">{{ item.combo_price }}</text>
           元/
-          <text class="text-red font-bold">{{ item.count }}</text>
+          <text class="text-red font-bold">{{ item.combo_num }}</text>
           次
         </view>
       </view>
     </view>
 
     <view class="p-32rpx">
-      <wd-button :block="true" size="large">我要充会员</wd-button>
+      <wd-button :block="true" size="large" @click="jumperPage('/pages/member/member-purchase')">
+        我要充会员
+      </wd-button>
     </view>
 
-    <ShopManageMenu :shop-id="shopId" />
+    <ShopManageMenu :shopId="shopId" />
 
     <view class="p-32rpx"></view>
   </view>
@@ -143,27 +155,111 @@
 
 <script lang="ts" setup>
 import ShopManageMenu from './components/shop-manage-menu.vue'
+import { useUserStore } from '@/store'
+import { httpPost } from '@/utils/http'
+import { useToast } from 'wot-design-uni'
+import { wxLogin } from '@/utils/wxLogin'
 
-const shopLogo = ref('/static/images/1-man-lan.png')
+const baseUrl = import.meta.env.VITE_SERVER_BASEURL
+
+const toast = useToast()
+
+const userStore = useUserStore()
+const userInfo = computed(() => {
+  return userStore.userInfo
+})
+
 const shopId = ref('')
 
-const shopGoods = ref([
-  {
-    name: '直面屏',
-    price: '100',
-    count: '10',
-  },
-  {
-    name: '曲面屏',
-    price: '100',
-    count: '10',
-  },
-  {
-    name: '苹果手机',
-    price: '100',
-    count: '10',
-  },
-])
+const shopInfo = ref({
+  shop_logo: '',
+  shop_name: '',
+  name: '',
+  phone: '',
+  address: '',
+  province_id: null,
+  province_name: '',
+  city_id: null,
+  city_name: '',
+  area_id: null,
+  area_name: '',
+  latitude: '',
+  longitude: '',
+  shop_id: '',
+  shop_qrcode: null,
+  users_id: '',
+})
+
+const shopLogoUrl = computed(() => {
+  return `${baseUrl}${shopInfo.value.shop_logo}`
+})
+
+const fullAddress = computed(() => {
+  return `${shopInfo.value.province_name}${shopInfo.value.city_name}${shopInfo.value.area_name}${shopInfo.value.address}`
+})
+
+const comboList = ref([]) // 店铺套餐
+const myComboList = ref([]) // 我的套餐
+
+const getShopInfo = async () => {
+  try {
+    toast.loading('加载中...')
+    const res = await httpPost('/api/Shop/getShopInfo', {
+      token: userInfo.value.token,
+      shop_id: shopId.value,
+    })
+
+    shopInfo.value = res.data as any
+  } catch (error) {
+    console.log(error)
+  } finally {
+    toast.close()
+  }
+}
+
+// 店铺套餐
+const getComboList = async () => {
+  const res = await httpPost('/api/Shop/getShopComboList', {
+    token: userInfo.value.token,
+    shop_id: shopId.value,
+  })
+
+  comboList.value = res.data as any[]
+}
+
+// 获取我的套餐
+const getMyComboList = async () => {
+  const res = await httpPost('/api/UsersInfo/getUsersComboList', {
+    token: userInfo.value.token,
+    shop_id: shopId.value,
+  })
+
+  console.log('getMyComboList', res)
+}
+
+const jumperPage = (path: string) => {
+  const fullPath = `${path}?shopId=${shopId.value}`
+
+  uni.navigateTo({
+    url: fullPath,
+  })
+}
+
+onLoad((options) => {
+  shopId.value = options.shopId
+
+  if (!userInfo.value.token) {
+    wxLogin().then(() => {
+      getShopInfo()
+      getComboList()
+      getMyComboList()
+    })
+  } else {
+    getShopInfo()
+    getComboList()
+    getMyComboList()
+  }
+})
 </script>
 
 <style lang="scss" scoped></style>

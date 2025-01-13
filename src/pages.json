@@ -64,7 +64,8 @@
       "type": "page",
       "style": {
         "navigationBarTitleText": "反馈",
-        "backgroundColor": "#f9f9f9"
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -82,7 +83,9 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "申请会员"
+        "navigationBarTitleText": "申请会员",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -106,11 +109,44 @@
       }
     },
     {
+      "path": "pages/shop/shop-combo-check",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "会员贴膜核销"
+      }
+    },
+    {
+      "path": "pages/shop/shop-combo-log",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "店铺核销记录",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/shop/shop-combo",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "套餐管理",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/shop/shop-edit",
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "编辑店铺"
+        "navigationBarTitleText": "店铺登记",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      },
+      "mp-alipay": {
+        "usingComponents": {}
       }
     },
     {

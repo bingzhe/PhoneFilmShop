@@ -45,14 +45,14 @@
       >
         商家区
       </view>
-
+      <!--  -->
       <view class="p-32rpx flex flex-col items-center" @click="goShop" v-if="!!userInfo.shop_id">
         <view>
           <view class="i-ic-twotone-storefront text-#00A3FF text-48rpx"></view>
         </view>
         <view class="text-32rpx text-#666666">我的店铺</view>
       </view>
-
+      <!--  -->
       <view class="p-32rpx flex flex-col items-center" @click="goShopEdit" v-if="!userInfo.shop_id">
         <view>
           <view class="i-ic:baseline-drive-file-rename-outline text-#00A3FF text-48rpx"></view>
@@ -144,7 +144,7 @@ const isPhoneBind = () => {
 const goShop = () => {
   if (!isPhoneBind()) return
   uni.reLaunch({
-    url: '/pages/shop/shop',
+    url: '/pages/shop/shop?shopId=' + userInfo.value.shop_id,
   })
 }
 

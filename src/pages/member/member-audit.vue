@@ -16,7 +16,10 @@
     </view>
 
     <view class="flex items-center justify-center pt-60rpx pb-60rpx bg-white">
-      <view class="w-200rpx h-200rpx bg-#F7F7F7 rounded-100rpx flex justify-center items-center">
+      <view
+        @click="handleScan"
+        class="w-200rpx h-200rpx bg-#F7F7F7 rounded-100rpx flex justify-center items-center"
+      >
         <view class="i-ic:baseline-qr-code-scanner text-80rpx text-#666"></view>
       </view>
     </view>
@@ -26,7 +29,7 @@
         <view>
           <view class="i-ic-twotone-storefront text-#00A3FF text-68rpx"></view>
         </view>
-        <view class="text-28rpx text-#666666">店铺名称</view>
+        <view class="text-28rpx text-#666666">{{ shopInfo.shop_name }}</view>
       </view>
       <view class="text-58rpx text-#666 font-bold i-carbon:arrows-horizontal"></view>
       <view class="text-28rpx text-#666 flex-1 flex flex-col items-center">
@@ -38,10 +41,10 @@
     </view>
 
     <wd-picker
-      :columns="shopGoods"
+      :columns="comboList"
       label="选择套餐"
       required
-      v-model="value"
+      v-model="selectCombo"
       @confirm="handleConfirm"
     />
 
@@ -52,27 +55,91 @@
 </template>
 
 <script lang="ts" setup>
-//
+import { useToast } from 'wot-design-uni'
+import { useUserStore } from '@/store'
+import { httpPost } from '@/utils/http'
 
-const value = ref('')
-const shopGoods = ref([
-  {
-    value: '1',
-    label: '直面屏 100元 10次',
-  },
-  {
-    value: '2',
-    label: '曲面屏 100元 10次',
-  },
-  {
-    value: '3',
-    label: '苹果手机 100元 10次',
-  },
-])
+const baseUrl = import.meta.env.VITE_SERVER_BASEURL
+
+const toast = useToast()
+
+const userStore = useUserStore()
+const userInfo = computed(() => {
+  return userStore.userInfo
+})
+
+const shopId = ref('')
+
+const selectCombo = ref('')
+const comboList = ref([])
+
+const shopInfo = ref({
+  shop_logo: '',
+  shop_name: '',
+})
+
+const memberUserInfo = ref({})
+
+const getShopInfo = async () => {
+  try {
+    toast.loading('加载中...')
+    const res = await httpPost('/api/Shop/getShopInfo', {
+      token: userInfo.value.token,
+      shop_id: shopId.value,
+    })
+
+    shopInfo.value = res.data as any
+  } catch (error) {
+    console.log(error)
+  } finally {
+    toast.close()
+  }
+}
+
+// 店铺套餐
+const getComboList = async () => {
+  const res = await httpPost('/api/Shop/getShopComboList', {
+    token: userInfo.value.token,
+    shop_id: shopId.value,
+  })
+
+  const data = (res.data || []) as any[]
+
+  comboList.value = data.map((item) => {
+    return {
+      value: item.id,
+      label: `${item.combo_name} ${item.combo_price}元 ${item.combo_num}次`,
+    }
+  })
+}
+
+// 调起来扫码
+const handleScan = () => {
+  uni.scanCode({
+    success: (res) => {
+      console.log('success', res)
+
+      const { result } = res
+      const resultObj = JSON.parse(result)
+
+      console.log('resultObj', resultObj)
+    },
+    fail: (err) => {
+      console.log(err)
+    },
+  })
+}
 
 const handleConfirm = (e) => {
   console.log(e)
 }
+
+onLoad((options) => {
+  shopId.value = options.shopId
+
+  getShopInfo()
+  getComboList()
+})
 </script>
 
 <style lang="scss" scoped>

@@ -3,7 +3,7 @@
     <view class="text-center text-28rpx text-#666 font-bold pb-24rpx">门店管理</view>
 
     <view
-      class="flex flex-wrap border-b-#eee border-b-1 border-l-0 border-r-0 border-t-0 border-solid pb-12rpx"
+      class="flex flex-wrap justify-center items-center border-b-#eee border-b-1 border-l-0 border-r-0 border-t-0 border-solid pb-12rpx"
     >
       <view
         class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
@@ -37,8 +37,11 @@
       </view>
     </view>
 
-    <view class="flex flex-wrap pt-12rpx">
-      <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
+    <view class="flex flex-wrap pt-12rpx justify-center items-center">
+      <view
+        class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
+        @click="jumperPage('/pages/shop/shop-combo')"
+      >
         <view class="mb-12rpx">
           <view class="i-ic:baseline-addchart text-#666 text-48rpx"></view>
         </view>
@@ -52,14 +55,17 @@
         <view class="text-24rpx text-#666666">下载店码</view>
       </view>
 
-      <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
+      <!-- <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
         <view class="mb-12rpx">
           <view class="i-ic:baseline-drive-folder-upload text-#666 text-48rpx"></view>
         </view>
         <view class="text-24rpx text-#666666">设置店标</view>
-      </view>
+      </view> -->
 
-      <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
+      <view
+        class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
+        @click="jumperPage('/pages/shop/shop-edit')"
+      >
         <view class="mb-12rpx">
           <view class="i-ic:outline-edit-calendar text-#666 text-48rpx"></view>
         </view>
@@ -75,7 +81,8 @@ const props = defineProps<{
 }>()
 
 const jumperPage = (path: string) => {
-  const fullPath = `/pages/member/member-audit?id=${props.shopId}`
+  const fullPath = `${path}?shopId=${props.shopId}`
+
   uni.navigateTo({
     url: fullPath,
   })

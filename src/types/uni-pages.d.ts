@@ -11,6 +11,9 @@ interface NavigateToOptions {
        "/pages/member/member-purchase" |
        "/pages/personal/personal-edit" |
        "/pages/personal/personal" |
+       "/pages/shop/shop-combo-check" |
+       "/pages/shop/shop-combo-log" |
+       "/pages/shop/shop-combo" |
        "/pages/shop/shop-edit" |
        "/pages/shop/shop" |
        "/pages/shop-info/shop-info" |

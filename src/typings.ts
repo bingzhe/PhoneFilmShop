@@ -20,6 +20,7 @@ type IUserInfo = {
   avatar?: string
   phone?: string
   shop_id?: number
+  users_id?: number
   /** 微信的 openid，非微信没有这个字段 */
   openid?: string
   token?: string

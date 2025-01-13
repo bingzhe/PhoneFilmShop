@@ -115,6 +115,7 @@ export default defineManifestConfig({
       urlCheck: false,
     },
     usingComponents: true,
+    requiredPrivateInfos: ['chooseLocation'],
     // __usePrivacyCheck__: true,
   },
   'mp-alipay': {

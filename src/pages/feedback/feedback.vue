@@ -4,7 +4,8 @@
   style: {
     // navigationStyle: 'custom',
     navigationBarTitleText: '反馈',
-    backgroundColor: '#f9f9f9',
+    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarTextStyle: 'white',
   },
 }
 </route>
@@ -76,6 +77,12 @@
 import PLATFORM from '@/utils/platform'
 import { useToast } from 'wot-design-uni'
 import { httpPost } from '@/utils/http'
+import { useUserStore } from '@/store'
+
+const userStore = useUserStore()
+const userInfo = computed(() => {
+  return userStore.userInfo
+})
 
 const { success: showSuccess } = useToast()
 
@@ -86,7 +93,7 @@ defineOptions({
 const formModel = reactive({
   model_name: '',
   phone_name: '',
-  phone: '',
+  phone: userInfo.value.phone,
   content: '',
 })
 
