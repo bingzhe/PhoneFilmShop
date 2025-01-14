@@ -71,17 +71,17 @@
         class="flex justify-around items-center h-170rpx border-b-#eee border-b-1 border-l-0 border-r-0 border-t-0 border-solid"
       >
         <view class="flex flex-col items-center">
-          <view class="text-48rpx text-#00A3FF font-bold">1000</view>
+          <view class="text-48rpx text-#00A3FF font-bold">{{ comboSpareNumTotal }}</view>
           <view class="text-28rpx text-#666">剩余贴膜次数</view>
         </view>
-        <view class="flex flex-col items-center">
+        <!-- <view class="flex flex-col items-center">
           <view class="text-48rpx text-#00A3FF font-bold">1000</view>
           <view class="text-28rpx text-#666">积分</view>
-        </view>
+        </view> -->
       </view>
       <view class="text-28rpx text-#666 text-center pt-16rpx pb-16rpx">
         您当前有
-        <text class="text-red font-bold">0</text>
+        <text class="text-red font-bold">{{ myComboList.length }}</text>
         条套餐
       </view>
     </view>
@@ -89,18 +89,21 @@
     <view class="flex justify-between items-center ml-24rpx mr-24rpx">
       <view
         class="w-223rpx bg-#023A44 h-140rpx rounded-16rpx flex flex-col justify-center items-center"
+        @click="jumperPage('/pages/member/member-combo-qr')"
       >
         <view class="i-ic:baseline-qr-code-scanner text-48rpx text-#fff mb-8rpx"></view>
         <view class="text-24rpx text-#fff">我要核销</view>
       </view>
       <view
         class="w-223rpx bg-#00A3FF h-140rpx rounded-16rpx flex flex-col justify-center items-center"
+        @click="jumperPage('/pages/member/member-combo-log')"
       >
         <view class="i-ic:outline-document-scanner text-48rpx text-#fff mb-8rpx"></view>
         <view class="text-24rpx text-#fff">核销记录</view>
       </view>
       <view
         class="w-223rpx bg-#00A3FF h-140rpx rounded-16rpx flex flex-col justify-center items-center"
+        @click="jumperPage('/pages/member/member-combo-list')"
       >
         <view class="i-ic:outline-document-scanner text-48rpx text-#fff mb-8rpx"></view>
         <view class="text-24rpx text-#fff">我的套餐</view>
@@ -186,7 +189,7 @@ const shopInfo = ref({
   latitude: '',
   longitude: '',
   shop_id: '',
-  shop_qrcode: null,
+  shop_qrcode: '',
   users_id: '',
 })
 
@@ -200,6 +203,8 @@ const fullAddress = computed(() => {
 
 const comboList = ref([]) // 店铺套餐
 const myComboList = ref([]) // 我的套餐
+
+const comboSpareNumTotal = ref(0) // 套餐剩余次数
 
 const getShopInfo = async () => {
   try {
@@ -229,12 +234,25 @@ const getComboList = async () => {
 
 // 获取我的套餐
 const getMyComboList = async () => {
-  const res = await httpPost('/api/UsersInfo/getUsersComboList', {
-    token: userInfo.value.token,
-    shop_id: shopId.value,
-  })
+  try {
+    const res = await httpPost('/api/UsersInfo/getUsersComboList', {
+      token: userInfo.value.token,
+      shop_id: shopId.value,
+    })
 
-  console.log('getMyComboList', res)
+    const data = (res.data || []) as any[]
+    myComboList.value = data
+
+    comboSpareNumTotal.value = data.reduce((total, item) => {
+      return total + item.spare_num
+    }, 0)
+
+    console.log('getMyComboList', res)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    toast.close()
+  }
 }
 
 const jumperPage = (path: string) => {
@@ -245,19 +263,21 @@ const jumperPage = (path: string) => {
   })
 }
 
+const getShopData = () => {
+  getShopInfo()
+  getComboList()
+  getMyComboList()
+}
+
 onLoad((options) => {
   shopId.value = options.shopId
 
   if (!userInfo.value.token) {
     wxLogin().then(() => {
-      getShopInfo()
-      getComboList()
-      getMyComboList()
+      getShopData()
     })
   } else {
-    getShopInfo()
-    getComboList()
-    getMyComboList()
+    getShopData()
   }
 })
 </script>

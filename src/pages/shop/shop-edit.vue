@@ -46,6 +46,7 @@
         />
 
         <wd-input
+          :disabled="isEdit"
           label="联系电话"
           label-width="100px"
           prop="phone"
@@ -56,6 +57,7 @@
         />
 
         <wd-input
+          :disabled="isEdit"
           label="联系人"
           label-width="100px"
           prop="name"
@@ -66,6 +68,7 @@
         />
 
         <wd-col-picker
+          :disabled="isEdit"
           label="省市区"
           label-width="100px"
           prop="area_value"
@@ -79,6 +82,7 @@
         ></wd-col-picker>
 
         <wd-input
+          :disabled="isEdit"
           label="地址"
           label-width="100px"
           prop="address"
@@ -89,6 +93,7 @@
         />
 
         <wd-input
+          :disabled="isEdit"
           label="经度"
           label-width="100px"
           prop="longitude"
@@ -98,13 +103,19 @@
           :rules="[{ required: true, message: '请选择位置' }]"
         >
           <template #suffix>
-            <wd-button size="small" custom-class="button" @click="chooseLocation">
+            <wd-button
+              size="small"
+              custom-class="button"
+              @click="chooseLocation"
+              :disabled="isEdit"
+            >
               地图定位
             </wd-button>
           </template>
         </wd-input>
 
         <wd-input
+          :disabled="isEdit"
           label="纬度"
           label-width="100px"
           prop="latitude"
@@ -180,17 +191,25 @@ const shopLogoUrl = computed(() => {
   return `${baseUrl}${formModel.value.shop_logo}`
 })
 
-watch(shopLogo, (newVal) => {
-  if (newVal) {
-    console.log(newVal, 'newVal')
-    const uploadData = JSON.parse(newVal)
-    formModel.value.shop_logo = uploadData.data
-  }
-})
+watch(
+  shopLogo,
+  (newVal) => {
+    if (newVal) {
+      console.log(newVal, 'newVal')
+      const uploadData = JSON.parse(newVal)
+      formModel.value.shop_logo = uploadData.data
+    }
+  },
+  {
+    deep: true,
+  },
+)
 
 watch(shopLoading, (newVal) => {
   if (newVal) {
     toast.loading('加载中...')
+  } else {
+    toast.close()
   }
 })
 
@@ -246,28 +265,44 @@ function handleSubmit() {
       if (valid) {
         const token = userStore.getToken()
 
-        const params: any = {
-          token,
-          ...formModel.value,
+        if (!shopId.value) {
+          const params: any = {
+            token,
+            ...formModel.value,
+          }
+
+          // if (shopId.value) {
+          //   params.shop_id = shopId.value
+
+          //   delete params.invitation_code
+          // }
+
+          // 排除area_value
+          delete params.area_value
+
+          console.log(params, 'params')
+
+          httpPost('/api/Shop/saveShopInfo', params).then((res) => {
+            toast.success('保存成功')
+            setTimeout(() => {
+              uni.navigateBack()
+            }, 1000)
+          })
+        } else {
+          const params: any = {
+            token,
+            shop_id: shopId.value,
+            shop_name: formModel.value.shop_name,
+            shop_logo: formModel.value.shop_logo,
+          }
+
+          httpPost('/api/Shop/editShopInfo', params).then((res) => {
+            toast.success('保存成功')
+            setTimeout(() => {
+              uni.navigateBack()
+            }, 1000)
+          })
         }
-
-        if (shopId.value) {
-          params.shop_id = shopId.value
-
-          delete params.invitation_code
-        }
-
-        // 排除area_value
-        delete params.area_value
-
-        console.log(params, 'params')
-
-        httpPost('/api/Shop/saveShopInfo', params).then((res) => {
-          toast.success('保存成功')
-          setTimeout(() => {
-            uni.navigateBack()
-          }, 1000)
-        })
       }
     })
     .catch((error) => {
@@ -287,7 +322,11 @@ function getShopInfo() {
     formModel.value.shop_name = resultData.shop_name
     formModel.value.phone = resultData.phone
     formModel.value.name = resultData.name
-    formModel.value.area_value = [resultData.province_id, resultData.city_id, resultData.area_id]
+    formModel.value.area_value = [
+      String(resultData.province_id),
+      String(resultData.city_id),
+      String(resultData.area_id),
+    ]
     formModel.value.province_name = resultData.province_name
     formModel.value.city_name = resultData.city_name
     formModel.value.area_name = resultData.area_name

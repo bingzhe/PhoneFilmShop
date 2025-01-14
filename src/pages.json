@@ -15,7 +15,7 @@
   },
   "tabBar": {
     "color": "#999999",
-    "selectedColor": "#018d71",
+    "selectedColor": "#00A3FF",
     "backgroundColor": "#F8F8F8",
     "borderStyle": "black",
     "height": "50px",
@@ -36,8 +36,8 @@
         "text": "教程"
       },
       {
-        "iconPath": "static/tabbar/feedback-off.png",
-        "selectedIconPath": "static/tabbar/feedback-on.png",
+        "iconPath": "static/tabbar/my-off.png",
+        "selectedIconPath": "static/tabbar/my-on.png",
         "pagePath": "pages/personal/personal",
         "text": "我"
       }
@@ -79,6 +79,32 @@
       }
     },
     {
+      "path": "pages/member/member-combo-list",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "我的套餐"
+      }
+    },
+    {
+      "path": "pages/member/member-combo-log",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "核销记录"
+      }
+    },
+    {
+      "path": "pages/member/member-combo-qr",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "贴膜核销",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/member/member-purchase",
       "type": "page",
       "layout": "default",
@@ -113,7 +139,9 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "会员贴膜核销"
+        "navigationBarTitleText": "会员贴膜核销",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -147,6 +175,16 @@
       },
       "mp-alipay": {
         "usingComponents": {}
+      }
+    },
+    {
+      "path": "pages/shop/shop-member-list",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "门店会员",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {

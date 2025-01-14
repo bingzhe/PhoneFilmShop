@@ -15,21 +15,30 @@
         <view class="text-24rpx text-#666666">会员审核</view>
       </view>
 
-      <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
+      <view
+        class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
+        @click="jumperPage('/pages/shop/shop-combo-check')"
+      >
         <view class="mb-12rpx">
           <view class="i-ic:baseline-qr-code-scanner text-#666 text-48rpx"></view>
         </view>
         <view class="text-24rpx text-#666666">贴膜核销</view>
       </view>
 
-      <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
+      <view
+        class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
+        @click="jumperPage('/pages/shop/shop-combo-log')"
+      >
         <view class="mb-12rpx">
           <view class="i-ic:outline-document-scanner text-#666 text-48rpx"></view>
         </view>
         <view class="text-24rpx text-#666666">核销记录</view>
       </view>
 
-      <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
+      <view
+        class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
+        @click="jumperPage('/pages/shop/shop-member-list')"
+      >
         <view class="mb-12rpx">
           <view class="i-mingcute:vip-1-line text-#666 text-48rpx"></view>
         </view>

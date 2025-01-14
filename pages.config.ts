@@ -18,7 +18,7 @@ export default defineUniPages({
   },
   tabBar: {
     color: '#999999',
-    selectedColor: '#018d71',
+    selectedColor: '#00A3FF',
     backgroundColor: '#F8F8F8',
     borderStyle: 'black',
     height: '50px',
@@ -39,8 +39,8 @@ export default defineUniPages({
         text: '教程',
       },
       {
-        iconPath: 'static/tabbar/feedback-off.png',
-        selectedIconPath: 'static/tabbar/feedback-on.png',
+        iconPath: 'static/tabbar/my-off.png',
+        selectedIconPath: 'static/tabbar/my-on.png',
         pagePath: 'pages/personal/personal',
         text: '我',
       },

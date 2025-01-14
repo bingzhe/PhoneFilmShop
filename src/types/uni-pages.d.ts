@@ -8,6 +8,9 @@ interface NavigateToOptions {
        "/pages/about/about" |
        "/pages/feedback/feedback" |
        "/pages/member/member-audit" |
+       "/pages/member/member-combo-list" |
+       "/pages/member/member-combo-log" |
+       "/pages/member/member-combo-qr" |
        "/pages/member/member-purchase" |
        "/pages/personal/personal-edit" |
        "/pages/personal/personal" |
@@ -15,6 +18,7 @@ interface NavigateToOptions {
        "/pages/shop/shop-combo-log" |
        "/pages/shop/shop-combo" |
        "/pages/shop/shop-edit" |
+       "/pages/shop/shop-member-list" |
        "/pages/shop/shop" |
        "/pages/shop-info/shop-info" |
        "/pages/video-course/video-course";

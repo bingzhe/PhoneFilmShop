@@ -26,17 +26,25 @@
 
     <view class="bg-#F7F7F7 pl-24rpx pr-24rpx flex items-center justify-between h-200rpx">
       <view class="text-28rpx text-#666 flex-1 flex flex-col items-center">
-        <view>
-          <view class="i-ic-twotone-storefront text-#00A3FF text-68rpx"></view>
-        </view>
+        <wd-img width="80rpx" height="80rpx" round :src="shopLogoUrl">
+          <template #error>
+            <view class="w-100% h-100% flex justify-center items-center">
+              <view class="i-ic:twotone-storefront text-80rpx text-#00A3FF"></view>
+            </view>
+          </template>
+        </wd-img>
         <view class="text-28rpx text-#666666">{{ shopInfo.shop_name }}</view>
       </view>
       <view class="text-58rpx text-#666 font-bold i-carbon:arrows-horizontal"></view>
       <view class="text-28rpx text-#666 flex-1 flex flex-col items-center">
-        <view>
-          <view class="i-ic-twotone-storefront text-#00A3FF text-68rpx"></view>
-        </view>
-        <view class="text-28rpx text-#666666">会员昵称</view>
+        <wd-img width="80rpx" height="80rpx" round :src="avatarUrl">
+          <template #error>
+            <view class="w-100% h-100% flex justify-center items-center">
+              <view class="i-carbon:user-avatar-filled text-80rpx text-#00A3FF"></view>
+            </view>
+          </template>
+        </wd-img>
+        <view class="text-28rpx text-#666666">{{ memberUserInfo.nikename }}</view>
       </view>
     </view>
 
@@ -49,7 +57,7 @@
     />
 
     <view class="p-96rpx">
-      <wd-button size="large" block>提交</wd-button>
+      <wd-button size="large" block @click="handleSave">提交</wd-button>
     </view>
   </view>
 </template>
@@ -69,6 +77,7 @@ const userInfo = computed(() => {
 })
 
 const shopId = ref('')
+const usersId = ref('')
 
 const selectCombo = ref('')
 const comboList = ref([])
@@ -78,7 +87,18 @@ const shopInfo = ref({
   shop_name: '',
 })
 
-const memberUserInfo = ref({})
+const shopLogoUrl = computed(() => {
+  return `${baseUrl}${shopInfo.value.shop_logo}`
+})
+
+const memberUserInfo = ref({
+  nikename: '',
+  avatar: '',
+})
+
+const avatarUrl = computed(() => {
+  return `${baseUrl}${memberUserInfo.value.avatar}`
+})
 
 const getShopInfo = async () => {
   try {
@@ -117,12 +137,35 @@ const getComboList = async () => {
 const handleScan = () => {
   uni.scanCode({
     success: (res) => {
-      console.log('success', res)
+      console.log('扫码信息', res)
 
       const { result } = res
-      const resultObj = JSON.parse(result)
+      const scanResult = JSON.parse(result)
 
-      console.log('resultObj', resultObj)
+      const { shopId: scanShopId, usersId: scanUsersId } = scanResult
+
+      if (scanShopId !== shopId.value) {
+        toast.error('店铺不匹配')
+        return
+      }
+
+      usersId.value = scanUsersId
+
+      httpPost('/api/UsersInfo/getUsersById', {
+        token: userInfo.value.token,
+        users_id: scanUsersId,
+      })
+        .then((res) => {
+          console.log('res', res)
+
+          const data = res.data as any
+
+          memberUserInfo.value.avatar = data.avatar
+          memberUserInfo.value.nikename = data.nikename
+        })
+        .catch((err) => {
+          console.log('err', err)
+        })
     },
     fail: (err) => {
       console.log(err)
@@ -130,8 +173,40 @@ const handleScan = () => {
   })
 }
 
-const handleConfirm = (e) => {
-  console.log(e)
+const handleConfirm = () => {}
+
+const handleSave = () => {
+  if (!usersId.value) {
+    toast.error('请先扫描会员申请码')
+    return
+  }
+
+  if (!selectCombo.value) {
+    toast.error('请选择套餐')
+    return
+  }
+
+  toast.loading('提交中...')
+
+  httpPost('/api/Shop/saveUsersCombo', {
+    token: userInfo.value.token,
+    shop_id: shopId.value,
+    users_id: usersId.value,
+    id: selectCombo.value,
+  })
+    .then((res) => {
+      console.log('res', res)
+      toast.success('提交成功')
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1000)
+    })
+    .catch((err) => {
+      console.log('err', err)
+    })
+    .finally(() => {
+      toast.close()
+    })
 }
 
 onLoad((options) => {
