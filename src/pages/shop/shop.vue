@@ -50,6 +50,7 @@
             </view>
             <view
               class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
+              @click="jumperPage('/pages/shop/shop-info')"
             >
               <view class="i-ic:twotone-storefront text-32rpx text-#fff"></view>
             </view>

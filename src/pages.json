@@ -182,6 +182,16 @@
       }
     },
     {
+      "path": "pages/shop/shop-info",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "店铺详情",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/shop/shop-member-list",
       "type": "page",
       "layout": "default",
