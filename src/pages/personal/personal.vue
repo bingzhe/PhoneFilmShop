@@ -46,7 +46,7 @@
         商家区
       </view>
       <!--  -->
-      <view class="p-32rpx flex flex-col items-center" @click="goShop" v-if="!!userInfo.shop_id">
+      <view class="p-64rpx flex flex-col items-center" @click="goShop" v-if="!!userInfo.shop_id">
         <view>
           <view class="i-ic-twotone-storefront text-#00A3FF text-48rpx"></view>
         </view>

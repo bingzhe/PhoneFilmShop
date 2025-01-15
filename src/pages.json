@@ -198,6 +198,9 @@
       "style": {
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTitleText": "",
+        "navigationBarTextStyle": "white",
+        "enablePullDownRefresh": false,
+        "disableScroll": true,
         "mp-weixin": {
           "homeButton": false
         }
