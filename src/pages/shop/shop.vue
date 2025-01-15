@@ -4,7 +4,7 @@
   style: {
     navigationBarBackgroundColor: '#00A3FF',
     navigationBarTitleText: '',
-    enablePullDownRefresh: true,
+    // enablePullDownRefresh: true,
     // navigationStyle: 'custom',
     'mp-weixin': {
       homeButton: false,
@@ -36,11 +36,13 @@
           <view class="flex">
             <view
               class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
+              @click="goMap"
             >
               <view class="i-carbon:location-current text-32rpx text-#fff"></view>
             </view>
             <view
               class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
+              @click="callPhone"
             >
               <view class="i-ic:baseline-local-phone text-32rpx text-#fff"></view>
             </view>
@@ -53,6 +55,7 @@
           <view>
             <view
               class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid"
+              @click="goPersonalCenter"
             >
               <view class="i-ic:baseline-account-circle text-32rpx text-#fff"></view>
             </view>
@@ -61,7 +64,10 @@
       </view>
     </view>
 
-    <view class="mt-32rpx ml-24rpx mr-24rpx mb-24rpx bg-white rounded-32rpx h-300rpx">
+    <view
+      v-if="!isCusShop"
+      class="mt-32rpx ml-24rpx mr-24rpx mb-24rpx bg-white rounded-32rpx h-300rpx"
+    >
       <view
         class="bg-#00A3FF text-white text-28rpx mr-24rpx ml-24rpx text-center rounded-b-32rpx pt-8rpx pb-8rpx"
       >
@@ -86,7 +92,7 @@
       </view>
     </view>
 
-    <view class="flex justify-between items-center ml-24rpx mr-24rpx">
+    <view v-if="!isCusShop" class="flex justify-between items-center ml-24rpx mr-24rpx">
       <view
         class="w-223rpx bg-#023A44 h-140rpx rounded-16rpx flex flex-col justify-center items-center"
         @click="jumperPage('/pages/member/member-combo-qr')"
@@ -144,15 +150,15 @@
       </view>
     </view>
 
-    <view class="p-32rpx">
+    <view v-if="!isCusShop" class="p-32rpx">
       <wd-button :block="true" size="large" @click="jumperPage('/pages/member/member-purchase')">
         我要充会员
       </wd-button>
     </view>
 
-    <ShopManageMenu :shopId="shopId" />
+    <ShopManageMenu v-if="isCusShop" :shopId="shopId" />
 
-    <view class="p-32rpx"></view>
+    <view class="p-12rpx"></view>
   </view>
 </template>
 
@@ -162,6 +168,7 @@ import { useUserStore } from '@/store'
 import { httpPost } from '@/utils/http'
 import { useToast } from 'wot-design-uni'
 import { wxLogin } from '@/utils/wxLogin'
+import { getUserInfoAPI } from '@/service/user'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 
@@ -171,6 +178,8 @@ const userStore = useUserStore()
 const userInfo = computed(() => {
   return userStore.userInfo
 })
+
+const isCusShop = ref(false)
 
 const shopId = ref('')
 
@@ -247,7 +256,7 @@ const getMyComboList = async () => {
       return total + item.spare_num
     }, 0)
 
-    console.log('getMyComboList', res)
+    // console.log('getMyComboList', res)
   } catch (error) {
     console.log(error)
   } finally {
@@ -263,6 +272,48 @@ const jumperPage = (path: string) => {
   })
 }
 
+const goPersonalCenter = () => {
+  uni.switchTab({ url: '/pages/personal/personal' })
+}
+
+// 调起拨打电话
+const callPhone = () => {
+  if (shopInfo.value.phone) {
+    uni.makePhoneCall({
+      phoneNumber: shopInfo.value.phone,
+    })
+  }
+}
+
+// 去地图进行导航
+const goMap = () => {
+  wx.openLocation({
+    latitude: Number(shopInfo.value.latitude),
+    longitude: Number(shopInfo.value.longitude),
+    name: shopInfo.value.shop_name,
+    address: fullAddress.value,
+    scale: 15,
+  })
+}
+
+const getUserInfo = async () => {
+  const res = (await getUserInfoAPI()) as any
+  const userInfo = {
+    ...res.data,
+    nickname: res.data.nikename,
+  }
+  userStore.setUserInfo(userInfo as IUserInfo)
+}
+
+const isCusShopFn = () => {
+  // eslint-disable-next-line eqeqeq
+  if (userInfo.value.shop_id == shopId.value) {
+    isCusShop.value = true
+  } else {
+    isCusShop.value = false
+  }
+}
+
 const getShopData = () => {
   getShopInfo()
   getComboList()
@@ -272,11 +323,15 @@ const getShopData = () => {
 onLoad((options) => {
   shopId.value = options.shopId
 
+  // 没有登录的时候，自动登录，并且查询用户信息
   if (!userInfo.value.token) {
-    wxLogin().then(() => {
+    wxLogin().then(async () => {
+      await getUserInfo()
+      isCusShopFn()
       getShopData()
     })
   } else {
+    isCusShopFn()
     getShopData()
   }
 })

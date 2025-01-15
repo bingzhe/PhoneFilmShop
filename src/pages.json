@@ -83,7 +83,9 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "我的套餐"
+        "navigationBarTitleText": "我的套餐",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -91,7 +93,9 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "核销记录"
+        "navigationBarTitleText": "核销记录",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -194,7 +198,6 @@
       "style": {
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTitleText": "",
-        "enablePullDownRefresh": true,
         "mp-weixin": {
           "homeButton": false
         }

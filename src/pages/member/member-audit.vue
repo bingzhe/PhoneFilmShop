@@ -203,8 +203,6 @@ const handleSave = () => {
     })
     .catch((err) => {
       console.log('err', err)
-    })
-    .finally(() => {
       toast.close()
     })
 }
