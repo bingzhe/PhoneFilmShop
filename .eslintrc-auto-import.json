@@ -97,6 +97,7 @@
     "useId": true,
     "useModel": true,
     "useTemplateRef": true,
-    "useColPickerData": true
+    "useColPickerData": true,
+    "useProjectName": true
   }
 }

@@ -80,7 +80,7 @@
       </view>
     </view>
 
-    <view v-show="!showSearchPanel" class="flex h100vh">
+    <view v-show="!showSearchPanel" class="flex min-h-100vh">
       <SliderMenu
         :menus="secondCates"
         :toggleCate="toggleCate"
@@ -98,11 +98,7 @@
           v-if="list.length === 0 && !loading"
           class="h-600rpx flex items-center justify-center"
         >
-          <image
-            class="important-w-[300rpx] important-h-[300rpx];"
-            style="height: 300rpx"
-            src="/static/images/empty.png"
-          ></image>
+          <image class="w-300rpx h-300rpx" src="/static/images/empty.png"></image>
         </view>
       </view>
     </view>
@@ -111,7 +107,7 @@
 
 <script lang="ts" setup>
 import PLATFORM from '@/utils/platform'
-import { httpGet } from '@/utils/http'
+import { httpGet, httpPost } from '@/utils/http'
 import CateMenu from './components/cate-menu.vue'
 import SliderMenu from './components/slider-menu.vue'
 import ProductItem from './components/product-item.vue'
@@ -122,6 +118,8 @@ const toast = useToast()
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getWindowInfo()
+
+const { projectName, setProjectName } = useProjectName()
 
 defineOptions({
   name: 'Home',
@@ -144,7 +142,7 @@ const searchValue = ref('')
 const showSearchPanel = ref(false)
 const searchNameList = ref<any[]>([])
 
-const searchType = ref(1) // 1 输入框查询 2 本机查询
+const searchType = ref(2) // 1 输入框查询 2 本机查询
 
 const list = ref<any[]>([])
 const page = ref(1)
@@ -174,10 +172,16 @@ const getSwiperList = async () => {
 }
 
 // 查找本机
-const handleSearchNative = () => {}
+const handleSearchNative = () => {
+  searchType.value = 2
+  getGoodsList(true)
+}
 
 // 输入框查找
-const handleSearch = () => {}
+const handleSearch = () => {
+  searchType.value = 1
+  getGoodsList(true)
+}
 
 const getFirstCateList = async () => {
   httpGet<any[]>('/api/Goods/getCateList1', { pid: 0, level: 1 }).then((res) => {
@@ -296,11 +300,43 @@ const getGoodsList = async (init?: boolean) => {
     })
 }
 
+const getDeviceInfo = async () => {
+  const deviceInfo = (wx as any).getDeviceInfo()
+
+  let model = deviceInfo.model
+  const system = deviceInfo.system
+
+  // 单独处理 iPhone XS Max China-exclusive<iPhone11,6>
+  model = model.replace(/China-exclusive/gm, '')
+
+  // 如果是ios,单独处理下里面的尖括号
+  const ios = !!(system.toLowerCase().search('ios') + 1)
+  if (ios) {
+    model = model.replace(/\((\S*?)\)<(\S*?)>/gm, '')
+    model = model.replace(/<(\S*?)>/gm, '')
+  }
+
+  const params = {
+    name: model,
+  }
+
+  httpPost('/api/Index/getPhoneName', params).then((res) => {
+    const localModel = res.data ? res.data : model
+
+    phoneModal.value = localModel
+  })
+}
+
 // 测试 uni API 自动引入
-onLoad(() => {
+onLoad(async () => {
+  await getDeviceInfo()
   getNoticeList()
   getSwiperList()
   getFirstCateList()
+
+  uni.setNavigationBarTitle({
+    title: projectName.value,
+  })
 })
 
 onReachBottom(() => {
