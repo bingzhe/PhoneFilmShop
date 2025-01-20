@@ -60,7 +60,11 @@ const getMyComboList = async () => {
 
     const data = (res.data || []) as any[]
     data.forEach((item) => {
-      item.use_time_str = dayjs(item.use_time * 1000).format('YYYY-MM-DD HH:mm:ss')
+      if (item.use_time) {
+        item.use_time_str = dayjs(item.use_time * 1000).format('YYYY-MM-DD HH:mm:ss')
+      } else {
+        item.use_time_str = '--'
+      }
     })
     dataList.value = data
 

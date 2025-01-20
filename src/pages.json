@@ -27,29 +27,30 @@
         "iconPath": "static/tabbar/home-off.png",
         "selectedIconPath": "static/tabbar/home-on.png",
         "pagePath": "pages/index/index",
-        "text": "首页"
+        "text": "型号查询"
       },
       {
         "iconPath": "static/tabbar/video-off.png",
         "selectedIconPath": "static/tabbar/video-on.png",
-        "pagePath": "pages/video-course/video-course",
-        "text": "教程"
+        "pagePath": "pages/order-system-home/order-system-home",
+        "text": "下单系统"
       },
       {
         "iconPath": "static/tabbar/my-off.png",
         "selectedIconPath": "static/tabbar/my-on.png",
-        "pagePath": "pages/personal/personal",
-        "text": "我"
+        "pagePath": "pages/service-added/service-added",
+        "text": "增值服务"
       }
     ]
   },
   "pages": [
     {
-      "path": "pages/index/index",
+      "path": "pages/start/start",
       "type": "home",
+      "layout": "default",
       "style": {
-        "navigationStyle": "custom",
-        "navigationBarTitleText": "科迪亚"
+        "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#ffffff"
       }
     },
     {
@@ -66,6 +67,13 @@
         "navigationBarTitleText": "反馈",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "type": "page",
+      "style": {
+        "navigationBarTitleText": "科迪亚"
       }
     },
     {
@@ -119,6 +127,26 @@
       }
     },
     {
+      "path": "pages/member/member-shop-list",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "购买过的店铺",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system-home/order-system-home",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "订单系统",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/personal/personal-edit",
       "type": "page",
       "layout": "default",
@@ -134,6 +162,16 @@
       "layout": "default",
       "style": {
         "navigationBarTitleText": "我",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/service-added/service-added",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "增值服务",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
       }
@@ -197,6 +235,16 @@
       "layout": "default",
       "style": {
         "navigationBarTitleText": "门店会员",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/shop/shop-staff",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "店员管理",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
       }

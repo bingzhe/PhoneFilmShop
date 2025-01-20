@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
-import { wxLogin } from './utils/wxLogin'
 
 onLaunch(() => {
   console.log('App Launch')
-  // #ifdef MP-WEIXIN
-  wxLogin()
-  // #endif
 })
 onShow(() => {
   console.log('App Show')

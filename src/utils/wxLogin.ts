@@ -49,6 +49,7 @@ export const wxLogin = async () => {
 
     return loginResult
   } catch (error) {
+    console.error('wxLogin error->', error)
     throw new Error('微信登录失败')
   }
 }

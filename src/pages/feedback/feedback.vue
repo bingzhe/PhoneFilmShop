@@ -10,7 +10,7 @@
 }
 </route>
 <template>
-  <view class="overflow-hidden pt-2 px-4" :style="{ marginTop: safeAreaInsets?.top + 'px' }">
+  <view class="overflow-hidden pt-2 px-4">
     <view class="text-36rpx font-bold mt-50rpx mb-50rpx text-center">反馈意见</view>
     <view class="color-#666 text-30rpx ml-40rpx mr-40rpx mb-50rpx text-center">
       您的以及是我们进步的阶梯！
@@ -70,6 +70,19 @@
         </view>
       </view>
     </wd-form>
+
+    <wd-fab position="right-bottom" :expandable="false">
+      <template #trigger>
+        <wd-button
+          @click="handleContact"
+          open-type="contact"
+          type="primary"
+          custom-class="custom-button"
+        >
+          <view class="i-ri:customer-service-2-line text-#fff text-54rpx"></view>
+        </wd-button>
+      </template>
+    </wd-fab>
   </view>
 </template>
 
@@ -98,7 +111,7 @@ const formModel = reactive({
 })
 
 // 获取屏幕边界到安全区域距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
+// const { safeAreaInsets } = uni.getSystemInfoSync()
 
 const yhxy = (e) => {
   uni.navigateTo({
@@ -134,7 +147,20 @@ const handleSubmit = () => {
 }
 // 测试 uni API 自动引入
 onLoad(() => {})
+
+const handleContact = () => {}
 </script>
+
+<style lang="scss" scoped>
+::v-deep .custom-button {
+  box-sizing: border-box;
+  width: 64px !important;
+  min-width: auto !important;
+  height: 64px !important;
+  margin: 8rpx;
+  border-radius: 32px !important;
+}
+</style>
 
 <style>
 page {

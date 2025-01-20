@@ -21,6 +21,7 @@ type IUserInfo = {
   phone?: string
   shop_id?: number | string
   users_id?: number | string
+  is_admin?: number
   /** 微信的 openid，非微信没有这个字段 */
   openid?: string
   token?: string

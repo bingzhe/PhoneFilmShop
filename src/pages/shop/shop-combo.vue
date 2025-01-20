@@ -13,34 +13,46 @@
   <view class="text-26rpx">
     <view class="table-wrapper pb-80rpx">
       <wd-table :data="dataList">
-        <wd-table-col prop="combo_name" label="套餐名称" width="175rpx"></wd-table-col>
-        <wd-table-col prop="unit_price" label="单价" width="100rpx" align="center"></wd-table-col>
-        <wd-table-col prop="combo_price" label="总价" width="125rpx" align="center"></wd-table-col>
+        <wd-table-col prop="combo_name" label="套餐名称" width="170rpx"></wd-table-col>
+        <wd-table-col prop="unit_price" label="单价" width="125rpx" align="center"></wd-table-col>
+        <wd-table-col
+          prop="combo_price"
+          label="会员价"
+          width="125rpx"
+          align="center"
+        ></wd-table-col>
         <wd-table-col prop="combo_num" label="次数" width="100rpx" align="center"></wd-table-col>
-        <wd-table-col prop="opr" label="操作" width="250rpx" align="center">
+        <wd-table-col prop="opr" label="操作" width="230rpx" align="center">
           <template #value="{ row, index }">
-            <view class="flex items-center">
+            <view class="flex items-center flex-wrap w-210rpx">
               <view
                 v-if="index !== dataListLength - 1"
-                class="flex items-center justify-center w-30px h-30px bg-#00A3FF rounded-4rpx text-#fff mr-24rpx"
+                class="flex items-center justify-center w-45rpx h-45rpx bg-#00A3FF rounded-4rpx text-#fff mr-8rpx"
                 @click="handleArrowDown(row, index)"
               >
-                <wd-icon name="arrow-thin-down" size="22px"></wd-icon>
+                <wd-icon name="arrow-thin-down" size="30rpx"></wd-icon>
               </view>
 
               <view
                 v-if="index !== 0"
-                class="flex items-center justify-center w-30px h-30px bg-#00A3FF rounded-4rpx text-#fff mr-24rpx"
+                class="flex items-center justify-center w-45rpx h-45rpx bg-#00A3FF rounded-4rpx text-#fff mr-8rpx"
                 @click="handleArrowUp(row, index)"
               >
-                <wd-icon name="arrow-thin-up" size="22px"></wd-icon>
+                <wd-icon name="arrow-thin-up" size="30rpx"></wd-icon>
               </view>
 
               <view
-                class="flex items-center justify-center w-30px h-30px bg-red rounded-4rpx text-#fff"
+                class="flex items-center justify-center w-45rpx h-45rpx bg-red rounded-4rpx text-#fff mr-8rpx"
+                @click="handleEdit(row)"
+              >
+                <wd-icon name="edit-outline" size="30rpx"></wd-icon>
+              </view>
+
+              <view
+                class="flex items-center justify-center w-45rpx h-45rpx bg-red rounded-4rpx text-#fff"
                 @click="handleDelete(row)"
               >
-                <wd-icon name="delete" size="20px"></wd-icon>
+                <wd-icon name="delete" size="30rpx"></wd-icon>
               </view>
             </view>
           </template>
@@ -76,7 +88,7 @@
               :rules="[{ required: true, message: '请填写单价' }]"
             />
             <wd-input
-              label="总价"
+              label="会员价"
               type="number"
               label-width="80px"
               prop="combo_price"
@@ -133,6 +145,8 @@ const formModel = reactive({
   combo_num: '',
 })
 
+const editRow = ref<any>({})
+
 const formRef = ref()
 
 const handleSubmit = () => {
@@ -142,13 +156,18 @@ const handleSubmit = () => {
       if (valid) {
         const token = userStore.getToken()
 
-        const params = {
+        const params: any = {
           token,
           shop_id: shopId.value,
           combo_name: formModel.combo_name,
           combo_price: formModel.combo_price,
           combo_num: formModel.combo_num,
           unit_price: formModel.unit_price,
+        }
+
+        if (editRow.value.id) {
+          params.id = editRow.value.id
+          params.sort = editRow.value.sort
         }
 
         toast.loading('加载中...')
@@ -159,6 +178,7 @@ const handleSubmit = () => {
             formModel.unit_price = ''
             formModel.combo_price = ''
             formModel.combo_num = ''
+            editRow.value = {}
           })
           .finally(() => {})
       }
@@ -224,6 +244,15 @@ const handleArrowUp = (row, index) => {
       getShopComboList()
     })
     .finally(() => {})
+}
+
+const handleEdit = (row) => {
+  editRow.value = row
+
+  formModel.combo_name = row.combo_name
+  formModel.unit_price = row.unit_price
+  formModel.combo_price = row.combo_price
+  formModel.combo_num = row.combo_num
 }
 
 const handleDelete = (row) => {

@@ -8,33 +8,31 @@
 }
 </route>
 <template>
-  <mescroll-body
+  <!-- <mescroll-body
     @init="mescrollInit"
     @down="downCallback"
     @up="upCallback"
     :up="{ empty: { icon: '/static/images/empty.png' } }"
-  >
-    <!-- <image src="/static/images/empty.png"></image> -->
-    <view
-      class="bg-white overflow-hidden pt-2 px-4"
-      :style="{ marginTop: safeAreaInsets?.top + 'px' }"
-    >
-      <view class="m-20rpx">
-        <view v-for="(item, index) in videoList" :key="index" class="w-100% flex-shrink-0 mb-30rpx">
-          <video class="w-100%" :src="item.fullUrl" :title="item.video_title"></video>
-          <view class="text-28rpx font-bold text-center">
-            {{ item.video_title }}
-          </view>
+  > -->
+  <!-- <image src="/static/images/empty.png"></image> -->
+  <!-- :style="{ marginTop: safeAreaInsets?.top + 'px' }" -->
+  <view class="bg-white overflow-hidden pt-2 px-4">
+    <view class="m-20rpx">
+      <view v-for="(item, index) in videoList" :key="index" class="w-100% flex-shrink-0 mb-30rpx">
+        <video class="w-100%" :src="item.fullUrl" :title="item.video_title"></video>
+        <view class="text-28rpx font-bold text-center">
+          {{ item.video_title }}
         </view>
       </view>
     </view>
-  </mescroll-body>
+  </view>
+
+  <view class="h-80rpx"></view>
+  <!-- </mescroll-body> -->
 </template>
 
 <script lang="ts" setup>
-import PLATFORM from '@/utils/platform'
-import useMescroll from '@/uni_modules/mescroll-uni/hooks/useMescroll'
-import { httpGet } from '@/utils/http'
+import { httpGet, httpPost } from '@/utils/http'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 
@@ -43,17 +41,17 @@ defineOptions({
 })
 
 // 获取屏幕边界到安全区域距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
+// const { safeAreaInsets } = uni.getSystemInfoSync()
 
 // 数据列表
 const videoList = ref<any[]>([])
 
 // 调用mescroll的hook (注: mescroll-uni不用传onPageScroll,onReachBottom, 而mescroll-body必传)
-const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom)
+// const { mescrollInit, downCallback, getMescroll } = useMescroll(onPageScroll, onReachBottom)
 
 // 上拉加载的回调: 其中num:当前页 从1开始, size:每页数据条数,默认10
-const upCallback = (mescroll) => {
-  httpGet<any[]>('/api/Index/getVideo')
+const getVideoList = () => {
+  httpPost<any[]>('/api/Index/getVideo')
     .then((res) => {
       // res.data ||
       const curPageData = res.data || []
@@ -62,15 +60,17 @@ const upCallback = (mescroll) => {
         item.fullUrl = `${baseUrl}${item.video_url}`
       })
 
-      // 当前页数据
-      if (mescroll.num === 1) videoList.value = [] // 第一页需手动制空列表
+      videoList.value = curPageData
 
-      videoList.value = videoList.value.concat(curPageData) // 追加新数据
+      // 当前页数据
+      // if (mescroll.num === 1) videoList.value = [] // 第一页需手动制空列表
+
+      // videoList.value = videoList.value.concat(curPageData) // 追加新数据
       // 联网成功的回调,隐藏下拉刷新和上拉加载的状态;
       // mescroll会根据传的参数,自动判断列表如果无任何数据,则提示空;列表无下一页数据,则提示无更多数据;
 
       // 方法一(推荐): 后台接口有返回列表的总页数 totalPage
-      mescroll.endByPage(curPageData.length, 1) // 必传参数(当前页的数据个数, 总页数)
+      // mescroll.endByPage(curPageData.length, 1) // 必传参数(当前页的数据个数, 总页数)
 
       // 方法二(推荐): 后台接口有返回列表的总数据量 totalSize
       // mescroll.endBySize(curPageData.length, totalSize); //必传参数(当前页的数据个数, 总数据量)
@@ -82,12 +82,14 @@ const upCallback = (mescroll) => {
       // mescroll.endSuccess(curPageData.length) // 请求成功, 结束加载
     })
     .catch(() => {
-      mescroll.endErr() // 请求失败, 结束加载
+      // mescroll.endErr() // 请求失败, 结束加载
     })
 }
 
 // 测试 uni API 自动引入
-onLoad(() => {})
+onLoad(() => {
+  getVideoList()
+})
 
 onPullDownRefresh(() => {})
 </script>

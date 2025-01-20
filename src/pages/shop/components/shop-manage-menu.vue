@@ -47,7 +47,15 @@
     </view>
 
     <view class="flex flex-wrap pt-12rpx justify-center items-center">
+      <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
+        <view class="mb-12rpx">
+          <view class="i-ic:outline-cloud-download text-#666 text-48rpx"></view>
+        </view>
+        <view class="text-24rpx text-#666666">下载店码</view>
+      </view>
+
       <view
+        v-if="isAdmin"
         class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
         @click="jumperPage('/pages/shop/shop-combo')"
       >
@@ -57,21 +65,19 @@
         <view class="text-24rpx text-#666666">套餐定制</view>
       </view>
 
-      <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
+      <view
+        v-if="isAdmin"
+        class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
+        @click="jumperPage('/pages/shop/shop-staff')"
+      >
         <view class="mb-12rpx">
-          <view class="i-ic:outline-cloud-download text-#666 text-48rpx"></view>
+          <view class="i-carbon:user-avatar-filled text-#666 text-48rpx"></view>
         </view>
-        <view class="text-24rpx text-#666666">下载店码</view>
+        <view class="text-24rpx text-#666666">门店店员</view>
       </view>
 
-      <!-- <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
-        <view class="mb-12rpx">
-          <view class="i-ic:baseline-drive-folder-upload text-#666 text-48rpx"></view>
-        </view>
-        <view class="text-24rpx text-#666666">设置店标</view>
-      </view> -->
-
       <view
+        v-if="isAdmin"
         class="w-25% flex flex-col items-center pt-12rpx pb-12rpx"
         @click="jumperPage('/pages/shop/shop-edit')"
       >
@@ -87,6 +93,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
   shopId: any
+  isAdmin: boolean
 }>()
 
 const jumperPage = (path: string) => {

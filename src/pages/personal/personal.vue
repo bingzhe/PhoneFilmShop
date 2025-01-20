@@ -13,7 +13,7 @@
   <view class="">
     <view class="flex items-center p-32rpx bg-white mb-24rpx">
       <view class="mr-32rpx">
-        <wd-img width="48" height="48" round :src="avatarUrl">
+        <wd-img width="48" height="48" round :src="avatarUrl" @click="goPersonalEdit">
           <template #error>
             <view class="w-100% h-100% flex justify-center items-center">
               <wd-img width="48" height="48" round src="/static/images/default_avatar.png"></wd-img>
@@ -27,14 +27,9 @@
         </wd-img>
       </view>
       <view class="flex-1">
-        <view class="text-32rpx">{{ userInfo.nickname || '佚名' }}</view>
-        <view class="flex justify-between items-center">
-          <view class="text-32rpx">{{ userInfo.phone || '手机号未设置' }}</view>
-          <view v-if="!userInfo.phone">
-            <wd-button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" size="small">
-              绑定手机号
-            </wd-button>
-          </view>
+        <view class="text-32rpx" @click="goPersonalEdit">{{ userInfo.nickname || '佚名' }}</view>
+        <view class="flex justify-between items-center" @click="goPersonalEdit">
+          <view class="text-32rpx">{{ hidePhone }}</view>
         </view>
       </view>
     </view>
@@ -73,24 +68,20 @@
           </view>
           <view class="text-32rpx text-#666666">个人信息</view>
         </view>
-        <view class="p-32rpx flex flex-col items-center">
+        <view class="p-32rpx flex flex-col items-center" @click="goShopList">
           <view>
-            <view class="i-ri:customer-service-2-line text-#00A3FF text-48rpx"></view>
+            <view class="i-ic-twotone-storefront text-#00A3FF text-48rpx"></view>
           </view>
-          <view class="text-32rpx text-#666666">联系客服</view>
-        </view>
-        <view class="p-32rpx flex flex-col items-center" @click="goFeedback">
-          <view>
-            <view class="i-ic:twotone-feedback text-#00A3FF text-48rpx"></view>
-          </view>
-          <view class="text-32rpx text-#666666">意见反馈</view>
+          <view class="text-32rpx text-#666666">购买过的店铺</view>
         </view>
       </view>
     </view>
 
     <view class="p-32rpx">
-      <wd-button :block="true" @click="logout" size="large">退出登录</wd-button>
+      <wd-button :block="true" @click="logout" size="large">返回首页</wd-button>
     </view>
+
+    <complete-userinfo-tip type="personal" />
   </view>
 </template>
 
@@ -99,6 +90,7 @@ import { getUserInfoAPI } from '@/service/user'
 import { httpPost } from '@/utils/http'
 import { useUserStore } from '@/store/user'
 import { useMessage } from 'wot-design-uni'
+import CompleteUserinfoTip from '@/components/complete-userinfo-tip.vue'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 const message = useMessage()
@@ -122,9 +114,14 @@ const avatarUrl = computed(() => {
   return `${baseUrl}${userStore.userInfo.avatar}`
 })
 
-onShow(() => {
-  getUserInfo()
+const hidePhone = computed(() => {
+  if (userInfo.value.phone) {
+    return String(userInfo.value.phone).replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
+  }
+  return '手机号未设置'
 })
+
+onShow(() => {})
 
 const logout = () => {
   uni.reLaunch({
@@ -132,32 +129,15 @@ const logout = () => {
   })
 }
 
-const isPhoneBind = () => {
-  const isBind = !!userInfo.value.phone
-  if (!isBind) {
-    message.alert('绑定手机号后继续使用')
-    return false
-  }
-  return true
-}
-
 const goShop = () => {
-  if (!isPhoneBind()) return
   uni.reLaunch({
     url: '/pages/shop/shop?shopId=' + userInfo.value.shop_id,
   })
 }
 
 const goShopEdit = () => {
-  if (!isPhoneBind()) return
   uni.navigateTo({
     url: '/pages/shop/shop-edit',
-  })
-}
-
-const goFeedback = () => {
-  uni.navigateTo({
-    url: '/pages/feedback/feedback',
   })
 }
 
@@ -167,29 +147,10 @@ const goPersonalEdit = () => {
   })
 }
 
-const getUserInfo = () => {
-  getUserInfoAPI().then((res: any) => {
-    const userInfo = {
-      ...res.data,
-      nickname: res.data.nikename,
-    }
-    userStore.setUserInfo(userInfo as IUserInfo)
+const goShopList = () => {
+  uni.navigateTo({
+    url: '/pages/member/member-shop-list',
   })
-}
-
-const getPhoneNumber = (e: any) => {
-  const { code } = e
-  const token = userStore.getToken()
-
-  if (code) {
-    httpPost('/api/WxLogin/savePhone', { code, token }).then((res) => {
-      uni.showToast({
-        icon: 'none',
-        title: '绑定成功',
-      })
-      getUserInfo()
-    })
-  }
 }
 </script>
 

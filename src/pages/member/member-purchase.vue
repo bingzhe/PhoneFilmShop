@@ -21,18 +21,54 @@
 <script lang="ts" setup>
 import UQRCode from 'uqrcodejs'
 import { useUserStore } from '@/store'
+import { httpPost } from '@/utils/http'
+import { useToast } from 'wot-design-uni'
+
+const toast = useToast()
 
 const userStore = useUserStore()
+const userInfo = computed(() => {
+  return userStore.userInfo
+})
 const usersId = computed(() => {
   return userStore.userInfo.users_id
 })
 
 const shopId = ref('')
 
-onLoad((options) => {
-  console.log('onLoad')
+const timer = ref(0)
 
+const getUsersNotice = async () => {
+  const res = await httpPost('/api/UsersInfo/getUsersNotice', {
+    token: userInfo.value.token,
+    shop_id: shopId.value,
+  })
+
+  const data = (res.data || {}) as any
+  const success = !!data.combo_id
+
+  if (success && timer.value) {
+    clearInterval(timer.value)
+    toast.success('恭喜您，订购成功，成为尊贵的会员!')
+
+    setTimeout(() => {
+      uni.navigateBack()
+    }, 2000)
+  }
+}
+
+onLoad((options) => {
   shopId.value = options.shopId
+
+  timer.value = setInterval(() => {
+    getUsersNotice()
+  }, 1000)
+})
+
+onBeforeUnmount(() => {
+  if (timer.value) {
+    clearInterval(timer.value)
+  }
 })
 
 onReady(() => {

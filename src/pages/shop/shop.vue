@@ -84,10 +84,6 @@
             <view class="text-48rpx text-#00A3FF font-bold">{{ comboSpareNumTotal }}</view>
             <view class="text-28rpx text-#666">剩余贴膜次数</view>
           </view>
-          <!-- <view class="flex flex-col items-center">
-          <view class="text-48rpx text-#00A3FF font-bold">1000</view>
-          <view class="text-28rpx text-#666">积分</view>
-        </view> -->
         </view>
         <view class="text-28rpx text-#666 text-center pt-16rpx pb-16rpx">
           您当前有
@@ -160,10 +156,12 @@
         </wd-button>
       </view>
 
-      <ShopManageMenu v-if="isCusShop" :shopId="shopId" />
+      <ShopManageMenu v-if="isCusShop" :shopId="shopId" :isAdmin="isAdmin" />
 
       <view class="p-12rpx"></view>
     </z-paging>
+
+    <CompleteUserinfoTip type="shop" />
   </view>
 </template>
 
@@ -171,18 +169,22 @@
 import ShopManageMenu from './components/shop-manage-menu.vue'
 import { useUserStore } from '@/store'
 import { httpPost } from '@/utils/http'
-import { useToast } from 'wot-design-uni'
-import { wxLogin } from '@/utils/wxLogin'
-import { getUserInfoAPI } from '@/service/user'
+import { useToast, useMessage } from 'wot-design-uni'
 import useZPaging from 'z-paging/components/z-paging/js/hooks/useZPaging'
+import CompleteUserinfoTip from '@/components/complete-userinfo-tip.vue'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 
 const toast = useToast()
+const message = useMessage()
 
 const userStore = useUserStore()
 const userInfo = computed(() => {
   return userStore.userInfo
+})
+
+const isAdmin = computed(() => {
+  return userInfo.value.is_admin === 1
 })
 
 const paging = ref()
@@ -283,7 +285,7 @@ const jumperPage = (path: string) => {
 }
 
 const goPersonalCenter = () => {
-  uni.switchTab({ url: '/pages/personal/personal' })
+  uni.navigateTo({ url: '/pages/personal/personal' })
 }
 
 // 调起拨打电话
@@ -304,15 +306,6 @@ const goMap = () => {
     address: fullAddress.value,
     scale: 15,
   })
-}
-
-const getUserInfo = async () => {
-  const res = (await getUserInfoAPI()) as any
-  const userInfo = {
-    ...res.data,
-    nickname: res.data.nikename,
-  }
-  userStore.setUserInfo(userInfo as IUserInfo)
 }
 
 const isCusShopFn = () => {
@@ -342,32 +335,11 @@ const getShopData = () => {
 
 onLoad((options) => {
   shopId.value = options.shopId
-
-  // // 没有登录的时候，自动登录，并且查询用户信息
-  // if (!userInfo.value.token) {
-  //   wxLogin().then(async () => {
-  //     await getUserInfo()
-  //     isCusShopFn()
-  //     getShopData()
-  //   })
-  // } else {
-  //   isCusShopFn()
-  //   getShopData()
-  // }
 })
 
 onShow(() => {
-  // 没有登录的时候，自动登录，并且查询用户信息
-  if (!userInfo.value.token) {
-    wxLogin().then(async () => {
-      await getUserInfo()
-      isCusShopFn()
-      getShopData()
-    })
-  } else {
-    isCusShopFn()
-    getShopData()
-  }
+  isCusShopFn()
+  getShopData()
 })
 </script>
 
