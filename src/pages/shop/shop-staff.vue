@@ -110,11 +110,9 @@ const handleSubmit = () => {
 
         toast.loading('加载中...')
         httpPost('/api/Shop/addAdmin', params)
-          .then((res) => {
-            if (res.code === 0) {
-              getList()
-              formModel.phone = ''
-            }
+          .then(() => {
+            getList()
+            formModel.phone = ''
           })
           .finally(() => {
             toast.close()
