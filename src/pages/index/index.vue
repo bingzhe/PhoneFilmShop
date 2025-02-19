@@ -28,19 +28,20 @@
 
     <view v-if="phoneModal" class="flex justify-between items-center p-10rpx pb-10rpx bg-#fff">
       <view class="flex items-center color-#2051d1">
-        <text
+        <!-- <text
           class="text-12px bg-#5ac3f3 color-#fff pl-10rpx pr-10rpx pt-5rpx pb-5rpx b-rd-6rpx mr-10rpx"
         >
           Native
-        </text>
-        <text class="text-12px font-bold">{{ phoneModal }}</text>
+        </text> -->
+        <text class="text-16px font-bold ml-18rpx">{{ phoneModal }}</text>
       </view>
       <view class="flex">
         <wd-button
           @click="handleSearchNative"
           custom-class="important-bg-#5ac3f3 important-h-60rpx important-line-height-60rpx"
+          icon="search"
         >
-          Search
+          <!-- Search -->
         </wd-button>
       </view>
     </view>
@@ -214,8 +215,6 @@ const getNewProduct = async () => {
   }).then((res) => {
     const data = res.data
 
-    console.log('data', data)
-
     productionShow.value = true
 
     if (!data) {
@@ -369,9 +368,11 @@ const getGoodsList = async (init?: boolean) => {
 }
 
 const getDeviceInfo = async () => {
-  const deviceInfo = (wx as any).getDeviceInfo()
+  const deviceInfo = uni.getDeviceInfo()
 
-  let model = deviceInfo.model
+  console.log('deviceInfo', deviceInfo)
+
+  let model = deviceInfo.deviceModel
   const system = deviceInfo.system
 
   // 单独处理 iPhone XS Max China-exclusive<iPhone11,6>
@@ -392,7 +393,7 @@ const getDeviceInfo = async () => {
   httpPost('/api/Index/getPhoneName', params).then((res) => {
     const localModel = res.data ? res.data : model
 
-    phoneModal.value = localModel
+    phoneModal.value = localModel as string
   })
 }
 
