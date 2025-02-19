@@ -8,6 +8,7 @@ interface NavigateToOptions {
        "/pages/about/about" |
        "/pages/feedback/feedback" |
        "/pages/index/index" |
+       "/pages/login/login" |
        "/pages/member/member-audit" |
        "/pages/member/member-combo-list" |
        "/pages/member/member-combo-log" |
@@ -15,6 +16,7 @@ interface NavigateToOptions {
        "/pages/member/member-purchase" |
        "/pages/member/member-shop-list" |
        "/pages/order-system-home/order-system-home" |
+       "/pages/personal/my" |
        "/pages/personal/personal-edit" |
        "/pages/personal/personal" |
        "/pages/service-added/service-added" |
@@ -32,7 +34,7 @@ interface NavigateToOptions {
 interface RedirectToOptions extends NavigateToOptions {}
 
 interface SwitchTabOptions {
-  url: "/pages/index/index" | "/pages/order-system-home/order-system-home" | "/pages/service-added/service-added"
+  url: "/pages/index/index" | "/pages/personal/my"
 }
 
 type ReLaunchOptions = NavigateToOptions | SwitchTabOptions;

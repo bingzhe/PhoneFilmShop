@@ -27,19 +27,13 @@
         "iconPath": "static/tabbar/home-off.png",
         "selectedIconPath": "static/tabbar/home-on.png",
         "pagePath": "pages/index/index",
-        "text": "型号查询"
-      },
-      {
-        "iconPath": "static/tabbar/video-off.png",
-        "selectedIconPath": "static/tabbar/video-on.png",
-        "pagePath": "pages/order-system-home/order-system-home",
-        "text": "下单系统"
+        "text": ""
       },
       {
         "iconPath": "static/tabbar/my-off.png",
         "selectedIconPath": "static/tabbar/my-on.png",
-        "pagePath": "pages/service-added/service-added",
-        "text": "增值服务"
+        "pagePath": "pages/personal/my",
+        "text": ""
       }
     ]
   },
@@ -72,8 +66,18 @@
     {
       "path": "pages/index/index",
       "type": "page",
+      "needLogin": true,
       "style": {
-        "navigationBarTitleText": "科迪亚"
+        "navigationBarTitleText": ""
+      }
+    },
+    {
+      "path": "pages/login/login",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "Login"
       }
     },
     {
@@ -144,6 +148,15 @@
         "navigationBarTitleText": "订单系统",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/personal/my",
+      "type": "page",
+      "layout": "default",
+      "needLogin": true,
+      "style": {
+        "navigationBarTitleText": "my"
       }
     },
     {

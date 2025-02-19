@@ -16,35 +16,43 @@
 </template>
 
 <script lang="ts" setup>
-import { wxLogin } from '@/utils/wxLogin'
-import { getUserInfo } from '@/service/user'
-import { httpGet } from '@/utils/http'
+// import { wxLogin } from '@/utils/wxLogin'
+// import { getUserInfo } from '@/service/user'
+// import { httpGet } from '@/utils/http'
 
-const { setProjectName } = useProjectName()
+// const { setProjectName } = useProjectName()
 
-const getProjectName = async () => {
-  const res = await httpGet('/api/Index/getName')
-  setProjectName(res.data as string)
-}
+// const getProjectName = async () => {
+//   const res = await httpGet('/api/Index/getName')
+//   setProjectName(res.data as string)
+// }
 
 onLoad(async (options) => {
   try {
-    const shopId = options.shopId
+    // const shopId = options.shopId
 
-    await wxLogin()
-    await getUserInfo()
+    // await wxLogin()
+    // await getUserInfo()
 
-    getProjectName()
+    // getProjectName()
+    // uni.reLaunch({
+    //   url: '/pages/login/login',
+    // })
 
-    if (shopId) {
-      uni.reLaunch({
-        url: `/pages/shop/shop?shopId=${shopId}`,
-      })
-    } else {
-      uni.switchTab({
-        url: '/pages/index/index',
-      })
-    }
+    // uni.switchTab({
+    uni.switchTab({
+      url: '/pages/index/index',
+    })
+
+    // if (shopId) {
+    //   uni.reLaunch({
+    //     url: `/pages/shop/shop?shopId=${shopId}`,
+    //   })
+    // } else {
+    //   uni.switchTab({
+    //     url: '/pages/index/index',
+    //   })
+    // }
   } catch (error) {
     console.log(error)
   }

@@ -1,9 +1,10 @@
 <!-- 使用 type="home" 属性设置首页，其他页面不需要设置，默认为page；推荐使用json5，更强大，且允许注释 -->
-<route lang="json5">
+<route lang="json5" type="page">
 {
+  needLogin: true,
   style: {
     // navigationStyle: 'custom',
-    navigationBarTitleText: '科迪亚',
+    navigationBarTitleText: '',
   },
 }
 </route>
@@ -30,7 +31,7 @@
         <text
           class="text-12px bg-#5ac3f3 color-#fff pl-10rpx pr-10rpx pt-5rpx pb-5rpx b-rd-6rpx mr-10rpx"
         >
-          本机
+          Native
         </text>
         <text class="text-12px font-bold">{{ phoneModal }}</text>
       </view>
@@ -39,16 +40,16 @@
           @click="handleSearchNative"
           custom-class="important-bg-#5ac3f3 important-h-60rpx important-line-height-60rpx"
         >
-          本机查找
+          Search
         </wd-button>
       </view>
     </view>
 
     <wd-sticky :offset-top="0" :z-index="99">
       <wd-search
-        placeholder="请输入手机号"
+        placeholder="Please enter phone number"
         v-model="searchValue"
-        cancel-txt="搜索"
+        cancel-txt="Search"
         custom-class="important-pt10rpx important-pb10rpx w-700rpx"
         @search="handleSearch"
         @cancel="handleSearch"
@@ -102,16 +103,25 @@
         </view>
       </view>
     </view>
+
+    <NewGoodsPopup
+      :productBg="productBg"
+      :productContent="productContent"
+      :productionShow="productionShow"
+      @close="closeNewGoodsPopup"
+    />
   </view>
 </template>
 
 <script lang="ts" setup>
 import PLATFORM from '@/utils/platform'
-import { httpGet, httpPost } from '@/utils/http'
+import { httpPost } from '@/utils/http'
 import CateMenu from './components/cate-menu.vue'
 import SliderMenu from './components/slider-menu.vue'
 import ProductItem from './components/product-item.vue'
+import NewGoodsPopup from './components/new-goods-popup.vue'
 import { useToast } from 'wot-design-uni'
+import { useUserStore } from '@/store/user'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 const toast = useToast()
@@ -119,10 +129,15 @@ const toast = useToast()
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getWindowInfo()
 
-const { projectName, setProjectName } = useProjectName()
+const projectName = ref('')
 
 defineOptions({
   name: 'Home',
+})
+
+const userStore = useUserStore()
+const userInfo = computed(() => {
+  return userStore.userInfo
 })
 
 const noticeTextList = ref<string[]>([])
@@ -149,9 +164,15 @@ const page = ref(1)
 const total = ref(0)
 const loading = ref(false)
 
+const productBg = ref('') // 新款更新背景图
+const productContent = ref('') // 新款更新内容
+const productionShow = ref(false) // 新款更新显示
+
 // 获取通告列表
 const getNoticeList = async () => {
-  httpGet<any[]>('/api/Index/getAnnouncement').then((res) => {
+  httpPost<any[]>('/api/Index/getAnnouncement', {
+    token: userInfo.value.token,
+  }).then((res) => {
     const list = res.data || []
 
     noticeTextList.value = list.map((item) => {
@@ -162,12 +183,47 @@ const getNoticeList = async () => {
 
 // 获取轮播图列表
 const getSwiperList = async () => {
-  httpGet<any[]>('/api/Index/getBanner').then((res) => {
+  httpPost<any[]>('/api/Index/getBanner', {
+    token: userInfo.value.token,
+  }).then((res) => {
     const list = res.data || []
 
     swiperList.value = list.map((item) => {
       return `${baseUrl}${item.img_url}`
     })
+  })
+}
+
+// 获取项目名称
+const getProjectName = async () => {
+  httpPost<any>('/api/Index/getName', {
+    token: userInfo.value.token,
+  }).then((res) => {
+    projectName.value = res.data as string
+
+    uni.setNavigationBarTitle({
+      title: projectName.value,
+    })
+  })
+}
+
+// 获取新商品
+const getNewProduct = async () => {
+  httpPost<any>('/api/Index/getNewProduct', {
+    token: userInfo.value.token,
+  }).then((res) => {
+    const data = res.data
+
+    console.log('data', data)
+
+    productionShow.value = true
+
+    if (!data) {
+      return
+    }
+
+    productBg.value = data.bg_img
+    productContent.value = data.content
   })
 }
 
@@ -184,7 +240,11 @@ const handleSearch = () => {
 }
 
 const getFirstCateList = async () => {
-  httpGet<any[]>('/api/Goods/getCateList1', { pid: 0, level: 1 }).then((res) => {
+  httpPost<any[]>('/api/Goods/getCateList1', {
+    pid: 0,
+    level: 1,
+    token: userInfo.value.token,
+  }).then((res) => {
     firstCates.value = res.data || []
 
     if (firstCates.value.length > 0) {
@@ -195,7 +255,11 @@ const getFirstCateList = async () => {
 }
 
 const getSecondCateList = async (cate) => {
-  httpGet<any[]>('/api/Goods/getCateList1', { pid: cate, level: 2 }).then((res) => {
+  httpPost<any[]>('/api/Goods/getCateList1', {
+    pid: cate,
+    level: 2,
+    token: userInfo.value.token,
+  }).then((res) => {
     secondCates.value = res.data || []
 
     if (secondCates.value.length > 0) {
@@ -226,7 +290,10 @@ const handleSearchChange = async ({ value }) => {
 
   const getInf = (str, key) => str.replace(new RegExp(`${key}`, 'gi'), `%%$&%%`).split('%%')
 
-  httpGet<any[]>('/api/Goods/getNameList', { name: value }).then((res) => {
+  httpPost<any[]>('/api/Goods/getNameList', {
+    name: value,
+    token: userInfo.value.token,
+  }).then((res) => {
     const nameList = res.data.map((item) => {
       return getInf(item, value)
     })
@@ -259,6 +326,7 @@ const getGoodsList = async (init?: boolean) => {
   const params: { [key: string]: any } = {
     page: page.value,
     size: 50,
+    token: userInfo.value.token,
   }
 
   if (secondCateId.value) {
@@ -278,9 +346,9 @@ const getGoodsList = async (init?: boolean) => {
     params.name = phoneModal.value
   }
 
-  toast.loading('加载中...')
+  toast.loading('Loading...')
   loading.value = true
-  httpGet<any[]>('/api/Goods/getGoodsList5', params)
+  httpPost<any[]>('/api/Goods/getGoodsList5', params)
     .then((res) => {
       const data: any = res.data || {}
       const _list = data.list || []
@@ -318,6 +386,7 @@ const getDeviceInfo = async () => {
 
   const params = {
     name: model,
+    token: userInfo.value.token,
   }
 
   httpPost('/api/Index/getPhoneName', params).then((res) => {
@@ -327,16 +396,18 @@ const getDeviceInfo = async () => {
   })
 }
 
+const closeNewGoodsPopup = () => {
+  productionShow.value = false
+}
+
 // 测试 uni API 自动引入
 onLoad(async () => {
   await getDeviceInfo()
+  getProjectName()
   getNoticeList()
   getSwiperList()
   getFirstCateList()
-
-  uni.setNavigationBarTitle({
-    title: projectName.value,
-  })
+  getNewProduct()
 })
 
 onReachBottom(() => {

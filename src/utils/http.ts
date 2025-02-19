@@ -1,5 +1,7 @@
 import { CustomRequestOptions } from '@/interceptors/request'
+import { useUserStore } from '@/store/user'
 
+const userStore = useUserStore()
 export const http = <T>(options: CustomRequestOptions) => {
   // 1. 返回 Promise 对象
   return new Promise<IResData<T>>((resolve, reject) => {
@@ -17,10 +19,13 @@ export const http = <T>(options: CustomRequestOptions) => {
           const resData = res.data as IResData<T>
           if (resData.code === 200) {
             resolve(resData)
+          } else if (resData.code === 100) {
+            userStore.clearUserInfo()
+            uni.reLaunch({ url: '/pages/index/index' })
           } else {
             uni.showToast({
               icon: 'none',
-              title: (res.data as IResData<T>).meg || '请求错误',
+              title: (res.data as IResData<T>).meg || 'Request error',
             })
             reject(res)
           }
@@ -34,7 +39,7 @@ export const http = <T>(options: CustomRequestOptions) => {
           !options.hideErrorToast &&
             uni.showToast({
               icon: 'none',
-              title: (res.data as IResData<T>).meg || '请求错误',
+              title: (res.data as IResData<T>).meg || 'Request error',
             })
           reject(res)
         }
@@ -43,7 +48,7 @@ export const http = <T>(options: CustomRequestOptions) => {
       fail(err) {
         uni.showToast({
           icon: 'none',
-          title: '网络错误，换个网络试试',
+          title: 'Network error, try a different network',
         })
         reject(err)
       },
