@@ -26,24 +26,24 @@ export default defineUniPages({
     iconWidth: '24px',
     spacing: '3px',
     list: [
-      {
-        iconPath: 'static/tabbar/home-off.png',
-        selectedIconPath: 'static/tabbar/home-on.png',
-        pagePath: 'pages/index/index',
-        text: '',
-      },
+      // {
+      //   iconPath: 'static/tabbar/home-off.png',
+      //   selectedIconPath: 'static/tabbar/home-on.png',
+      //   pagePath: 'pages/index/index',
+      //   text: '',
+      // },
       // {
       //   iconPath: 'static/tabbar/video-off.png',
       //   selectedIconPath: 'static/tabbar/video-on.png',
       //   pagePath: 'pages/order-system-home/order-system-home',
       //   text: '下单系统',
       // },
-      {
-        iconPath: 'static/tabbar/my-off.png',
-        selectedIconPath: 'static/tabbar/my-on.png',
-        pagePath: 'pages/personal/my',
-        text: '',
-      },
+      // {
+      //   iconPath: 'static/tabbar/my-off.png',
+      //   selectedIconPath: 'static/tabbar/my-on.png',
+      //   pagePath: 'pages/personal/my',
+      //   text: '',
+      // },
     ],
   },
 })

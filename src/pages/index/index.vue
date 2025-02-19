@@ -1,7 +1,6 @@
 <!-- 使用 type="home" 属性设置首页，其他页面不需要设置，默认为page；推荐使用json5，更强大，且允许注释 -->
-<route lang="json5" type="page">
+<route lang="json5" type="home">
 {
-  needLogin: true,
   style: {
     // navigationStyle: 'custom',
     navigationBarTitleText: '',
@@ -48,7 +47,7 @@
 
     <wd-sticky :offset-top="0" :z-index="99">
       <wd-search
-        placeholder="Please enter phone number"
+        placeholder="Please enter phone model"
         v-model="searchValue"
         cancel-txt="Search"
         custom-class="important-pt10rpx important-pb10rpx w-700rpx"

@@ -22,29 +22,14 @@
     "fontSize": "10px",
     "iconWidth": "24px",
     "spacing": "3px",
-    "list": [
-      {
-        "iconPath": "static/tabbar/home-off.png",
-        "selectedIconPath": "static/tabbar/home-on.png",
-        "pagePath": "pages/index/index",
-        "text": ""
-      },
-      {
-        "iconPath": "static/tabbar/my-off.png",
-        "selectedIconPath": "static/tabbar/my-on.png",
-        "pagePath": "pages/personal/my",
-        "text": ""
-      }
-    ]
+    "list": []
   },
   "pages": [
     {
-      "path": "pages/start/start",
+      "path": "pages/index/index",
       "type": "home",
-      "layout": "default",
       "style": {
-        "navigationBarTitleText": "",
-        "navigationBarBackgroundColor": "#ffffff"
+        "navigationBarTitleText": ""
       }
     },
     {
@@ -61,14 +46,6 @@
         "navigationBarTitleText": "反馈",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
-      }
-    },
-    {
-      "path": "pages/index/index",
-      "type": "page",
-      "needLogin": true,
-      "style": {
-        "navigationBarTitleText": ""
       }
     },
     {
@@ -154,7 +131,6 @@
       "path": "pages/personal/my",
       "type": "page",
       "layout": "default",
-      "needLogin": true,
       "style": {
         "navigationBarTitleText": "my"
       }
@@ -283,6 +259,15 @@
       "layout": "default",
       "style": {
         "navigationBarTitleText": ""
+      }
+    },
+    {
+      "path": "pages/start/start",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#ffffff"
       }
     },
     {
