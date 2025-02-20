@@ -1,5 +1,5 @@
 // 全局状态
-const projectName = ref('科迪亚')
+const projectName = ref('优源通科技')
 
 export function useProjectName() {
   // 本地状态
