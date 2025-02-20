@@ -3,9 +3,9 @@
     <wd-sidebar-item
       v-for="(item, index) in menus"
       :key="index"
-      :value="index"
+      :value="item.cate_id"
       :label="item.jian"
-      customClass="important-text-12px font-bold important-pt24rpx important-pb-24rpx"
+      customClass="important-text-12px font-bold important-p-12rpx important-min-h-44px important-w-180rpx text-center"
     />
   </wd-sidebar>
 </template>
