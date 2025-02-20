@@ -4,13 +4,13 @@
       v-for="(item, index) in menus"
       :key="index"
       :value="item.cate_id"
-      customClass="important-text-12px font-bold important-p-12rpx important-min-h-44px position-relative important-w-180rpx"
+      customClass="important-text-12px font-bold important-p-12rpx important-min-h-44px position-relative important-w-180rpx text-center"
       :label="item.jian"
     >
       <template #icon>
         <view
           v-if="item.xilie"
-          class="important-text-10px position-absolute top-0 left-0 color-#fff h-30rpx w-30rpx rounded-tl-none rounded-tr-none rounded-br-15rpx rounded-bl-none text-center leading-30rpx"
+          class="important-text-10px position-absolute top-0 left-0 color-#fff h-30rpx w-45rpx rounded-tl-none rounded-tr-none rounded-br-15rpx rounded-bl-none text-center leading-30rpx"
           :style="'background: #' + item.colour + ';'"
         >
           {{ item.xilie }}
