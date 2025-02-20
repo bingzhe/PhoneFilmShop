@@ -4,7 +4,7 @@
       v-for="(item, index) in menus"
       :key="index"
       :value="item.cate_id"
-      customClass="important-text-12px font-bold important-pt-24rpx important-pb-24rpx position-relative important-w-180rpx"
+      customClass="important-text-12px font-bold important-p-12rpx important-min-h-44px position-relative important-w-180rpx"
       :label="item.jian"
     >
       <template #icon>
