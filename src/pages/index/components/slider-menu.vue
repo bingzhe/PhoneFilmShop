@@ -3,8 +3,8 @@
     <wd-sidebar-item
       v-for="(item, index) in menus"
       :key="index"
-      :value="index"
-      customClass="important-text-12px font-bold important-pt-24rpx important-pb-24rpx position-relative"
+      :value="item.cate_id"
+      customClass="important-text-12px font-bold important-pt-24rpx important-pb-24rpx position-relative important-w-180rpx"
       :label="item.jian"
     >
       <template #icon>
@@ -37,9 +37,9 @@ watch(
 
 const activeKey = ref(0)
 
-const onChange = ({ value, label }) => {
-  emits('slider-menu-item-click', value)
-  console.log(label)
+const onChange = (e) => {
+  emits('slider-menu-item-click', e.value)
+  console.log('slider-menu-item-click', e)
 }
 </script>
 
