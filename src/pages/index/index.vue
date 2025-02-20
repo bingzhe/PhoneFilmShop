@@ -3,7 +3,7 @@
 {
   style: {
     // navigationStyle: 'custom',
-    navigationBarTitleText: '科迪亚',
+    navigationBarTitleText: '',
   },
 }
 </route>
@@ -365,6 +365,9 @@ page {
 }
 
 :deep(.wd-sidebar__padding) {
+  width: 180rpx !important;
+}
+:deep(.wd-sidebar) {
   width: 180rpx !important;
 }
 </style>
