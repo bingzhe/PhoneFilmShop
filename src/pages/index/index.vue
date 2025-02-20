@@ -132,10 +132,10 @@ const phoneModal = ref('')
 
 const toggleCate = ref(false)
 const firstCates = ref<any[]>([])
-const firstCateId = ref('')
+const firstCateId = ref(null)
 
 const secondCates = ref<any[]>([])
-const secondCateId = ref('')
+const secondCateId = ref(null)
 
 const searchValue = ref('')
 
@@ -198,9 +198,9 @@ const getSecondCateList = async (cate) => {
   httpGet<any[]>('/api/Goods/getCateList1', { pid: cate, level: 2 }).then((res) => {
     secondCates.value = res.data || []
 
-    if (secondCates.value.length > 0) {
-      secondCateId.value = secondCates.value[0].cate_id
-    }
+    // if (secondCates.value.length > 0) {
+    //   secondCateId.value = secondCates.value[0].cate_id
+    // }
     getGoodsList(true)
   })
 }
@@ -265,7 +265,8 @@ const getGoodsList = async (init?: boolean) => {
     params.cate_id = secondCateId.value
   } else if (firstCateId.value) {
     // 1是一级菜单的全部分类
-    if (firstCateId.value !== '1') {
+    // eslint-disable-next-line eqeqeq
+    if (firstCateId.value !== 1) {
       params.pid = firstCateId.value
     }
   }
@@ -361,5 +362,9 @@ page {
 
 :deep(.wd-swiper__track) {
   border-radius: 0 !important;
+}
+
+:deep(.wd-sidebar__padding) {
+  width: 180rpx !important;
 }
 </style>
