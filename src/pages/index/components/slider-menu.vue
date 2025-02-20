@@ -4,9 +4,19 @@
       v-for="(item, index) in menus"
       :key="index"
       :value="index"
+      customClass="important-text-12px font-bold important-pt-24rpx important-pb-24rpx position-relative"
       :label="item.jian"
-      customClass="important-text-12px font-bold important-pt24rpx important-pb-24rpx"
-    />
+    >
+      <template #icon>
+        <view
+          v-if="item.xilie"
+          class="important-text-10px position-absolute top-0 left-0 color-#fff h-30rpx w-30rpx rounded-tl-none rounded-tr-none rounded-br-15rpx rounded-bl-none text-center leading-30rpx"
+          :style="'background: #' + item.colour + ';'"
+        >
+          {{ item.xilie }}
+        </view>
+      </template>
+    </wd-sidebar-item>
   </wd-sidebar>
 </template>
 
