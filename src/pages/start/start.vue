@@ -29,14 +29,35 @@ const getProjectName = async () => {
 
 onLoad(async (options) => {
   try {
-    const shopId = options.shopId
+    const scene = options.scene
+    console.log('scene', scene)
 
     await wxLogin()
     await getUserInfo()
 
     getProjectName()
 
-    if (shopId) {
+    if (scene) {
+      const sceneDecodeURI = decodeURIComponent(scene)
+      console.log('sceneDecodeURI', sceneDecodeURI)
+
+      // ?shopld:4
+      const parseParams = (str: string) => {
+        const params: any = {}
+        str.split('&').forEach((pair) => {
+          const cleanPair = pair.replace(/^\?/, '')
+          const [key, value] = cleanPair.split(':')
+          if (key) params[key] = value || ''
+        })
+        return params
+      }
+      const params = parseParams(sceneDecodeURI)
+      console.log('params', params)
+
+      const shopId = params.shopId
+
+      console.log('shopId', shopId)
+
       uni.reLaunch({
         url: `/pages/shop/shop?shopId=${shopId}`,
       })
