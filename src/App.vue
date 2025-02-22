@@ -3,6 +3,8 @@ import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 
 onLaunch(() => {
   console.log('App Launch')
+  console.log('App uni.getLaunchOptionsSync()================')
+  console.log(uni.getLaunchOptionsSync())
 })
 onShow(() => {
   console.log('App Show')
