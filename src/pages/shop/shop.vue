@@ -156,7 +156,12 @@
         </wd-button>
       </view>
 
-      <ShopManageMenu v-if="isCusShop" :shopId="shopId" :isAdmin="isAdmin" />
+      <ShopManageMenu
+        v-if="isCusShop"
+        :shopId="shopId"
+        :isAdmin="isAdmin"
+        @shoplogo-upload="shopLogoUpload"
+      />
 
       <view class="p-12rpx"></view>
     </z-paging>
@@ -318,6 +323,67 @@ const isCusShopFn = () => {
 
   initCompleted.value = true
 }
+
+function saveImageToAlbum(tempFilePath) {
+  // 检查相册权限
+  wx.getSetting({
+    success: (res) => {
+      if (!res.authSetting['scope.writePhotosAlbum']) {
+        // 未授权时请求权限
+        wx.authorize({
+          scope: 'scope.writePhotosAlbum',
+          success: () => {
+            saveImage(tempFilePath)
+          },
+          fail: () => {
+            toast.warning('请授权保存到相册')
+          },
+        })
+      } else {
+        // 已授权，直接保存
+        saveImage(tempFilePath)
+      }
+    },
+  })
+}
+
+// 实际保存操作
+function saveImage(tempFilePath) {
+  wx.saveImageToPhotosAlbum({
+    filePath: tempFilePath,
+    success: () => {
+      toast.success('保存成功')
+    },
+    fail: (err) => {
+      console.error('保存失败', err)
+      toast.warning('保存失败')
+    },
+  })
+}
+
+const shopLogoUpload = () => {
+  console.log(shopInfo.value)
+  console.log('shopLogoUpload')
+
+  const base64Raw = shopInfo.value.shop_qrcode // 假设返回字段为 base64
+
+  const tempFilePath = `${wx.env.USER_DATA_PATH}/qrcode.png`
+  const fs = wx.getFileSystemManager()
+
+  fs.writeFile({
+    filePath: tempFilePath,
+    data: base64Raw,
+    encoding: 'base64',
+    success: () => {
+      saveImageToAlbum(tempFilePath)
+    },
+    fail: (err) => {
+      console.error('生成图片失败', err)
+      toast.warning('生成图片失败')
+    },
+  })
+}
+
 const onRefresh = () => {
   // 告知z-paging下拉刷新结束，这样才可以开始下一次的下拉刷新
   getShopData()
