@@ -46,7 +46,7 @@
       </view>
     </view>
 
-    <view class="flex flex-wrap pt-12rpx justify-center items-center">
+    <view class="flex flex-wrap pt-12rpx justify-center items-center" @click="shopLogoUpload">
       <view class="w-25% flex flex-col items-center pt-12rpx pb-12rpx">
         <view class="mb-12rpx">
           <view class="i-ic:outline-cloud-download text-#666 text-48rpx"></view>
@@ -96,12 +96,18 @@ const props = defineProps<{
   isAdmin: boolean
 }>()
 
+const emits = defineEmits(['shoplogo-upload'])
+
 const jumperPage = (path: string) => {
   const fullPath = `${path}?shopId=${props.shopId}`
 
   uni.navigateTo({
     url: fullPath,
   })
+}
+
+const shopLogoUpload = () => {
+  emits('shoplogo-upload')
 }
 </script>
 

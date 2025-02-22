@@ -46,7 +46,7 @@ onLoad(async (options) => {
         const params: any = {}
         str.split('&').forEach((pair) => {
           const cleanPair = pair.replace(/^\?/, '')
-          const [key, value] = cleanPair.split(':')
+          const [key, value] = cleanPair.split('=')
           if (key) params[key] = value || ''
         })
         return params
