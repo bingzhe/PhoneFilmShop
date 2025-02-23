@@ -347,6 +347,16 @@ onReachBottom(() => {
   page.value = page.value + 1
   getGoodsList()
 })
+
+const onShareAppMessage = () => ({})
+const onShareTimeline = () => ({})
+</script>
+
+<script lang="ts">
+export default {
+  onShareAppMessage,
+  onShareTimeline,
+}
 </script>
 
 <style>

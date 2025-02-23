@@ -130,7 +130,7 @@ const logout = () => {
 }
 
 const goShop = () => {
-  uni.reLaunch({
+  uni.navigateTo({
     url: '/pages/shop/shop?shopId=' + userInfo.value.shop_id,
   })
 }

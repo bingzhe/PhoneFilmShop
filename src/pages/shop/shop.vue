@@ -177,6 +177,8 @@ import { httpPost } from '@/utils/http'
 import { useToast, useMessage } from 'wot-design-uni'
 import useZPaging from 'z-paging/components/z-paging/js/hooks/useZPaging'
 import CompleteUserinfoTip from '@/components/complete-userinfo-tip.vue'
+import { wxLogin } from '@/utils/wxLogin'
+import { getUserInfo } from '@/service/user'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 
@@ -403,10 +405,29 @@ onLoad((options) => {
   shopId.value = options.shopId
 })
 
-onShow(() => {
+onShow(async () => {
+  if (!userInfo.value.token) {
+    await wxLogin()
+    await getUserInfo()
+  }
+
   isCusShopFn()
   getShopData()
 })
+
+const onShareAppMessage = () => ({
+  path: '/pages/shop/shop?shopId=' + shopId.value,
+})
+const onShareTimeline = () => ({
+  query: 'shopId=' + shopId.value,
+})
+</script>
+
+<script lang="ts">
+export default {
+  onShareAppMessage,
+  onShareTimeline,
+}
 </script>
 
 <style lang="scss" scoped></style>
