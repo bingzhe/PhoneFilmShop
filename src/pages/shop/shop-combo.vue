@@ -116,6 +116,9 @@
           <view class="h-20rpx"></view>
         </view>
       </wd-form>
+      <view class="p-24rpx">
+        <wd-button type="primary" size="large" block @click="goSelectComboTemp">快捷添加</wd-button>
+      </view>
     </view>
   </view>
 </template>
@@ -289,9 +292,18 @@ const getShopComboList = () => {
       toast.close()
     })
 }
+const goSelectComboTemp = () => {
+  uni.navigateTo({
+    url: '/pages/shop/shop-combo-temp?shopId=' + shopId.value,
+  })
+}
 
 onLoad((options) => {
   shopId.value = options.shopId
+  // getShopComboList()
+})
+
+onShow(() => {
   getShopComboList()
 })
 </script>

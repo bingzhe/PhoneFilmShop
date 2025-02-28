@@ -197,6 +197,16 @@
       }
     },
     {
+      "path": "pages/shop/shop-combo-temp",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "套餐模板",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/shop/shop-combo",
       "type": "page",
       "layout": "default",

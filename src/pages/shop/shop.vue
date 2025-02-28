@@ -372,6 +372,7 @@ const shopLogoUpload = () => {
   const tempFilePath = `${wx.env.USER_DATA_PATH}/qrcode.png`
   const fs = wx.getFileSystemManager()
 
+  toast.loading('保存中...')
   fs.writeFile({
     filePath: tempFilePath,
     data: base64Raw,
