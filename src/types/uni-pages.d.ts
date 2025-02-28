@@ -20,6 +20,7 @@ interface NavigateToOptions {
        "/pages/service-added/service-added" |
        "/pages/shop/shop-combo-check" |
        "/pages/shop/shop-combo-log" |
+       "/pages/shop/shop-combo-temp" |
        "/pages/shop/shop-combo" |
        "/pages/shop/shop-edit" |
        "/pages/shop/shop-info" |
