@@ -14,13 +14,16 @@
     <view class="table-wrapper pb-80rpx">
       <wd-table :data="dataList">
         <wd-table-col prop="combo_name" label="套餐名称" width="170rpx"></wd-table-col>
-        <wd-table-col prop="unit_price" label="单价" width="125rpx" align="center"></wd-table-col>
-        <wd-table-col
-          prop="combo_price"
-          label="会员价"
-          width="125rpx"
-          align="center"
-        ></wd-table-col>
+        <wd-table-col prop="unit_price" label="单价" width="125rpx" align="center">
+          <template #value="{ row }">
+            {{ row.unit_price == '0.00' ? '-' : row.unit_price }}
+          </template>
+        </wd-table-col>
+        <wd-table-col prop="combo_price" label="会员价" width="125rpx" align="center">
+          <template #value="{ row }">
+            {{ row.combo_price == '0.00' ? '-' : row.combo_price }}
+          </template>
+        </wd-table-col>
         <wd-table-col prop="combo_num" label="次数" width="100rpx" align="center"></wd-table-col>
         <wd-table-col prop="opr" label="操作" width="230rpx" align="center">
           <template #value="{ row, index }">
@@ -85,8 +88,8 @@
               clearable
               v-model="formModel.unit_price"
               placeholder="请输入单价"
-              :rules="[{ required: true, message: '请填写单价' }]"
             />
+            <!-- :rules="[{ required: true, message: '请填写单价' }]" -->
             <wd-input
               label="会员价"
               type="number"
@@ -94,9 +97,9 @@
               prop="combo_price"
               clearable
               v-model="formModel.combo_price"
-              placeholder="请输入价格"
-              :rules="[{ required: true, message: '请填写单价' }]"
+              placeholder="请输入会员价"
             />
+            <!-- :rules="[{ required: true, message: '请填写单价' }]" -->
 
             <wd-input
               label="次数"
