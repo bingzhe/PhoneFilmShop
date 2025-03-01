@@ -17,57 +17,60 @@
 
 <template>
   <view class="">
-    <view class="bg-#00A3FF pl-32rpx pr-32rpx pb-16rpx flex w-750rpx box-border">
-      <view class="mr-32rpx">
-        <view class="h-140rpx w-140rpx bg-#fff rounded-70rpx flex justify-center items-center">
-          <wd-img width="64" height="64" round :src="shopLogoUrl">
-            <template #error>
-              <view class="w-100% h-100% flex justify-center items-center">
-                <view class="i-ic:twotone-storefront text-64rpx text-#00A3FF"></view>
+    <!-- :use-page-scroll="true" -->
+    <z-paging ref="paging" refresher-only @onRefresh="onRefresh">
+      <template #top>
+        <view class="bg-#00A3FF pl-32rpx pr-32rpx pb-16rpx flex w-750rpx box-border">
+          <view class="mr-32rpx">
+            <view class="h-140rpx w-140rpx bg-#fff rounded-70rpx flex justify-center items-center">
+              <wd-img width="64" height="64" round :src="shopLogoUrl">
+                <template #error>
+                  <view class="w-100% h-100% flex justify-center items-center">
+                    <view class="i-ic:twotone-storefront text-64rpx text-#00A3FF"></view>
+                  </view>
+                </template>
+              </wd-img>
+            </view>
+          </view>
+          <view class="flex-1">
+            <view class="text-white text-32rpx font-bold mb-16rpx">{{ shopInfo.shop_name }}</view>
+            <view class="text-white text-28rpx">联系电话：{{ shopInfo.phone }}</view>
+            <view class="text-white text-28rpx mb-16rpx">地址：{{ fullAddress }}</view>
+
+            <view class="flex justify-between items-center">
+              <view class="flex">
+                <view
+                  class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
+                  @click="goMap"
+                >
+                  <view class="i-carbon:location-current text-32rpx text-#fff"></view>
+                </view>
+                <view
+                  class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
+                  @click="callPhone"
+                >
+                  <view class="i-ic:baseline-local-phone text-32rpx text-#fff"></view>
+                </view>
+                <view
+                  class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
+                  @click="jumperPage('/pages/shop/shop-info')"
+                >
+                  <view class="i-ic:twotone-storefront text-32rpx text-#fff"></view>
+                </view>
               </view>
-            </template>
-          </wd-img>
-        </view>
-      </view>
-      <view class="flex-1">
-        <view class="text-white text-32rpx font-bold mb-16rpx">{{ shopInfo.shop_name }}</view>
-        <view class="text-white text-28rpx">联系电话：{{ shopInfo.phone }}</view>
-        <view class="text-white text-28rpx mb-16rpx">地址：{{ fullAddress }}</view>
-
-        <view class="flex justify-between items-center">
-          <view class="flex">
-            <view
-              class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
-              @click="goMap"
-            >
-              <view class="i-carbon:location-current text-32rpx text-#fff"></view>
-            </view>
-            <view
-              class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
-              @click="callPhone"
-            >
-              <view class="i-ic:baseline-local-phone text-32rpx text-#fff"></view>
-            </view>
-            <view
-              class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid mr-16rpx"
-              @click="jumperPage('/pages/shop/shop-info')"
-            >
-              <view class="i-ic:twotone-storefront text-32rpx text-#fff"></view>
-            </view>
-          </view>
-          <view>
-            <view
-              class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid"
-              @click="goPersonalCenter"
-            >
-              <view class="i-ic:baseline-account-circle text-32rpx text-#fff"></view>
+              <view>
+                <view
+                  class="w-48rpx h-48rpx flex justify-center items-center rounded-8rpx border-1 border-#fff border-solid"
+                  @click="goPersonalCenter"
+                >
+                  <view class="i-ic:baseline-account-circle text-32rpx text-#fff"></view>
+                </view>
+              </view>
             </view>
           </view>
         </view>
-      </view>
-    </view>
+      </template>
 
-    <z-paging ref="paging" refresher-only @onRefresh="onRefresh" :use-page-scroll="true">
       <view
         v-if="!isCusShop"
         class="mt-32rpx ml-24rpx mr-24rpx mb-24rpx bg-white rounded-32rpx h-300rpx"
@@ -140,9 +143,9 @@
             </view>
             <view>{{ item.combo_name }}</view>
           </view>
-          <view>{{ item.unit_price }}</view>
+          <view>{{ item.unit_price == '0.00' ? '-' : item.unit_price }}</view>
           <view class="flex-1 text-right">
-            <text class="font-bold">{{ item.combo_price }}</text>
+            <text class="font-bold">{{ item.combo_price == '0.00' ? '-' : item.combo_price }}</text>
             元/
             <text class="text-red font-bold">{{ item.combo_num }}</text>
             次
@@ -163,7 +166,7 @@
         @shoplogo-upload="shopLogoUpload"
       />
 
-      <view class="p-12rpx"></view>
+      <view class="p-48rpx"></view>
     </z-paging>
 
     <CompleteUserinfoTip type="shop" />
