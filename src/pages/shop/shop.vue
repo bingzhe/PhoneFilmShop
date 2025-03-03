@@ -126,7 +126,7 @@
           class="flex justify-between items-center text-32rpx text-#666 mb-16rpx pl-16rpx pr-16rpx"
         >
           <view class="w-300rpx">套餐名称</view>
-          <view>单价</view>
+          <view>单价/次</view>
           <view class="flex-1 text-right">会员价</view>
         </view>
 
@@ -143,7 +143,7 @@
             </view>
             <view>{{ item.combo_name }}</view>
           </view>
-          <view>{{ item.unit_price == '0.00' ? '-' : item.unit_price }}</view>
+          <view>{{ item.unit_price == '0.00' ? '-' : item.unit_price }}元</view>
           <view class="flex-1 text-right">
             <text class="font-bold">{{ item.combo_price == '0.00' ? '-' : item.combo_price }}</text>
             元/
