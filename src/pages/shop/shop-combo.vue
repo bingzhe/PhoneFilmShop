@@ -13,7 +13,11 @@
   <view class="text-26rpx">
     <view class="table-wrapper pb-80rpx">
       <wd-table :data="dataList">
-        <wd-table-col prop="combo_name" label="套餐名称" width="170rpx"></wd-table-col>
+        <wd-table-col prop="combo_name" label="套餐名称" width="170rpx">
+          <template #value="{ row }">
+            <view class="line-clamp-2">{{ row.ping }} {{ row.combo_name }}</view>
+          </template>
+        </wd-table-col>
         <wd-table-col prop="unit_price" label="单价" width="125rpx" align="center">
           <template #value="{ row }">
             {{ row.unit_price == '0.00' ? '-' : row.unit_price }}
