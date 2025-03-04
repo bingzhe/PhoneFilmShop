@@ -18,7 +18,11 @@
             <view>{{ index + 1 }}</view>
           </template>
         </wd-table-col>
-        <wd-table-col prop="combo_name" label="核销套餐" width="170rpx"></wd-table-col>
+        <wd-table-col prop="combo_name" label="核销套餐" width="170rpx">
+          <template #value="{ row }">
+            <view class="line-clamp-2">{{ row.ping }} {{ row.combo_name }}</view>
+          </template>
+        </wd-table-col>
         <wd-table-col prop="combo_price" label="核销详情" width="480rpx">
           <template #value="{ row }">
             <view>

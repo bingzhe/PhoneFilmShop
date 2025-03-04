@@ -141,7 +141,7 @@
             >
               {{ i + 1 }}
             </view>
-            <view>{{ item.combo_name }}</view>
+            <view>{{ item.ping }} {{ item.combo_name }}</view>
           </view>
           <view>{{ item.unit_price == '0.00' ? '-' : item.unit_price }}元</view>
           <view class="flex-1 text-right">
@@ -170,6 +170,16 @@
     </z-paging>
 
     <CompleteUserinfoTip type="shop" />
+
+    <wd-popup custom-style="border-radius:32rpx;padding:32rpx;" v-model="imgPreviewPopup">
+      <view>
+        <wd-img :src="imgPreviewUrlTemp" width="300" height="300"></wd-img>
+      </view>
+      <view class="mt-32rpx flex justify-center items-center">
+        <wd-button type="info" class="mr-24rpx" @click="handleCloseImgPreviewPopup">关闭</wd-button>
+        <wd-button type="primary" @click="saveImageToAlbum">保存图片</wd-button>
+      </view>
+    </wd-popup>
   </view>
 </template>
 
@@ -204,6 +214,9 @@ const isCusShop = ref(false)
 const initCompleted = ref(false)
 
 const shopId = ref('')
+
+const imgPreviewPopup = ref(false)
+const imgPreviewUrlTemp = ref('')
 
 const shopInfo = ref({
   shop_logo: '',
@@ -329,7 +342,9 @@ const isCusShopFn = () => {
   initCompleted.value = true
 }
 
-function saveImageToAlbum(tempFilePath) {
+function saveImageToAlbum() {
+  toast.loading('保存中...')
+  const tempFilePath = imgPreviewUrlTemp.value
   // 检查相册权限
   wx.getSetting({
     success: (res) => {
@@ -370,18 +385,25 @@ const shopLogoUpload = () => {
   console.log(shopInfo.value)
   console.log('shopLogoUpload')
 
+  if (imgPreviewUrlTemp.value) {
+    imgPreviewPopup.value = true
+    return
+  }
+
   const base64Raw = shopInfo.value.shop_qrcode // 假设返回字段为 base64
 
   const tempFilePath = `${wx.env.USER_DATA_PATH}/qrcode.png`
   const fs = wx.getFileSystemManager()
 
-  toast.loading('保存中...')
+  // toast.loading('保存中...')
   fs.writeFile({
     filePath: tempFilePath,
     data: base64Raw,
     encoding: 'base64',
     success: () => {
-      saveImageToAlbum(tempFilePath)
+      imgPreviewUrlTemp.value = tempFilePath
+      imgPreviewPopup.value = true
+      // saveImageToAlbum(tempFilePath)
     },
     fail: (err) => {
       console.error('生成图片失败', err)
@@ -399,6 +421,11 @@ const onRefresh = () => {
     paging.value.complete()
   }, 1000)
 }
+
+const handleCloseImgPreviewPopup = () => {
+  imgPreviewPopup.value = false
+}
+
 const getShopData = () => {
   getShopInfo()
   getComboList()

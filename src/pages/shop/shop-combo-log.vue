@@ -42,7 +42,7 @@
         <wd-table-col prop="combo_price" label="核销信息" width="480rpx">
           <template #value="{ row }">
             <view>
-              <view>套餐名称：{{ row.combo_name }}</view>
+              <view class="line-clamp-2">套餐名称：{{ row.ping }} {{ row.combo_name }}</view>
               <view>套餐详情：{{ row.combo_price }}元/{{ row.combo_num }}次</view>
               <view>核销时间：{{ row.create_time_str }}</view>
             </view>
