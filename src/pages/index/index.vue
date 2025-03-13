@@ -46,7 +46,7 @@
 
     <wd-sticky :offset-top="0" :z-index="99">
       <wd-search
-        placeholder="请输入手机号"
+        placeholder="请输入手机型号"
         v-model="searchValue"
         cancel-txt="搜索"
         custom-class="important-pt10rpx important-pb10rpx w-700rpx"
