@@ -3,7 +3,7 @@
 {
   style: {
     // navigationStyle: 'custom',
-    navigationBarTitleText: '',
+    navigationBarTitleText: 'MagicGorilla',
   },
 }
 </route>
