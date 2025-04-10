@@ -2,48 +2,15 @@
 <route lang="json5">
 {
   style: {
-    // navigationStyle: 'custom',
-    navigationBarTitleText: '',
+    navigationBarTitleText: '分类',
+    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarTextStyle: 'white',
   },
 }
 </route>
 <template>
   <!-- :style="{ marginTop: safeAreaInsets?.top + 'px' }" -->
   <view class="bg-white">
-    <wd-notice-bar
-      v-if="noticeTextList.length > 0"
-      :text="noticeTextList"
-      prefix="sound"
-      custom-class="important-b-rd-0"
-    />
-
-    <wd-swiper
-      v-if="noticeTextList.length > 0"
-      :list="swiperList"
-      autoplay
-      :current="0"
-      height="120"
-    ></wd-swiper>
-
-    <view v-if="phoneModal" class="flex justify-between items-center p-10rpx pb-10rpx bg-#fff">
-      <view class="flex items-center color-#2051d1">
-        <text
-          class="text-12px bg-#5ac3f3 color-#fff pl-10rpx pr-10rpx pt-5rpx pb-5rpx b-rd-6rpx mr-10rpx"
-        >
-          本机
-        </text>
-        <text class="text-12px font-bold">{{ phoneModal }}</text>
-      </view>
-      <view class="flex">
-        <wd-button
-          @click="handleSearchNative"
-          custom-class="important-bg-#5ac3f3 important-h-60rpx important-line-height-60rpx"
-        >
-          本机查找
-        </wd-button>
-      </view>
-    </view>
-
     <wd-sticky :offset-top="0" :z-index="99">
       <wd-search
         placeholder="请输入手机型号"
@@ -92,6 +59,7 @@
           :key="index"
           :product="product"
           @toggle-expand="onToggleExpand(product)"
+          @add-to-cart="onAddToCart(product)"
         />
 
         <view
@@ -102,19 +70,27 @@
         </view>
       </view>
     </view>
+
+    <OrderTabbar />
   </view>
 </template>
 
 <script lang="ts" setup>
-import PLATFORM from '@/utils/platform'
 import { httpGet, httpPost } from '@/utils/http'
 import CateMenu from './components/cate-menu.vue'
 import SliderMenu from './components/slider-menu.vue'
 import ProductItem from './components/product-item.vue'
 import { useToast } from 'wot-design-uni'
+import { useUserStore } from '@/store'
+import OrderTabbar from '../components/order-tabbar.vue'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 const toast = useToast()
+
+const userStore = useUserStore()
+const userInfo = computed(() => {
+  return userStore.userInfo
+})
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getWindowInfo()
@@ -122,13 +98,8 @@ const { safeAreaInsets } = uni.getWindowInfo()
 const { projectName, setProjectName } = useProjectName()
 
 defineOptions({
-  name: 'Home',
+  name: 'Category',
 })
-
-const noticeTextList = ref<string[]>([])
-const swiperList = ref<string[]>([])
-
-const phoneModal = ref('')
 
 const toggleCate = ref(false)
 const firstCates = ref<any[]>([])
@@ -142,40 +113,12 @@ const searchValue = ref('')
 const showSearchPanel = ref(false)
 const searchNameList = ref<any[]>([])
 
-const searchType = ref(2) // 1 输入框查询 2 本机查询
+const searchType = ref(1) // 1 输入框查询 2 本机查询
 
 const list = ref<any[]>([])
 const page = ref(1)
 const total = ref(0)
 const loading = ref(false)
-
-// 获取通告列表
-const getNoticeList = async () => {
-  httpGet<any[]>('/api/Index/getAnnouncement').then((res) => {
-    const list = res.data || []
-
-    noticeTextList.value = list.map((item) => {
-      return item.content
-    })
-  })
-}
-
-// 获取轮播图列表
-const getSwiperList = async () => {
-  httpGet<any[]>('/api/Index/getBanner').then((res) => {
-    const list = res.data || []
-
-    swiperList.value = list.map((item) => {
-      return `${baseUrl}${item.img_url}`
-    })
-  })
-}
-
-// 查找本机
-const handleSearchNative = () => {
-  searchType.value = 2
-  getGoodsList(true)
-}
 
 // 输入框查找
 const handleSearch = () => {
@@ -275,10 +218,6 @@ const getGoodsList = async (init?: boolean) => {
     params.name = searchValue.value
   }
 
-  if (searchType.value === 2 && phoneModal.value) {
-    params.name = phoneModal.value
-  }
-
   toast.loading('加载中...')
   loading.value = true
   httpGet<any[]>('/api/Goods/getGoodsList5', params)
@@ -301,43 +240,13 @@ const getGoodsList = async (init?: boolean) => {
     })
 }
 
-const getDeviceInfo = async () => {
-  const deviceInfo = (wx as any).getDeviceInfo()
-
-  let model = deviceInfo.model || ''
-  const system = deviceInfo.system || ''
-
-  // 单独处理 iPhone XS Max China-exclusive<iPhone11,6>
-  model = model.replace(/China-exclusive/gm, '')
-
-  // 如果是ios,单独处理下里面的尖括号
-  const ios = !!(system.toLowerCase().search('ios') + 1)
-  if (ios) {
-    model = model.replace(/\((\S*?)\)<(\S*?)>/gm, '')
-    model = model.replace(/<(\S*?)>/gm, '')
-  }
-
-  const params = {
-    name: model,
-  }
-
-  httpPost('/api/Index/getPhoneName', params).then((res) => {
-    const localModel = res.data ? res.data : model
-
-    phoneModal.value = localModel
-  })
-}
-
 // 测试 uni API 自动引入
 onLoad(async () => {
-  await getDeviceInfo()
-  getNoticeList()
-  getSwiperList()
   getFirstCateList()
 
-  uni.setNavigationBarTitle({
-    title: projectName.value,
-  })
+  // uni.setNavigationBarTitle({
+  //   title: projectName.value,
+  // })
 })
 
 onReachBottom(() => {
@@ -348,15 +257,31 @@ onReachBottom(() => {
   getGoodsList()
 })
 
-const onShareAppMessage = () => ({})
-const onShareTimeline = () => ({})
+// const onShareAppMessage = () => ({})
+// const onShareTimeline = () => ({})
+
+const onAddToCart = (product) => {
+  console.log(product)
+  httpPost<any[]>('/api/Order/CreateCart', {
+    token: userInfo.value.token,
+    goods_id: product.goods_id,
+    goods_num: 1,
+  }).then((res) => {
+    console.log(res)
+  })
+
+  uni.showToast({
+    title: '已添加到购物车',
+    icon: 'success',
+  })
+}
 </script>
 
 <script lang="ts">
-export default {
-  onShareAppMessage,
-  onShareTimeline,
-}
+// export default {
+//   onShareAppMessage,
+//   onShareTimeline,
+// }
 </script>
 
 <style>

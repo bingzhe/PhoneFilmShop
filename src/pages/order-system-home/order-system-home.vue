@@ -10,14 +10,28 @@
 </route>
 
 <template>
-  <view class="">
-    <view class="flex justify-center items-center h-300rpx">
-      <view class="text-32rpx text-#666 font-bold">正在开发中，敬请期待</view>
+  <view class="p-64rpx">
+    <view>
+      <wd-button
+        block
+        size="large"
+        type="success"
+        custom-class="mb-64rpx custom-shadow"
+        @click="handleOrderSystem"
+      >
+        下单系统
+      </wd-button>
     </view>
   </view>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const handleOrderSystem = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/category/category',
+  })
+}
+</script>
 
 <style lang="scss" scoped>
 //

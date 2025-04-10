@@ -288,6 +288,77 @@
       "style": {
         "navigationBarTitleText": "教程"
       }
+    },
+    {
+      "path": "pages/order-system/address/address-add",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "新增地址"
+      }
+    },
+    {
+      "path": "pages/order-system/address/address-list",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "地址列表"
+      }
+    },
+    {
+      "path": "pages/order-system/cart/cart",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "购物车",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/category/category",
+      "type": "page",
+      "style": {
+        "navigationBarTitleText": "分类",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/order/confirm-order",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "订单确认",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/order/order-detail",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "订单详情"
+      }
+    },
+    {
+      "path": "pages/order-system/order/order-list",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "订单列表"
+      }
+    },
+    {
+      "path": "pages/order-system/order-person/order-person",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "个人中心",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
     }
   ],
   "subPackages": []
