@@ -2,7 +2,7 @@
 <route lang="json5" type="home">
 {
   style: {
-    // navigationStyle: 'custom',
+    navigationStyle: 'custom',
     navigationBarTitleText: 'MagicGorilla',
   },
 }
@@ -45,7 +45,7 @@
       </view>
     </view>
 
-    <wd-sticky :offset-top="0" :z-index="99">
+    <wd-sticky :offset-top="-44" :z-index="99">
       <wd-search
         placeholder="Please enter phone model"
         v-model="searchValue"

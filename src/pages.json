@@ -29,6 +29,7 @@
       "path": "pages/index/index",
       "type": "home",
       "style": {
+        "navigationStyle": "custom",
         "navigationBarTitleText": "MagicGorilla"
       }
     },
