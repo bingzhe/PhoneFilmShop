@@ -18,11 +18,11 @@
     />
 
     <wd-swiper
-      v-if="noticeTextList.length > 0"
+      v-if="swiperList.length > 0"
       :list="swiperList"
       autoplay
       :current="0"
-      height="120"
+      height="400rpx"
     ></wd-swiper>
 
     <view v-if="phoneModal" class="flex justify-between items-center p-10rpx pb-10rpx bg-#fff">
