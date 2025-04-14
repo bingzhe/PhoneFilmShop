@@ -117,8 +117,31 @@ const isAllSelected = ref(false)
 const totalPrice = ref(0)
 const selectedCount = ref(0)
 
+const selectedCartIds = ref<number[]>([])
+
 // 监听屏幕安全区域变化
 const safeAreaInsetBottom = ref(0)
+
+// // 存储选中的商品到本地
+// const saveSelectedItems = () => {
+//   try {
+//     uni.setStorageSync('selectedCartIds', JSON.stringify(selectedCartIds.value))
+//   } catch (e) {
+//     console.error('保存选中商品失败', e)
+//   }
+// }
+
+// // 从本地获取选中的商品
+// const getSelectedItems = () => {
+//   try {
+//     const saved = uni.getStorageSync('selectedCartIds')
+//     if (saved) {
+//       selectedCartIds.value = JSON.parse(saved)
+//     }
+//   } catch (e) {
+//     console.error('获取选中商品失败', e)
+//   }
+// }
 
 // 获取安全区域高度
 const getSafeArea = () => {
@@ -162,7 +185,8 @@ const getCart = () => {
       values.forEach((category: any) => {
         if (category.list) {
           category.list.forEach((item: any) => {
-            item.checked = false
+            // 如果商品ID在已选择列表中，则设置为选中状态
+            item.checked = selectedCartIds.value.includes(item.cart_id)
           })
         }
         // 初始化packList数组和选中的包装
@@ -272,25 +296,35 @@ const removeCartItem = (cartId: number) => {
 const updateTotalPrice = () => {
   let price = 0
   let count = 0
+  selectedCartIds.value = [] // 重置选中项
 
   cartList.value.forEach((category) => {
+    // 计算当前分类下选中商品的总数量
+    let categorySelectedCount = 0
+
     if (category.list) {
       category.list.forEach((item: any) => {
         if (item.checked) {
           price += Number(item.goods_price) * Number(item.goods_num)
           count += 1
+          // 更新选中的商品ID列表
+          selectedCartIds.value.push(item.cart_id)
+          // 累加该分类下选中商品的数量
+          categorySelectedCount += Number(item.goods_num)
         }
       })
     }
 
-    // 如果有选中的包装，计入总价
-    if (category.bao && category.list.some((item: any) => item.checked)) {
-      price += Number(category.bao.goods_price)
+    // 如果有选中的包装，计入总价 (包装价格 = 包装单价 × 分类下选中商品总数量)
+    if (category.bao && categorySelectedCount > 0) {
+      price += Number(category.bao.goods_price) * categorySelectedCount
     }
   })
 
   totalPrice.value = price
   selectedCount.value = count
+  // 保存选中的商品到本地存储
+  // saveSelectedItems()
 
   // 检查是否全选
   const allSelected =
@@ -333,11 +367,11 @@ const submitOrder = () => {
   }
 
   // 有选择的结算的商品的分类必须存在包装
-  console.log(
-    cartList.value.filter(
-      (category) => category.list && category.list.some((item) => item.checked),
-    ),
-  )
+  // console.log(
+  //   cartList.value.filter(
+  //     (category) => category.list && category.list.some((item) => item.checked),
+  //   ),
+  // )
   const hasBao = cartList.value
     .filter((category) => category.list && category.list.some((item) => item.checked))
     .every((category) => category.bao && category.bao.goods_id)
@@ -375,6 +409,8 @@ const selectPackage = (category: any, pack: any) => {
 }
 
 onMounted(() => {
+  // 获取本地存储的选中商品
+  // getSelectedItems()
   getCart()
   getSafeArea()
   // setupResizeObserver()
