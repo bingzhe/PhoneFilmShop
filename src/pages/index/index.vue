@@ -18,7 +18,7 @@
     />
 
     <wd-swiper
-      v-if="noticeTextList.length > 0"
+      v-if="swiperList.length > 0"
       :list="swiperList"
       autoplay
       :current="0"

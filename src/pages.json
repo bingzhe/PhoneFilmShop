@@ -294,7 +294,9 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "新增地址"
+        "navigationBarTitleText": "新增地址",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -302,7 +304,9 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "地址列表"
+        "navigationBarTitleText": "地址列表",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {
