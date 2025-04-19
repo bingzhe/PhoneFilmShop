@@ -84,6 +84,7 @@
 
         <view class="popup-content mb-32rpx">
           <view class="product-name text-16px mb-16rpx">
+            {{ currentProduct?.code }} {{ currentProduct?.cate_name || '' }}
             {{ currentProduct?.goods_name || '' }}
           </view>
           <view class="flex justify-between items-center">
@@ -96,7 +97,9 @@
           <wd-button type="info" class="flex-1 mr-16rpx" @click="closeQuantityPopup">
             取消
           </wd-button>
-          <wd-button type="primary" class="flex-1" @click="confirmAddToCart">加入购物车</wd-button>
+          <wd-button type="primary" class="flex-1" @click="confirmAddToCartBefore">
+            加入购物车
+          </wd-button>
         </view>
       </view>
     </wd-popup>
@@ -306,6 +309,13 @@ const closeQuantityPopup = () => {
   showQuantityPopup.value = false
 }
 
+const confirmAddToCartBefore = () => {
+  nextTick(() => {
+    setTimeout(() => {
+      confirmAddToCart()
+    }, 100)
+  })
+}
 // 确认添加到购物车
 const confirmAddToCart = () => {
   if (!currentProduct.value) return
@@ -332,6 +342,10 @@ const confirmAddToCart = () => {
       toast.error('添加失败，请重试')
       console.error(err)
     })
+}
+
+const handleQuantityChange = (value) => {
+  console.log(value)
 }
 </script>
 
