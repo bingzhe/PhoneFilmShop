@@ -317,7 +317,7 @@ const updateTotalPrice = () => {
 
     // 如果有选中的包装，计入总价 (包装价格 = 包装单价 × 分类下选中商品总数量)
     if (category.bao && categorySelectedCount > 0) {
-      price += Number(category.bao.goods_price) * categorySelectedCount
+      price += Number(category.bao.goods_price)
     }
   })
 
@@ -333,6 +333,11 @@ const updateTotalPrice = () => {
       (category) => category.list && category.list.every((item: any) => item.checked),
     )
   isAllSelected.value = allSelected
+}
+
+const resetCart = () => {
+  selectedCartIds.value = [] // 重置选中项
+  getCart()
 }
 
 // 全选/取消全选
@@ -414,6 +419,10 @@ onMounted(() => {
   getCart()
   getSafeArea()
   // setupResizeObserver()
+})
+
+defineExpose({
+  resetCart,
 })
 
 onBeforeUnmount(() => {

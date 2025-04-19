@@ -4,8 +4,7 @@ import { ref } from 'vue'
 const initState = {
   nickname: '',
   avatar: '',
-  token:
-    'MDAwMDAwMDAwMJbasGnElryslZVu0450r2ayinFqsqZ-ocXSjqGVgLqclajSrLu3r2l_uJiTgnWvY7KKiWm0zKugvL2gsJKRrqKJlLiow7u7nIHOd5w',
+  token: '',
   phone: '',
 }
 

@@ -343,7 +343,9 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "订单详情"
+        "navigationBarTitleText": "订单详情",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -351,7 +353,9 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "订单列表"
+        "navigationBarTitleText": "订单列表",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
       }
     },
     {

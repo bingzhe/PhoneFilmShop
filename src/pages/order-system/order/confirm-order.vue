@@ -15,10 +15,13 @@
     <view class="address-block" @click="navigateToAddress">
       <view v-if="defaultAddress" class="address-info">
         <view class="address-header">
-          <view class="address-name">{{ defaultAddress.consignee }}</view>
-          <view class="address-phone">{{ defaultAddress.mobile }}</view>
+          <view class="address-name">{{ defaultAddress.name }}</view>
+          <view class="address-phone">{{ defaultAddress.telephone }}</view>
         </view>
-        <view class="address-detail">{{ defaultAddress.address }}</view>
+        <view class="address-detail">
+          {{ defaultAddress.province_name }}{{ defaultAddress.city_name
+          }}{{ defaultAddress.area_name }}{{ defaultAddress.address }}
+        </view>
       </view>
       <view v-else class="no-address">
         <view class="no-address-text">请选择收货地址</view>
@@ -96,6 +99,7 @@
 import { useUserStore } from '@/store'
 import { httpPost } from '@/utils/http'
 import { useToast } from 'wot-design-uni'
+import { getLastPage } from '@/utils/index'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -181,9 +185,13 @@ const calculatePrices = () => {
 
   // 计算商品和包装总价
   cartCategories.value.forEach((category) => {
+    // 计算当前分类下选中商品的总数量
+    let categorySelectedCount = 0
     // 计算商品价格
     category.list.forEach((item) => {
       goodsTotal += Number(item.goods_price) * Number(item.goods_num)
+      // 累加该分类下选中商品的数量
+      categorySelectedCount += Number(item.goods_num)
     })
 
     // 计算包装价格
@@ -254,18 +262,39 @@ const submitOrder = () => {
   }
 
   toast.loading('提交订单中...')
+  const cartIdList = []
+  cartCategories.value.forEach((category) => {
+    category.list.forEach((item) => {
+      cartIdList.push(item.cart_id)
+    })
+
+    if (category.bao) {
+      cartIdList.push(category.bao.cart_id)
+    }
+  })
+  console.log(cartIdList)
   httpPost('/api/Order/CreateOrder', {
     token: userInfo.value.token,
-    cart_list: cartIds.value.join(','),
-    order_price: totalPrice.value,
-    address_id: defaultAddress.value.id,
+    cart_list: cartIdList.join(','),
+    order_price: totalPrice.value.toFixed(2),
+    address_id: defaultAddress.value.address_id,
+    delivery_type: 0,
   })
-    .then((res) => {
+    .then((res: any) => {
+      // 调用上个页面的resetCart
+
+      const pages = getCurrentPages()
+      const prevPage = pages[pages.length - 2]
+      if (prevPage) {
+        prevPage.$vm.resetCart()
+      }
+
       toast.success('订单提交成功')
+      const orderId = res.data?.order_id
       // 跳转到订单详情或支付页面
       setTimeout(() => {
         uni.redirectTo({
-          url: `/pages/order-system/order/order-detail?order_id=${res.data}`,
+          url: `/pages/order-system/order/order-detail?order_id=${orderId}`,
         })
       }, 1500)
     })
