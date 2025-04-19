@@ -74,6 +74,7 @@ import { useUserStore } from '@/store'
 import { httpPost } from '@/utils/http'
 import { useColPickerData } from '@/hooks/useColPickerData'
 import { getCurrentInstance } from 'vue'
+import { getOrderToken } from '@/utils/orderToken'
 
 const toast = useToast()
 
@@ -160,7 +161,7 @@ const validatorArea = (val: any) => {
 const getAddressDetail = () => {
   toast.loading('加载中...')
   httpPost('/Api/Usersinfo/getAddress', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
   })
     .then((res: any) => {
       if (res.data && res.data.length > 0) {
@@ -219,7 +220,7 @@ const saveAddress = () => {
   toast.loading('保存中...')
 
   const params: any = {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
     // address_id: addressId.value || '',
     name: formModel.value.name,
     telephone: formModel.value.telephone,

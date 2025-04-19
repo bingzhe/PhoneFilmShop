@@ -100,6 +100,7 @@ import { useUserStore } from '@/store'
 import { httpPost } from '@/utils/http'
 import { useToast } from 'wot-design-uni'
 import { getLastPage } from '@/utils/index'
+import { getOrderToken } from '@/utils/orderToken'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -131,7 +132,7 @@ const cartCategories = ref<any[]>([])
 const getCartList = () => {
   toast.loading('加载中...')
   httpPost<any>('/api/Order/GetCartList', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
   })
     .then((res) => {
       const data = res.data || {}
@@ -229,7 +230,7 @@ const canSubmit = computed(() => {
 // 获取默认地址
 const getDefaultAddress = () => {
   httpPost('/Api/Usersinfo/getDefaultAddress', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
   })
     .then((res) => {
       if (res.data) {
@@ -274,7 +275,7 @@ const submitOrder = () => {
   })
   console.log(cartIdList)
   httpPost('/api/Order/CreateOrder', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
     cart_list: cartIdList.join(','),
     order_price: totalPrice.value.toFixed(2),
     address_id: defaultAddress.value.address_id,

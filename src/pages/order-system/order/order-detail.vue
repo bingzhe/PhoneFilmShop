@@ -156,6 +156,7 @@ import { httpGet, httpPost } from '@/utils/http'
 import { useToast } from 'wot-design-uni'
 import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store'
+import { getOrderToken } from '@/utils/orderToken'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -200,7 +201,7 @@ const getOrderDetail = async () => {
   try {
     const res = await httpPost('/Api/Order/GetOrderInfo', {
       order_id: orderId.value,
-      token: userInfo.value.token,
+      token_order: getOrderToken(),
     })
     orderInfo.value = res.data
   } catch (error) {
@@ -224,7 +225,7 @@ const cancelOrder = () => {
         try {
           const result = await httpPost('/Api/Order/QuxiaoOrder', {
             order_id: orderId.value,
-            token: userInfo.value.token,
+            token_order: getOrderToken(),
           })
           uni.showToast({
             title: '订单取消成功',

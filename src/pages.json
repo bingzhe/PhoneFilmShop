@@ -141,7 +141,7 @@
       "type": "page",
       "layout": "default",
       "style": {
-        "navigationBarTitleText": "订单系统",
+        "navigationBarTitleText": "下单系统",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
       }
@@ -364,6 +364,16 @@
       "layout": "default",
       "style": {
         "navigationBarTitleText": "个人中心",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/order-person/order-personal-edit",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "个人信息",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
       }

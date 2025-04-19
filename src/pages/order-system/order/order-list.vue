@@ -111,6 +111,7 @@ import { ref, onMounted, computed } from 'vue'
 import { httpGet, httpPost } from '@/utils/http'
 import { useToast } from 'wot-design-uni'
 import { useUserStore } from '@/store'
+import { getOrderToken } from '@/utils/orderToken'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -180,7 +181,7 @@ const getOrderList = async () => {
   loading.value = true
   try {
     const params: any = {
-      token: userInfo.value.token,
+      token_order: getOrderToken(),
     }
 
     if (currentStatus.value !== 0) {
@@ -217,7 +218,7 @@ const cancelOrder = async (orderId: string) => {
         try {
           const result = await httpPost('/Api/Order/QuxiaoOrder', {
             order_id: orderId,
-            token: userInfo.value.token,
+            token_order: getOrderToken(),
           })
           uni.showToast({
             title: '订单取消成功',

@@ -83,6 +83,7 @@ import ProductItem from './components/product-item.vue'
 import { useToast } from 'wot-design-uni'
 import { useUserStore } from '@/store'
 import OrderTabbar from '../components/order-tabbar.vue'
+import { getOrderToken } from '@/utils/orderToken'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 const toast = useToast()
@@ -263,7 +264,7 @@ onReachBottom(() => {
 const onAddToCart = (product) => {
   console.log(product)
   httpPost<any[]>('/api/Order/CreateCart', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
     goods_id: product.goods_id,
     goods_num: 1,
   }).then((res) => {

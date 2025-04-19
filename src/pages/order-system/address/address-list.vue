@@ -58,6 +58,7 @@ import { useToast } from 'wot-design-uni'
 import { useUserStore } from '@/store'
 import { httpPost } from '@/utils/http'
 import { getCurrentInstance } from 'vue'
+import { getOrderToken } from '@/utils/orderToken'
 
 const toast = useToast()
 
@@ -83,7 +84,7 @@ const eventChannel = ref(null)
 const getAddressList = () => {
   toast.loading('加载中...')
   httpPost('/Api/Usersinfo/getAddress', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
   })
     .then((res: any) => {
       if (res.data) {
@@ -107,7 +108,7 @@ const handleDelete = (item: any) => {
       if (res.confirm) {
         toast.loading('删除中...')
         httpPost('/Api/Usersinfo/delAddress', {
-          token: userInfo.value.token,
+          token_order: getOrderToken(),
           address_id: item.address_id,
         })
           .then(() => {

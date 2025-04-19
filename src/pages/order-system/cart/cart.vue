@@ -101,6 +101,7 @@ import { httpPost } from '@/utils/http'
 import { useUserStore } from '@/store'
 import { useToast } from 'wot-design-uni'
 import { nextTick, onMounted, ref, computed, onBeforeUnmount } from 'vue'
+import { getOrderToken } from '@/utils/orderToken'
 
 const toast = useToast()
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
@@ -175,7 +176,7 @@ const getCart = () => {
   cartLoading.value = true
   toast.loading('加载中...')
   httpPost<any[]>('/api/Order/GetCartList', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
   })
     .then((res) => {
       const data = res.data || {}
@@ -217,7 +218,7 @@ const getCart = () => {
 // 更新商品数量
 const updateGoodsNum = (item: any) => {
   httpPost('/api/Order/CreateCart', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
     cart_id: item.cart_id,
     goods_num: item.goods_num,
     goods_id: item.goods_id,
@@ -236,7 +237,7 @@ const updateGoodsNum = (item: any) => {
 // 更新包装
 const handlePackage = (category: any, pack: any, isUpdate = false) => {
   const params: any = {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
     goods_num: 1,
     goods_id: pack.goods_id,
   }
@@ -261,7 +262,7 @@ const removePackage = (category: any) => {
   if (!category.bao || !category.bao.cart_id) return
 
   httpPost('/api/Order/DelCart', {
-    token: userInfo.value.token,
+    token_order: getOrderToken(),
     cart_list: category.bao.cart_id,
   })
     .then(() => {
@@ -281,7 +282,7 @@ const removeCartItem = (cartId: number) => {
     success: (res) => {
       if (res.confirm) {
         httpPost('/api/Order/DelCart', {
-          token: userInfo.value.token,
+          token_order: getOrderToken(),
           cart_list: cartId,
         }).then(() => {
           toast.success('删除成功')
