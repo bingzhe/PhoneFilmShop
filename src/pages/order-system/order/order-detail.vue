@@ -23,7 +23,7 @@
       </view>
 
       <!-- 收货信息 -->
-      <view class="info-card">
+      <!-- <view class="info-card">
         <view class="card-title">
           <wd-icon name="location" color="#00a3ff" size="36rpx" />
           <text>收货信息</text>
@@ -34,7 +34,7 @@
             {{ orderInfo.province }}{{ orderInfo.city }}{{ orderInfo.area }}{{ orderInfo.address }}
           </view>
         </view>
-      </view>
+      </view> -->
 
       <!-- 订单信息 -->
       <view class="info-card">
@@ -368,6 +368,8 @@ onLoad((options) => {
 }
 
 .item-label {
+  flex-shrink: 0;
+  margin-right: 20rpx;
   color: #999;
 }
 

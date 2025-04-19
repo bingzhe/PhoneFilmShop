@@ -11,7 +11,7 @@
 <template>
   <!-- :style="{ marginTop: safeAreaInsets?.top + 'px' }" -->
   <view class="bg-white">
-    <wd-sticky :offset-top="0" :z-index="99">
+    <wd-sticky :offset-top="0" :z-index="19">
       <wd-search
         placeholder="请输入手机型号"
         v-model="searchValue"
@@ -72,6 +72,34 @@
     </view>
 
     <OrderTabbar />
+
+    <!-- 添加数量选择弹窗 -->
+    <wd-popup
+      v-model="showQuantityPopup"
+      custom-style="border-radius:16rpx;padding:32rpx;"
+      :z-index="29"
+    >
+      <view class="quantity-popup">
+        <view class="popup-title text-center text-18px font-bold mb-32rpx">选择数量</view>
+
+        <view class="popup-content mb-32rpx">
+          <view class="product-name text-16px mb-16rpx">
+            {{ currentProduct?.goods_name || '' }}
+          </view>
+          <view class="flex justify-between items-center">
+            <text class="text-14px">数量：</text>
+            <wd-input-number v-model="selectedQuantity" :min="0"></wd-input-number>
+          </view>
+        </view>
+
+        <view class="popup-footer flex justify-between">
+          <wd-button type="info" class="flex-1 mr-16rpx" @click="closeQuantityPopup">
+            取消
+          </wd-button>
+          <wd-button type="primary" class="flex-1" @click="confirmAddToCart">加入购物车</wd-button>
+        </view>
+      </view>
+    </wd-popup>
   </view>
 </template>
 
@@ -261,20 +289,49 @@ onReachBottom(() => {
 // const onShareAppMessage = () => ({})
 // const onShareTimeline = () => ({})
 
+// 数量选择弹窗相关状态
+const showQuantityPopup = ref(false)
+const selectedQuantity = ref(0)
+const currentProduct = ref<any>(null)
+
+// 打开数量选择弹窗
 const onAddToCart = (product) => {
-  console.log(product)
+  currentProduct.value = product
+  selectedQuantity.value = 0 // 重置数量为1
+  showQuantityPopup.value = true
+}
+
+// 关闭数量选择弹窗
+const closeQuantityPopup = () => {
+  showQuantityPopup.value = false
+}
+
+// 确认添加到购物车
+const confirmAddToCart = () => {
+  if (!currentProduct.value) return
+
+  if (selectedQuantity.value === 0) {
+    toast.warning('请添加数量')
+    return
+  }
+
   httpPost<any[]>('/api/Order/CreateCart', {
     token_order: getOrderToken(),
-    goods_id: product.goods_id,
-    goods_num: 1,
-  }).then((res) => {
-    console.log(res)
+    goods_id: currentProduct.value.goods_id,
+    goods_num: selectedQuantity.value,
   })
-
-  uni.showToast({
-    title: '已添加到购物车',
-    icon: 'success',
-  })
+    .then((res) => {
+      console.log(res)
+      uni.showToast({
+        title: '已添加到购物车',
+        icon: 'success',
+      })
+      showQuantityPopup.value = false // 关闭弹窗
+    })
+    .catch((err) => {
+      toast.error('添加失败，请重试')
+      console.error(err)
+    })
 }
 </script>
 
@@ -305,5 +362,30 @@ page {
 }
 :deep(.wd-sidebar) {
   width: 180rpx !important;
+}
+/* 数量选择弹窗样式 */
+.quantity-popup {
+  width: 600rpx;
+}
+
+.popup-title {
+  color: #333;
+}
+
+.product-name {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #333;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.popup-content {
+  padding: 16rpx 0;
+}
+
+.popup-footer {
+  margin-top: 32rpx;
 }
 </style>

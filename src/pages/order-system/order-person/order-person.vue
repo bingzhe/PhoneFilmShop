@@ -50,11 +50,11 @@
             <view class="i-ri:file-list-3-line cell-icon"></view>
           </template>
         </wd-cell>
-        <wd-cell title="地址管理" is-link @click="goToAddressList">
+        <!-- <wd-cell title="地址管理" is-link @click="goToAddressList">
           <template #icon>
             <view class="i-ri:map-pin-line cell-icon"></view>
           </template>
-        </wd-cell>
+        </wd-cell> -->
       </wd-cell-group>
     </view>
 

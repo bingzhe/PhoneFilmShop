@@ -36,7 +36,6 @@
                 <wd-input-number
                   v-model="item.goods_num"
                   :min="1"
-                  :max="99"
                   @change="updateGoodsNum(item)"
                 ></wd-input-number>
               </view>

@@ -12,7 +12,7 @@
 <template>
   <view class="container">
     <!-- 地址模块 -->
-    <view class="address-block" @click="navigateToAddress">
+    <!-- <view class="address-block" @click="navigateToAddress">
       <view v-if="defaultAddress" class="address-info">
         <view class="address-header">
           <view class="address-name">{{ defaultAddress.name }}</view>
@@ -29,7 +29,7 @@
       <view class="address-right">
         <wd-icon name="arrow-right" size="18px"></wd-icon>
       </view>
-    </view>
+    </view> -->
 
     <!-- 商品信息模块 -->
     <view v-if="cartCategories.length > 0" class="goods-block">
@@ -75,6 +75,14 @@
       <view class="price-item total-price">
         <text>订单总计</text>
         <text>¥{{ totalPrice.toFixed(2) }}</text>
+      </view>
+    </view>
+
+    <!-- 添加备注 -->
+    <view class="remark-block">
+      <view class="remark-title">添加备注</view>
+      <view class="remark-input">
+        <textarea class="remark-textarea" placeholder="请输入备注" v-model="remark"></textarea>
       </view>
     </view>
 
@@ -127,6 +135,9 @@ const defaultAddress = ref<any>(null)
 
 // 保存筛选后的购物车分类
 const cartCategories = ref<any[]>([])
+
+// 备注
+const remark = ref('')
 
 // 获取购物车列表
 const getCartList = () => {
@@ -224,43 +235,43 @@ const totalPrice = computed(() => {
 
 // 是否可以提交订单
 const canSubmit = computed(() => {
-  return cartCategories.value.length > 0 && defaultAddress.value !== null
+  return cartCategories.value.length > 0
 })
 
 // 获取默认地址
-const getDefaultAddress = () => {
-  httpPost('/Api/Usersinfo/getDefaultAddress', {
-    token_order: getOrderToken(),
-  })
-    .then((res) => {
-      if (res.data) {
-        defaultAddress.value = res.data
-      }
-    })
-    .catch((err) => {
-      console.error('获取默认地址失败', err)
-    })
-}
+// const getDefaultAddress = () => {
+//   httpPost('/Api/Usersinfo/getDefaultAddress', {
+//     token_order: getOrderToken(),
+//   })
+//     .then((res) => {
+//       if (res.data) {
+//         defaultAddress.value = res.data
+//       }
+//     })
+//     .catch((err) => {
+//       console.error('获取默认地址失败', err)
+//     })
+// }
 
 // 跳转到地址选择页面
-const navigateToAddress = () => {
-  uni.navigateTo({
-    url: '/pages/order-system/address/address-list?select=1',
-    events: {
-      // 监听地址选择事件
-      selectAddress: function (address: any) {
-        defaultAddress.value = address
-      },
-    },
-  })
-}
+// const navigateToAddress = () => {
+//   uni.navigateTo({
+//     url: '/pages/order-system/address/address-list?select=1',
+//     events: {
+//       // 监听地址选择事件
+//       selectAddress: function (address: any) {
+//         defaultAddress.value = address
+//       },
+//     },
+//   })
+// }
 
 // 提交订单
 const submitOrder = () => {
-  if (!defaultAddress.value) {
-    toast.warning('请选择收货地址')
-    return
-  }
+  // if (!defaultAddress.value) {
+  //   toast.warning('请选择收货地址')
+  //   return
+  // }
 
   toast.loading('提交订单中...')
   const cartIdList = []
@@ -278,8 +289,9 @@ const submitOrder = () => {
     token_order: getOrderToken(),
     cart_list: cartIdList.join(','),
     order_price: totalPrice.value.toFixed(2),
-    address_id: defaultAddress.value.address_id,
+    // address_id: defaultAddress.value.address_id,
     delivery_type: 0,
+    remark: remark.value,
   })
     .then((res: any) => {
       // 调用上个页面的resetCart
@@ -316,7 +328,7 @@ onLoad((options: any) => {
   if (options.cart_ids) {
     cartIds.value = options.cart_ids.split(',')
     getCartList()
-    getDefaultAddress()
+    // getDefaultAddress()
   } else {
     toast.error('参数错误')
     setTimeout(() => {
@@ -330,6 +342,7 @@ onLoad((options: any) => {
 .container {
   box-sizing: border-box;
   min-height: 100vh;
+  padding-top: 20rpx;
   padding-bottom: 150rpx;
   background-color: #f7f8fa;
 }
@@ -540,5 +553,25 @@ onLoad((options: any) => {
 .price {
   font-weight: bold;
   color: #ff4400;
+}
+
+// 备注模块
+.remark-block {
+  padding: 20rpx 30rpx;
+  margin: 20rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+}
+
+.remark-title {
+  margin-bottom: 10rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.remark-input {
+  padding: 20rpx;
+  border: 1rpx solid #f5f5f5;
+  border-radius: 12rpx;
 }
 </style>
