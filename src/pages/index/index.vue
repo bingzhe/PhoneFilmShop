@@ -157,7 +157,7 @@ const searchValue = ref('')
 const showSearchPanel = ref(false)
 const searchNameList = ref<any[]>([])
 
-const searchType = ref(2) // 1 输入框查询 2 本机查询
+const searchType = ref(1) // 1 输入框查询 2 本机查询
 
 const list = ref<any[]>([])
 const page = ref(1)
@@ -227,7 +227,8 @@ const getNewProduct = async () => {
 
 // 查找本机
 const handleSearchNative = () => {
-  searchType.value = 2
+  // searchType.value = 2
+  searchValue.value = phoneModal.value
   getGoodsList(true)
 }
 
@@ -271,11 +272,13 @@ const onMenuClick = (id) => {
   firstCateId.value = id
   secondCateId.value = ''
   toggleCate.value = !toggleCate.value
+  searchType.value = 1
   getSecondCateList(firstCateId.value)
 }
 
 const onSliderClick = (id) => {
   secondCateId.value = id
+  searchType.value = 1
   getGoodsList(true)
 }
 
