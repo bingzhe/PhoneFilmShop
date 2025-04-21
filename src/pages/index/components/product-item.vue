@@ -14,11 +14,12 @@
             {{ product.cate_name }}
           </view>
         </view>
-        <!-- <view class="mb-10rpx">
+        <view class="mb-10rpx">
           <view class="text-10px font-bold mr-10rpx" :style="'color: #' + product.colour + ';'">
-            {{ product.goods_name }}
+            <!-- {{ product.goods_name }} -->
+            MagicGorilla-HD
           </view>
-        </view> -->
+        </view>
         <view class="flex flex-wrap">
           <view
             class="bg-#fa4126 color-#fff mr-10rpx mb-10rpx m-rd-4rpx text-12px pt-5rpx pb-5rpx pl-10rpx pr-12rpx"
