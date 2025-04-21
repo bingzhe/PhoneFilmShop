@@ -618,7 +618,8 @@ onBeforeUnmount(() => {
   flex-direction: row;
   align-items: center;
   width: calc(50% - 20rpx);
-  padding: 10rpx;
+  min-height: 100rpx; /* 确保有足够的高度显示两行文本 */
+  padding: 12rpx;
   overflow: hidden; /* 防止内容溢出 */
   border: 1px solid #eee;
   border-radius: 8rpx;
@@ -648,17 +649,21 @@ onBeforeUnmount(() => {
 }
 
 .package-name {
+  display: -webkit-box;
   width: 100%;
   max-width: 100%;
   overflow: hidden;
   font-size: 24rpx;
+  line-height: 1.3;
   text-align: left;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal; /* 允许换行 */
+  -webkit-line-clamp: 2; /* 显示2行 */
+  -webkit-box-orient: vertical;
 }
 
 .package-price {
-  margin-top: 10rpx;
+  margin-top: 8rpx;
   font-size: 26rpx;
   font-weight: bold;
   color: #ff4400;
