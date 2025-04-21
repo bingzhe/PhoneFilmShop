@@ -61,8 +61,18 @@
               ]"
               @click="selectPackage(category, pack)"
             >
-              <view class="package-name">{{ pack.goods_name }}</view>
-              <view class="package-price">¥{{ pack.goods_price }}</view>
+              <view class="package-img" v-if="pack.full_goods_img" @click.stop>
+                <wd-img
+                  :enable-preview="true"
+                  width="80rpx"
+                  height="80rpx"
+                  :src="pack.full_goods_img"
+                ></wd-img>
+              </view>
+              <view class="package-info">
+                <view class="package-name">{{ pack.goods_name }}</view>
+                <view class="package-price">¥{{ pack.goods_price }}</view>
+              </view>
             </view>
           </view>
         </view>
@@ -203,6 +213,9 @@ const getCart = () => {
         // price: 1.3
         // users_id: 106
         category.bao = category.bao || null
+        ;(category.bao_list || []).forEach((pack: any) => {
+          pack.full_goods_img = pack.goods_img ? baseUrl + pack.goods_img : ''
+        })
       })
 
       cartList.value = values
@@ -602,11 +615,11 @@ onBeforeUnmount(() => {
 .package-item {
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
   width: calc(50% - 20rpx);
-  padding: 15rpx;
-  text-align: center;
+  padding: 10rpx;
+  overflow: hidden; /* 防止内容溢出 */
   border: 1px solid #eee;
   border-radius: 8rpx;
   transition: all 0.3s;
@@ -614,13 +627,32 @@ onBeforeUnmount(() => {
 
 .package-item-active {
   color: #00a3ff;
-  background-color: arffa(0, 163, 255, 0.05);
+  background-color: rgba(0, 163, 255, 0.05);
   border-color: #00a3ff;
 }
 
+.package-img {
+  flex-shrink: 0; /* 防止图片容器被压缩 */
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 15rpx;
+}
+
+.package-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  width: 0; /* 这个设置很重要，确保flex子元素可以正确应用overflow */
+  min-width: 0;
+}
+
 .package-name {
+  width: 100%;
+  max-width: 100%;
   overflow: hidden;
   font-size: 24rpx;
+  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -630,5 +662,6 @@ onBeforeUnmount(() => {
   font-size: 26rpx;
   font-weight: bold;
   color: #ff4400;
+  text-align: left;
 }
 </style>
