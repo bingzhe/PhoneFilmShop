@@ -41,9 +41,14 @@
           @click="goToDetail(order.order_id)"
         >
           <view class="order-header">
-            <view class="order-no">订单号：{{ order.order_no }}</view>
-            <view class="order-status" :class="`status-${order.status}`">
-              {{ getStatusText(order.status) }}
+            <view class="order-header-top">
+              <view class="order-no">订单号：{{ order.order_no }}</view>
+              <view class="order-status" :class="`status-${order.status}`">
+                {{ getStatusText(order.status) }}
+              </view>
+            </view>
+            <view class="order-header-bottom">
+              <view class="order-no">客户信息：{{ order.user_code + '-' + order.nikename }}</view>
             </view>
           </view>
 
@@ -54,7 +59,16 @@
               :key="cateIndex"
               class="category-section"
             >
-              <view class="category-title">{{ category.category_name }}</view>
+              <view class="category-header">
+                <view class="category-tag"></view>
+                <view class="category-title">
+                  {{ category.category_name }}
+                  <view class="category-stats">
+                    <text class="category-count">总数量: {{ category.all_num }}</text>
+                    <text class="category-price">总价: ¥{{ category.all_price }}</text>
+                  </view>
+                </view>
+              </view>
 
               <!-- 商品列表 -->
               <view class="goods-list">
@@ -328,11 +342,14 @@ onShow(() => {
 }
 
 .order-header {
+  padding: 24rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.order-header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24rpx;
-  border-bottom: 1rpx solid #f5f5f5;
+  margin-bottom: 20rpx;
 }
 
 .order-no {
@@ -367,28 +384,69 @@ onShow(() => {
 }
 
 .category-section {
+  padding: 15rpx;
   margin-bottom: 15rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.03);
 
   &:last-child {
     margin-bottom: 0;
   }
 }
 
+.category-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.category-tag {
+  width: 6rpx;
+  height: 28rpx;
+  margin-right: 12rpx;
+  background-color: #00a3ff;
+  border-radius: 3rpx;
+}
+
 .category-title {
-  padding: 10rpx 0;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
   font-size: 26rpx;
   font-weight: bold;
   color: #333;
 }
 
+.category-stats {
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+}
+
+.category-count {
+  margin-right: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+
+.category-price {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #ff4400;
+}
+
 .goods-list {
-  padding: 0 10rpx;
+  padding: 10rpx;
+  background-color: #f9f9f9;
+  border-radius: 8rpx;
 }
 
 .goods-item {
   position: relative;
-  padding: 15rpx 0;
-  border-bottom: 1rpx solid #f5f5f5;
+  padding: 15rpx 10rpx;
+  border-bottom: 1rpx dashed #eee;
 
   &:last-child {
     border-bottom: none;
@@ -426,14 +484,18 @@ onShow(() => {
 }
 
 .goods-count {
+  padding: 2rpx 12rpx;
   font-size: 24rpx;
   color: #666;
+  background-color: #f0f0f0;
+  border-radius: 20rpx;
 }
 
 .package-item {
-  padding: 15rpx;
-  margin-top: 10rpx;
-  background-color: #f9f9f9;
+  padding: 15rpx 10rpx;
+  margin: 15rpx 0 10rpx;
+  background-color: #fff;
+  border-left: 4rpx solid #00a3ff;
   border-radius: 8rpx;
 }
 

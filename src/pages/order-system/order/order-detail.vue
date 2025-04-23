@@ -50,6 +50,10 @@
           <text class="item-label">下单时间</text>
           <text class="item-value">{{ orderInfo.ctime }}</text>
         </view>
+        <view class="info-item">
+          <text class="item-label">客户信息</text>
+          <text class="item-value">{{ orderInfo.user_code + '-' + orderInfo.nikename }}</text>
+        </view>
         <view class="info-item" v-if="orderInfo.pay_time">
           <text class="item-label">付款时间</text>
           <text class="item-value">{{ orderInfo.pay_time }}</text>
@@ -93,7 +97,16 @@
             :key="cateIndex"
             class="category-section"
           >
-            <view class="category-title">{{ category.category_name }}</view>
+            <view class="category-header">
+              <view class="category-tag"></view>
+              <view class="category-title">
+                {{ category.category_name }}
+                <view class="category-stats">
+                  <text class="category-count">总数量: {{ category.all_num }}</text>
+                  <text class="category-price">总价: ¥{{ category.all_price }}</text>
+                </view>
+              </view>
+            </view>
 
             <!-- 商品列表 -->
             <view class="goods-list">
@@ -396,28 +409,69 @@ onLoad((options) => {
 }
 
 .category-section {
+  padding: 20rpx;
   margin-bottom: 20rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.03);
 
   &:last-child {
     margin-bottom: 0;
   }
 }
 
+.category-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.category-tag {
+  width: 6rpx;
+  height: 30rpx;
+  margin-right: 12rpx;
+  background-color: #00a3ff;
+  border-radius: 3rpx;
+}
+
 .category-title {
-  padding: 10rpx 0;
-  font-size: 26rpx;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 28rpx;
   font-weight: bold;
   color: #333;
 }
 
+.category-stats {
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+}
+
+.category-count {
+  margin-right: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+
+.category-price {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #ff4400;
+}
+
 .goods-list {
-  padding: 0 10rpx;
+  padding: 10rpx;
+  background-color: #f9f9f9;
+  border-radius: 8rpx;
 }
 
 .goods-item {
   position: relative;
-  padding: 15rpx 0;
-  border-bottom: 1rpx solid #f5f5f5;
+  padding: 15rpx 10rpx;
+  border-bottom: 1rpx dashed #eee;
 
   &:last-child {
     border-bottom: none;
@@ -455,14 +509,18 @@ onLoad((options) => {
 }
 
 .goods-count {
+  padding: 2rpx 12rpx;
   font-size: 24rpx;
   color: #666;
+  background-color: #f0f0f0;
+  border-radius: 20rpx;
 }
 
 .package-item {
-  padding: 15rpx;
-  margin-top: 10rpx;
-  background-color: #f9f9f9;
+  padding: 15rpx 10rpx;
+  margin: 15rpx 0 10rpx;
+  background-color: #fff;
+  border-left: 4rpx solid #00a3ff;
   border-radius: 8rpx;
 }
 

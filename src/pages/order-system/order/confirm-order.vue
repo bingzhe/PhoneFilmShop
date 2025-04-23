@@ -208,7 +208,7 @@ const calculatePrices = () => {
 
     // 计算包装价格
     if (category.bao) {
-      packageTotal += Number(category.bao.goods_price)
+      packageTotal += Number(category.bao.goods_price) * categorySelectedCount
     }
   })
 

@@ -152,6 +152,8 @@ const page = ref(1)
 const total = ref(0)
 const loading = ref(false)
 
+const userLevel = ref(1)
+
 // 输入框查找
 const handleSearch = () => {
   searchType.value = 1
@@ -226,6 +228,7 @@ const onToggleExpand = (product) => {
 }
 
 const getGoodsList = async (init?: boolean) => {
+  console.log('userLevel', userLevel.value)
   if (init) {
     page.value = 1
     list.value = []
@@ -261,6 +264,11 @@ const getGoodsList = async (init?: boolean) => {
         item.selectList = item.spec_list.filter((spec) => spec.is_checked === 1)
         item.spec_list = item.spec_list.filter((spec) => spec.is_checked !== 1)
         item.expand = false
+
+        // eslint-disable-next-line eqeqeq
+        if (userLevel.value == 2) {
+          item.goods_price = item.vip_price
+        }
       })
 
       total.value = data.count
@@ -272,8 +280,22 @@ const getGoodsList = async (init?: boolean) => {
     })
 }
 
+const getUserInfo = async () => {
+  const res = await httpPost('/api/UsersInfo/index', {
+    token_order: getOrderToken(),
+  })
+
+  const data = res.data as {
+    level: number
+  }
+
+  userLevel.value = data.level
+  uni.setStorageSync('userLevel', userLevel.value)
+}
+
 // 测试 uni API 自动引入
 onLoad(async () => {
+  await getUserInfo()
   getFirstCateList()
 
   // uni.setNavigationBarTitle({

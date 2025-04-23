@@ -39,6 +39,10 @@
           <text class="user-info-label">用户名：</text>
           <text class="user-info-value">{{ userInfo.username || '-' }}</text>
         </view>
+        <view class="user-info-item mt-10rpx">
+          <text class="user-info-label">用户编号：</text>
+          <text class="user-info-value">{{ userInfo.user_code || '-' }}</text>
+        </view>
       </view>
     </view>
 
@@ -74,9 +78,13 @@ import { getOrderToken } from '@/utils/orderToken'
 const userInfo = ref<{
   nikename: string
   username: string
+  user_code: string
+  level: number
 }>({
   nikename: '',
   username: '',
+  user_code: '',
+  level: 1,
 })
 
 // const avatarUrl = computed(() => {
@@ -97,7 +105,11 @@ const getUserInfo = async () => {
   userInfo.value = res.data as {
     nikename: string
     username: string
+    level: number
+    user_code: string
   }
+
+  uni.setStorageSync('userLevel', userInfo.value.level)
 }
 
 // const goPersonalEdit = () => {

@@ -330,7 +330,7 @@ const updateTotalPrice = () => {
 
     // 如果有选中的包装，计入总价 (包装价格 = 包装单价 × 分类下选中商品总数量)
     if (category.bao && categorySelectedCount > 0) {
-      price += Number(category.bao.goods_price)
+      price += Number(category.bao.goods_price) * categorySelectedCount
     }
   })
 
@@ -609,7 +609,7 @@ onBeforeUnmount(() => {
 .package-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
+  // gap: 20rpx;
 }
 
 .package-item {
@@ -617,9 +617,10 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: calc(50% - 20rpx);
+  width: 100%;
   min-height: 100rpx; /* 确保有足够的高度显示两行文本 */
   padding: 12rpx;
+  margin-bottom: 20rpx;
   overflow: hidden; /* 防止内容溢出 */
   border: 1px solid #eee;
   border-radius: 8rpx;
