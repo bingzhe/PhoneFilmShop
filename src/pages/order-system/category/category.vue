@@ -77,6 +77,7 @@
     <wd-popup
       v-model="showQuantityPopup"
       custom-style="border-radius:16rpx;padding:32rpx;"
+      custom-class="!top-30vh"
       :z-index="29"
     >
       <view class="quantity-popup">

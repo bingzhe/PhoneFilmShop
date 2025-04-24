@@ -62,6 +62,16 @@
       </wd-cell-group>
     </view>
 
+    <!-- 退出登录按钮 -->
+    <view class="logout-button-container">
+      <wd-button size="large" @click="logout" class="logout-button">
+        <view class="flex items-center justify-center">
+          <view class="i-ri:logout-box-line mr-8rpx"></view>
+          <text>退出登录</text>
+        </view>
+      </wd-button>
+    </view>
+
     <OrderTabbar />
   </view>
 </template>
@@ -132,6 +142,27 @@ const goToAddressList = () => {
   })
 }
 
+// 退出登录
+const logout = () => {
+  // 清除登录相关的存储
+  uni.removeStorageSync('orderToken')
+  uni.removeStorageSync('userLevel')
+
+  // 延迟跳转到登录页
+  setTimeout(() => {
+    uni.switchTab({
+      url: '/pages/order-system-home/order-system-home',
+    })
+  }, 1500)
+
+  // 显示退出成功提示
+  uni.showToast({
+    title: '已退出登录',
+    icon: 'success',
+    duration: 1500,
+  })
+}
+
 onShow(() => {
   getUserInfo()
 })
@@ -172,5 +203,17 @@ onShow(() => {
   margin-right: 10rpx;
   font-size: 40rpx;
   color: #3c9cff;
+}
+
+.logout-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+  margin: 60rpx 40rpx;
+}
+
+.logout-button {
+  border-radius: 12rpx;
 }
 </style>
