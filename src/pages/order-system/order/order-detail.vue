@@ -135,7 +135,7 @@
         <view class="price-detail">
           <view class="price-item">
             <text>商品总数</text>
-            <text>¥{{ orderInfo.all_num }}</text>
+            <text>{{ orderInfo.all_num }}</text>
           </view>
           <view class="price-item">
             <text>商品总价</text>
