@@ -85,7 +85,7 @@
 
         <view class="popup-content mb-32rpx">
           <view class="product-name text-16px mb-16rpx">
-            {{ currentProduct?.code }} {{ currentProduct?.cate_name || '' }}
+            {{ currentProduct?.code }} {{ currentProduct?.jian || '' }}
             {{ currentProduct?.goods_name || '' }}
           </view>
           <view class="flex justify-between items-center">

@@ -100,7 +100,7 @@
 
           <view class="order-footer">
             <view class="order-total">
-              <text class="total-price">合计：¥{{ order.price }}</text>
+              <text class="total-price">总数量：{{ order.all_num }} 合计：¥{{ order.price }}</text>
             </view>
 
             <view class="order-actions">
