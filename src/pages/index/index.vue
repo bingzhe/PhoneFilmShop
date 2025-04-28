@@ -20,7 +20,7 @@
     <wd-swiper
       v-if="swiperList.length > 0"
       :list="swiperList"
-      autoplay
+      :autoplay="swiperAutoPlay"
       :current="0"
       height="120"
     ></wd-swiper>
@@ -127,6 +127,7 @@ defineOptions({
 
 const noticeTextList = ref<string[]>([])
 const swiperList = ref<string[]>([])
+const swiperAutoPlay = ref(false)
 
 const phoneModal = ref('')
 
@@ -338,6 +339,14 @@ onLoad(async () => {
   uni.setNavigationBarTitle({
     title: projectName.value,
   })
+})
+
+onShow(() => {
+  swiperAutoPlay.value = true
+})
+
+onHide(() => {
+  swiperAutoPlay.value = false
 })
 
 onReachBottom(() => {
