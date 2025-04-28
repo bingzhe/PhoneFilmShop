@@ -40,9 +40,9 @@
           </view>
         </view>
 
-        <view class="text-14px color-#fa4126">
+        <!-- <view class="text-14px color-#fa4126">
           <text>零售指导价：¥{{ product.price }}元</text>
-        </view>
+        </view> -->
       </view>
     </view>
     <view class="text-center" @click="toggleExpand">
