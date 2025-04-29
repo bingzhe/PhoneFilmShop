@@ -1,7 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-const initState = { nickname: '', avatar: '', token: '', phone: '' }
+const initState = {
+  nickname: '',
+  avatar: '',
+  token: '',
+  phone: '',
+}
 
 export const useUserStore = defineStore(
   'user',
