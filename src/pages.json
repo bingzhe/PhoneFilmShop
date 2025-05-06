@@ -359,6 +359,16 @@
       }
     },
     {
+      "path": "pages/order-system/order-person/change-password",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "修改密码",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/order-system/order-person/order-person",
       "type": "page",
       "layout": "default",
