@@ -54,6 +54,11 @@
             <view class="i-ri:file-list-3-line cell-icon"></view>
           </template>
         </wd-cell>
+        <wd-cell title="修改密码" is-link @click="handleChangePassword">
+          <template #icon>
+            <view class="i-ri:lock-password-line cell-icon"></view>
+          </template>
+        </wd-cell>
         <!-- <wd-cell title="地址管理" is-link @click="goToAddressList">
           <template #icon>
             <view class="i-ri:map-pin-line cell-icon"></view>
@@ -132,6 +137,13 @@ const getUserInfo = async () => {
 const goToOrderList = () => {
   uni.navigateTo({
     url: '/pages/order-system/order/order-list',
+  })
+}
+
+// 跳转到修改密码
+const handleChangePassword = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/order-person/change-password',
   })
 }
 

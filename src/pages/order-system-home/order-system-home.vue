@@ -72,6 +72,7 @@ import { ref, reactive } from 'vue'
 import { useToast, useMessage } from 'wot-design-uni'
 import { httpPost } from '@/utils/http'
 import { getOrderToken, setOrderToken } from '@/utils/orderToken'
+import { saveUsername, getLastUsername } from '@/utils/userStorage'
 
 // 表单引用
 const formRef = ref()
@@ -102,6 +103,9 @@ const handleLogin = () => {
             // 保存登录token，设置7天有效期
             setOrderToken(res.data.token_order, 1)
 
+            // 保存用户名到本地存储
+            saveUsername(formData.username)
+
             toast.success('登录成功')
 
             // 登录成功后跳转到订单系统
@@ -130,6 +134,19 @@ onMounted(() => {
     uni.reLaunch({
       url: '/pages/order-system/category/category',
     })
+  } else {
+    // 如果没有token，尝试从本地存储获取上次登录的用户名
+    const username = getLastUsername()
+    if (username) {
+      formData.username = username
+    }
+  }
+})
+
+onShow(() => {
+  const username = getLastUsername()
+  if (username) {
+    formData.username = username
   }
 })
 </script>
