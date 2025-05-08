@@ -1,5 +1,5 @@
 {
-  "name": "科迪亚",
+  "name": "贴膜测试",
   "appid": "__UNI__64B3A63",
   "description": "",
   "versionName": "1.0.0",
@@ -83,7 +83,7 @@
   },
   "quickapp": {},
   "mp-weixin": {
-    "appid": "wx08525ddabf8590cf",
+    "appid": "wx279adc4e40b50196",
     "setting": {
       "urlCheck": false
     },

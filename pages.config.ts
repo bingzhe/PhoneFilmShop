@@ -32,12 +32,12 @@ export default defineUniPages({
         pagePath: 'pages/index/index',
         text: '型号查询',
       },
-      {
-        iconPath: 'static/tabbar/video-off.png',
-        selectedIconPath: 'static/tabbar/video-on.png',
-        pagePath: 'pages/order-system-home/order-system-home',
-        text: '下单系统',
-      },
+      // {
+      //   iconPath: 'static/tabbar/video-off.png',
+      //   selectedIconPath: 'static/tabbar/video-on.png',
+      //   pagePath: 'pages/order-system-home/order-system-home',
+      //   text: '下单系统',
+      // },
       {
         iconPath: 'static/tabbar/my-off.png',
         selectedIconPath: 'static/tabbar/my-on.png',
