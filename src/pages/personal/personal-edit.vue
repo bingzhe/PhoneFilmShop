@@ -43,13 +43,11 @@
       class="h-44px pl-15px pr-15px border-t-1rpx border-b-1rpx border-l-0 border-r-0 border-#E5E5E5 border-solid flex items-center"
     >
       <view class="text-14px text-label w-25% mr-15px">手机号</view>
-      <view v-if="userInfo.phone" class="text-14px text-#333333">
+      <!-- <view v-if="userInfo.phone" class="text-14px text-#333333">
         {{ userInfo.phone }}
-      </view>
-      <view v-if="!userInfo.phone">
-        <wd-button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" size="small">
-          绑定手机号
-        </wd-button>
+      </view> -->
+      <view class="w-full">
+        <wd-input type="number" v-model="phoneNumber" placeholder="请输入手机号" clearable />
       </view>
     </view>
 
@@ -77,6 +75,7 @@ const userInfo = computed(() => {
 
 const nickname = ref(userInfo.value.nickname)
 const avatar = ref(userInfo.value.avatar)
+const phoneNumber = ref(userInfo.value.phone)
 
 const avatarUrl = computed(() => {
   return `${baseUrl}${avatar.value}`
@@ -118,6 +117,10 @@ const onSave = () => {
     params.avatar = avatar.value
   }
 
+  if (phoneNumber.value) {
+    params.phone = phoneNumber.value
+  }
+
   httpPost('/api/UsersInfo/saveUserInfo', params).then((res) => {
     toast.success('保存成功')
 
@@ -134,21 +137,6 @@ const onSave = () => {
         }, 1000)
       })
   })
-}
-
-const getPhoneNumber = (e: any) => {
-  const { code } = e
-  const token = userStore.getToken()
-
-  if (code) {
-    httpPost('/api/WxLogin/savePhone', { code, token }).then((res) => {
-      uni.showToast({
-        icon: 'none',
-        title: '绑定成功',
-      })
-      getUserInfo()
-    })
-  }
 }
 </script>
 
