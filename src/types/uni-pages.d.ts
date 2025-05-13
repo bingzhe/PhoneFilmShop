@@ -6,7 +6,6 @@
 interface NavigateToOptions {
   url: "/pages/start/start" |
        "/pages/about/about" |
-       "/pages/feedback/feedback" |
        "/pages/index/index" |
        "/pages/member/member-audit" |
        "/pages/member/member-combo-list" |
@@ -14,7 +13,6 @@ interface NavigateToOptions {
        "/pages/member/member-combo-qr" |
        "/pages/member/member-purchase" |
        "/pages/member/member-shop-list" |
-       "/pages/order-system-home/order-system-home" |
        "/pages/personal/personal-edit" |
        "/pages/personal/personal" |
        "/pages/service-added/service-added" |
@@ -28,17 +26,7 @@ interface NavigateToOptions {
        "/pages/shop/shop-staff" |
        "/pages/shop/shop" |
        "/pages/shop-info/shop-info" |
-       "/pages/video-course/video-course" |
-       "/pages/order-system/address/address-add" |
-       "/pages/order-system/address/address-list" |
-       "/pages/order-system/cart/cart" |
-       "/pages/order-system/category/category" |
-       "/pages/order-system/order/confirm-order" |
-       "/pages/order-system/order/order-detail" |
-       "/pages/order-system/order/order-list" |
-       "/pages/order-system/order-person/change-password" |
-       "/pages/order-system/order-person/order-person" |
-       "/pages/order-system/order-person/order-personal-edit";
+       "/pages/video-course/video-course";
 }
 interface RedirectToOptions extends NavigateToOptions {}
 
