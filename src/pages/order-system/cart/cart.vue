@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '购物车',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -185,7 +185,7 @@ const getCart = () => {
   cartLoading.value = true
   toast.loading('加载中...')
   httpPost<any[]>('/api/Order/GetCartList', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
   })
     .then((res) => {
       const data = res.data || {}
@@ -230,7 +230,7 @@ const getCart = () => {
 // 更新商品数量
 const updateGoodsNum = (item: any) => {
   httpPost('/api/Order/CreateCart', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
     cart_id: item.cart_id,
     goods_num: item.goods_num,
     goods_id: item.goods_id,
@@ -249,7 +249,7 @@ const updateGoodsNum = (item: any) => {
 // 更新包装
 const handlePackage = (category: any, pack: any, isUpdate = false) => {
   const params: any = {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
     goods_num: 1,
     goods_id: pack.goods_id,
   }
@@ -274,7 +274,7 @@ const removePackage = (category: any) => {
   if (!category.bao || !category.bao.cart_id) return
 
   httpPost('/api/Order/DelCart', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
     cart_list: category.bao.cart_id,
   })
     .then(() => {
@@ -294,7 +294,7 @@ const removeCartItem = (cartId: number) => {
     success: (res) => {
       if (res.confirm) {
         httpPost('/api/Order/DelCart', {
-          token_order: getOrderToken(),
+          token: getOrderToken(),
           cart_list: cartId,
         }).then(() => {
           toast.success('删除成功')

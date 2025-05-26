@@ -3,7 +3,7 @@
 {
   style: {
     navigationBarTitleText: '分类',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -12,48 +12,30 @@
   <!-- :style="{ marginTop: safeAreaInsets?.top + 'px' }" -->
   <view class="bg-white">
     <wd-sticky :offset-top="0" :z-index="19">
-      <wd-search
-        placeholder="请输入手机型号"
-        v-model="searchValue"
-        cancel-txt="搜索"
-        custom-class="important-pt10rpx important-pb10rpx w-700rpx"
-        @search="handleSearch"
-        @cancel="handleSearch"
-        @change="handleSearchChange"
-      />
-
-      <CateMenu
-        v-show="!showSearchPanel"
-        :menus="firstCates"
-        :firstCateId="firstCateId"
-        @menu-item-click="onMenuClick"
-      />
+      <view class="w-750rpx bg-#fff">
+        <wd-search
+          placeholder="请输入要查询内容"
+          v-model="searchValue"
+          cancel-txt="搜索"
+          custom-class="important-pt10rpx important-pb10rpx w-700rpx"
+          @search="handleSearch"
+          @cancel="handleSearch"
+          @change="handleSearchChange"
+        />
+      </view>
     </wd-sticky>
 
-    <view v-show="showSearchPanel" class="ml-30rpx mr-30rpx">
-      <view
-        v-for="(name, index) in searchNameList"
-        :key="index"
-        class="text-14px line-height-60rpx b-b-1px b-b-solid b-b-#ccc"
-        @click="handleSearchNameItemClick(name)"
-      >
-        <text
-          v-for="(item, j) in name"
-          :key="j"
-          :class="item.toLowerCase() === searchValue.toLowerCase() ? 'color-red' : ''"
-        >
-          {{ item }}
-        </text>
+    <view class="flex min-h-100vh">
+      <view class="category-left-container">
+        <SliderMenu
+          :menus="firstCates"
+          :toggleCate="toggleCate"
+          @slider-menu-item-click="onSliderClick"
+        />
       </view>
-    </view>
 
-    <view v-show="!showSearchPanel" class="flex min-h-100vh">
-      <SliderMenu
-        :menus="secondCates"
-        :toggleCate="toggleCate"
-        @slider-menu-item-click="onSliderClick"
-      />
-      <view class="flex-1">
+      <view class="flex-1 w-570rpx">
+        <CateMenu :menus="secondCates" :firstCateId="secondCateId" @menu-item-click="onMenuClick" />
         <ProductItem
           v-for="(product, index) in list"
           :key="index"
@@ -84,13 +66,19 @@
         <view class="popup-title text-center text-18px font-bold mb-32rpx">选择数量</view>
 
         <view class="popup-content mb-32rpx">
-          <view class="product-name text-16px mb-16rpx">
-            {{ currentProduct?.code }} {{ currentProduct?.jian || '' }}
-            {{ currentProduct?.goods_name || '' }}
+          <view class="flex mb-16rpx">
+            <image
+              :src="currentProduct?.goods_img_full"
+              mode="aspectFill"
+              class="popup-product-image mr-16rpx"
+            />
+            <view class="product-name text-16px flex-1 w-350rpx">
+              {{ currentProduct?.goods_name || '' }}
+            </view>
           </view>
           <view class="flex justify-between items-center">
             <text class="text-14px">数量：</text>
-            <wd-input-number v-model="selectedQuantity" :min="0"></wd-input-number>
+            <wd-input-number v-model="selectedQuantity" :min="1"></wd-input-number>
           </view>
         </view>
 
@@ -157,71 +145,65 @@ const userLevel = ref(1)
 
 // 输入框查找
 const handleSearch = () => {
-  searchType.value = 1
-  getGoodsList(true)
+  if (searchValue.value) {
+    uni.navigateTo({
+      url: `/pages/order-system/goods-search-list/goods-search-list?name=${searchValue.value}`,
+    })
+  } else {
+    uni.navigateTo({
+      url: '/pages/order-system/goods-search-list/goods-search-list',
+    })
+  }
 }
 
 const getFirstCateList = async () => {
-  httpGet<any[]>('/api/Goods/getCateList1', { pid: 0, level: 1 }).then((res) => {
+  // pid: 0, level: 1
+  httpGet<any[]>('/api/Ordergoods/getCateList', {}).then((res) => {
     firstCates.value = res.data || []
 
     if (firstCates.value.length > 0) {
-      firstCateId.value = firstCates.value[0].cate_id
+      firstCateId.value = firstCates.value[0].category_id
       getSecondCateList(firstCateId.value)
     }
   })
 }
 
 const getSecondCateList = async (cate) => {
-  httpGet<any[]>('/api/Goods/getCateList1', { pid: cate, level: 2 }).then((res) => {
+  httpGet<any[]>('/api/Ordergoods/getCateList', { category_id: cate }).then((res) => {
     secondCates.value = res.data || []
 
-    // if (secondCates.value.length > 0) {
-    //   secondCateId.value = secondCates.value[0].cate_id
-    // }
+    if (secondCates.value.length > 0) {
+      secondCateId.value = secondCates.value[0].category_id
+    }
     getGoodsList(true)
   })
 }
 
 const onMenuClick = (id) => {
-  firstCateId.value = id
-  secondCateId.value = ''
-  toggleCate.value = !toggleCate.value
-  getSecondCateList(firstCateId.value)
-}
-
-const onSliderClick = (id) => {
   secondCateId.value = id
   getGoodsList(true)
 }
 
-const handleSearchChange = async ({ value }) => {
-  if (value) {
-    showSearchPanel.value = true
-  } else {
-    showSearchPanel.value = false
-  }
-
-  const getInf = (str, key) => str.replace(new RegExp(`${key}`, 'gi'), `%%$&%%`).split('%%')
-
-  httpGet<any[]>('/api/Goods/getNameList', { name: value }).then((res) => {
-    const nameList = res.data.map((item) => {
-      return getInf(item, value)
-    })
-
-    searchNameList.value = nameList
-  })
+const onSliderClick = (id) => {
+  firstCateId.value = id
+  secondCateId.value = ''
+  // toggleCate.value = !toggleCate.value
+  getSecondCateList(firstCateId.value)
 }
 
-const handleSearchNameItemClick = (nameArr) => {
-  const name = nameArr.join('')
-
-  searchValue.value = name
-  showSearchPanel.value = false
-
-  searchType.value = 1
-
-  getGoodsList(true)
+const handleSearchChange = async ({ value }) => {
+  // if (value) {
+  //   showSearchPanel.value = true
+  // } else {
+  //   showSearchPanel.value = false
+  // }
+  // const getInf = (str, key) => str.replace(new RegExp(`${key}`, 'gi'), `%%$&%%`).split('%%')
+  // httpGet<any[]>('/api/Goods/getNameList', { name: value }).then((res) => {
+  //   const nameList = res.data.map((item) => {
+  //     return getInf(item, value)
+  //   })
+  //   searchNameList.value = nameList
+  // })
 }
 
 const onToggleExpand = (product) => {
@@ -229,47 +211,50 @@ const onToggleExpand = (product) => {
 }
 
 const getGoodsList = async (init?: boolean) => {
-  console.log('userLevel', userLevel.value)
+  // console.log('userLevel', userLevel.value)
   if (init) {
     page.value = 1
     list.value = []
   }
 
   const params: { [key: string]: any } = {
+    order: 1,
+    by: 1,
     page: page.value,
     size: 50,
   }
 
   if (secondCateId.value) {
-    params.cate_id = secondCateId.value
-  } else if (firstCateId.value) {
-    // 1是一级菜单的全部分类
-    // eslint-disable-next-line eqeqeq
-    if (firstCateId.value !== 1) {
-      params.pid = firstCateId.value
-    }
+    params.category_id = secondCateId.value
   }
+  // else if (firstCateId.value) {
+  //   // 1是一级菜单的全部分类
+  //   // eslint-disable-next-line eqeqeq
+  //   if (firstCateId.value !== 1) {
+  //     params.pid = firstCateId.value
+  //   }
+  // }
 
-  if (searchType.value === 1 && searchValue.value) {
-    params.name = searchValue.value
-  }
+  // if (searchType.value === 1 && searchValue.value) {
+  //   params.name = searchValue.value
+  // }
 
   toast.loading('加载中...')
   loading.value = true
-  httpGet<any[]>('/api/Goods/getGoodsList5', params)
+  httpGet<any[]>('/api/Ordergoods/getGoodsList', params)
     .then((res) => {
       const data: any = res.data || {}
       const _list = data.list || []
 
       _list.forEach((item) => {
-        item.selectList = item.spec_list.filter((spec) => spec.is_checked === 1)
-        item.spec_list = item.spec_list.filter((spec) => spec.is_checked !== 1)
-        item.expand = false
-
+        item.goods_img_full = `${baseUrl}${item.goods_img}?w=100&h=100`
+        // item.selectList = item.spec_list.filter((spec) => spec.is_checked === 1)
+        // item.spec_list = item.spec_list.filter((spec) => spec.is_checked !== 1)
+        // item.expand = false
         // eslint-disable-next-line eqeqeq
-        if (userLevel.value == 2) {
-          item.goods_price = item.vip_price
-        }
+        // if (userLevel.value == 2) {
+        //   item.goods_price = item.vip_price
+        // }
       })
 
       total.value = data.count
@@ -281,22 +266,9 @@ const getGoodsList = async (init?: boolean) => {
     })
 }
 
-const getUserInfo = async () => {
-  const res = await httpPost('/api/UsersInfo/index', {
-    token_order: getOrderToken(),
-  })
-
-  const data = res.data as {
-    level: number
-  }
-
-  userLevel.value = data.level
-  uni.setStorageSync('userLevel', userLevel.value)
-}
-
 // 测试 uni API 自动引入
 onLoad(async () => {
-  await getUserInfo()
+  // await getUserInfo()
   getFirstCateList()
 
   // uni.setNavigationBarTitle({
@@ -348,10 +320,16 @@ const confirmAddToCart = () => {
     return
   }
 
-  httpPost<any[]>('/api/Order/CreateCart', {
-    token_order: getOrderToken(),
-    goods_id: currentProduct.value.goods_id,
-    goods_num: selectedQuantity.value,
+  const cartList = [
+    {
+      goods_id: currentProduct.value.goods_id,
+      goods_num: selectedQuantity.value,
+    },
+  ]
+
+  httpPost<any[]>('/api/Order/CreateCartBatch', {
+    token: getOrderToken(),
+    cart_list: JSON.stringify(cartList),
   })
     .then((res) => {
       console.log(res)
@@ -410,12 +388,8 @@ page {
 }
 
 .product-name {
-  display: -webkit-box;
-  overflow: hidden;
   color: #333;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  word-break: break-all;
 }
 
 .popup-content {
@@ -424,5 +398,21 @@ page {
 
 .popup-footer {
   margin-top: 32rpx;
+}
+
+.popup-product-image {
+  flex-shrink: 0;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+}
+
+.category-left-container {
+  position: sticky;
+  top: 40px;
+  left: 0;
+  z-index: 10;
+  height: calc(100vh - 40px); /* 减去搜索栏的高度 */
+  overflow-y: auto;
 }
 </style>

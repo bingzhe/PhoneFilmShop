@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '增值服务',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }

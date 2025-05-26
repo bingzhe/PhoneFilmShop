@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '修改密码',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -107,7 +107,7 @@ const submitForm = async () => {
     loading.value = true
 
     const res = await httpPost('/api/Login/RevisePwdByPwd', {
-      token_order: getOrderToken(),
+      token: getOrderToken(),
       old_password: formData.oldPassword,
       new_password: formData.newPassword,
       again_password: formData.confirmPassword,

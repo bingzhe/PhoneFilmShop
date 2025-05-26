@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '核销记录',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -59,7 +59,7 @@ const dataList = ref([])
 const getComboLog = () => {
   toast.loading('加载中...')
   httpPost(`/api/UsersInfo/getUsersComboLog`, {
-    token: userInfo.value.token,
+    token_order: userInfo.value.token,
     shop_id: shopId.value,
   })
     .then((res) => {

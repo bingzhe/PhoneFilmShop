@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '贴膜核销',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -58,7 +58,7 @@ let qrCode = null
 const getMyComboList = async () => {
   try {
     const res = await httpPost('/api/UsersInfo/getUsersComboList', {
-      token: userInfo.value.token,
+      token_order: userInfo.value.token,
       shop_id: shopId.value,
     })
 

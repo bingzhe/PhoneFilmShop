@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { wxLogin } from '@/utils/wxLogin'
+import { wxLogin, wxLoginOrder } from '@/utils/wxLogin'
 import { getUserInfo } from '@/service/user'
 import { httpGet } from '@/utils/http'
 
@@ -34,6 +34,8 @@ onLoad(async (options) => {
 
     await wxLogin()
     await getUserInfo()
+
+    wxLoginOrder()
 
     getProjectName()
 

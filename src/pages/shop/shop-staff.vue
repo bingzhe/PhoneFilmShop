@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '店员管理',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -18,7 +18,7 @@
             <wd-img width="48" height="48" round :src="row.avatarUrl">
               <template #error>
                 <view class="w-100% h-100% flex justify-center items-center">
-                  <view class="i-carbon:user-avatar-filled text-64rpx text-#00A3FF"></view>
+                  <view class="i-carbon:user-avatar-filled text-64rpx text-#23B7EB"></view>
                 </view>
               </template>
             </wd-img>
@@ -103,7 +103,7 @@ const handleSubmit = () => {
         const token = userStore.getToken()
 
         const params: any = {
-          token,
+          token_order: token,
           shop_id: shopId.value,
           phone: formModel.phone,
         }
@@ -132,7 +132,7 @@ const handleDelete = (row) => {
   toast.loading('加载中...')
   httpPost('/api/Shop/delAdmin', {
     shop_id: shopId.value,
-    token,
+    token_order: token,
     admin_id: id,
   })
     .then((res) => {
@@ -149,7 +149,7 @@ const getList = () => {
   toast.loading('加载中...')
 
   httpPost('/api/Shop/getAdminUsers', {
-    token,
+    token_order: token,
     shop_id: shopId.value,
     page: 1,
     size: 100,

@@ -62,7 +62,10 @@ function confirm() {
       .catch(() => {
         // 关闭小程序
         if (props.type === 'personal') {
-          uni.navigateBack()
+          // uni.navigateBack()
+          uni.switchTab({
+            url: '/pages/index/index',
+          })
         } else if (props.type === 'shop') {
           // #ifdef MP-WEIXIN
           wx.exitMiniProgram()

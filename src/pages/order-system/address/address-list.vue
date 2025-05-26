@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '地址列表',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -84,7 +84,7 @@ const eventChannel = ref(null)
 const getAddressList = () => {
   toast.loading('加载中...')
   httpPost('/Api/Usersinfo/getAddress', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
   })
     .then((res: any) => {
       if (res.data) {
@@ -108,7 +108,7 @@ const handleDelete = (item: any) => {
       if (res.confirm) {
         toast.loading('删除中...')
         httpPost('/Api/Usersinfo/delAddress', {
-          token_order: getOrderToken(),
+          token: getOrderToken(),
           address_id: item.address_id,
         })
           .then(() => {

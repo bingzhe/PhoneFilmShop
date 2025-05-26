@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '个人信息',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -58,7 +58,7 @@ const username = ref('')
 
 const getUserInfo = async () => {
   const res: any = await httpPost('/api/UsersInfo/index', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
   })
 
   if (res.code === 200 && res.data) {
@@ -71,7 +71,7 @@ const onSave = () => {
   const token = getOrderToken()
 
   const params: any = {
-    token_order: token,
+    token,
   }
   if (nickname.value) {
     params.nikename = nickname.value

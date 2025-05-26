@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '订单确认',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -143,7 +143,7 @@ const remark = ref('')
 const getCartList = () => {
   toast.loading('加载中...')
   httpPost<any>('/api/Order/GetCartList', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
   })
     .then((res) => {
       const data = res.data || {}
@@ -241,7 +241,7 @@ const canSubmit = computed(() => {
 // 获取默认地址
 // const getDefaultAddress = () => {
 //   httpPost('/Api/Usersinfo/getDefaultAddress', {
-//     token_order: getOrderToken(),
+//     token: getOrderToken(),
 //   })
 //     .then((res) => {
 //       if (res.data) {
@@ -286,7 +286,7 @@ const submitOrder = () => {
   })
   console.log(cartIdList)
   httpPost('/api/Order/CreateOrder', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
     cart_list: cartIdList.join(','),
     order_price: totalPrice.value.toFixed(2),
     // address_id: defaultAddress.value.address_id,

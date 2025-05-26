@@ -101,7 +101,7 @@ const handleLogin = () => {
 
           if (res.code === 200 && res.data) {
             // 保存登录token，设置7天有效期
-            setOrderToken(res.data.token_order, 1)
+            setOrderToken(res.data.token, 1)
 
             // 保存用户名到本地存储
             saveUsername(formData.username)

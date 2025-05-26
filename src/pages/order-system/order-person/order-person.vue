@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '个人中心',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -115,7 +115,7 @@ const userInfo = ref<{
 
 const getUserInfo = async () => {
   const res = await httpPost('/api/UsersInfo/index', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
   })
   userInfo.value = res.data as {
     nikename: string

@@ -50,3 +50,10 @@ export const setOrderToken = (token: string, expireDays: number = 1): void => {
 
   uni.setStorageSync('orderToken', tokenDataStr)
 }
+
+/**
+ * 清除订单令牌
+ */
+export const clearOrderToken = () => {
+  uni.removeStorageSync('orderToken')
+}

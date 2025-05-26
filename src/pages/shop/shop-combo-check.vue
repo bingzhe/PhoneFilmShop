@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '会员贴膜核销',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -29,7 +29,7 @@
         <wd-img width="80rpx" height="80rpx" round :src="shopLogoUrl">
           <template #error>
             <view class="w-100% h-100% flex justify-center items-center">
-              <view class="i-ic:twotone-storefront text-80rpx text-#00A3FF"></view>
+              <view class="i-ic:twotone-storefront text-80rpx text-#23B7EB"></view>
             </view>
           </template>
         </wd-img>
@@ -40,7 +40,7 @@
         <!-- <wd-img width="80rpx" height="80rpx" round :src="avatarUrl">
           <template #error>
             <view class="w-100% h-100% flex justify-center items-center">
-              <view class="i-carbon:user-avatar-filled text-80rpx text-#00A3FF"></view>
+              <view class="i-carbon:user-avatar-filled text-80rpx text-#23B7EB"></view>
             </view>
           </template>
         </wd-img> -->
@@ -96,7 +96,7 @@ const getShopInfo = async () => {
   try {
     toast.loading('加载中...')
     const res = await httpPost('/api/Shop/getShopInfo', {
-      token: userInfo.value.token,
+      token_order: userInfo.value.token,
       shop_id: shopId.value,
     })
 
@@ -127,7 +127,7 @@ const handleScan = () => {
       comboId.value = scanComboId
 
       httpPost('/api/UsersInfo/getUsersComboInfo', {
-        token: userInfo.value.token,
+        token_order: userInfo.value.token,
         id: scanComboId,
       })
         .then((res) => {
@@ -155,7 +155,7 @@ const handleSave = () => {
   toast.loading('提交中...')
 
   httpPost('/api/Shop/checkCombo', {
-    token: userInfo.value.token,
+    token_order: userInfo.value.token,
     id: comboId.value,
   })
     .then((res) => {

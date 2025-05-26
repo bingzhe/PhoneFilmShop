@@ -5,7 +5,7 @@ export const getUserInfoAPI = async () => {
   const userStore = useUserStore()
   const token = userStore.getToken()
 
-  return http.post('/api/UsersInfo/index', { token })
+  return http.post('/api/UsersInfo/index', { token_order: token })
 }
 
 export const getUserInfo = async () => {

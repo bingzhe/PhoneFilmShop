@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '套餐模板',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -70,7 +70,7 @@ const onSelectComboTemp = () => {
 
   toast.loading('保存中...')
   httpPost('/api/Shop/saveShopComboById', {
-    token: userStore.getToken(),
+    token_order: userStore.getToken(),
     shop_id: shopId.value,
     ids: selectList.value.join(','),
   })
@@ -94,7 +94,7 @@ const getComboTempList = () => {
   const token = userStore.getToken()
 
   httpPost('/api/Shop/getComboList', {
-    token,
+    token_order: token,
     shop_id: shopId.value,
   })
     .then((res) => {

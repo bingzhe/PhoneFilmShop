@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '个人信息',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -30,6 +30,7 @@
     <view
       class="border-t-1rpx border-b-1rpx border-l-0 border-r-0 border-#E5E5E5 border-solid mb-15px"
     >
+      <!--@ts-ignore -->
       <wd-input
         type="nickname"
         label="昵称"
@@ -108,7 +109,7 @@ const onSave = () => {
   const token = userStore.getToken()
 
   const params: any = {
-    token,
+    token_order: token,
   }
   if (nickname.value) {
     params.nikename = nickname.value
@@ -141,7 +142,7 @@ const getPhoneNumber = (e: any) => {
   const token = userStore.getToken()
 
   if (code) {
-    httpPost('/api/WxLogin/savePhone', { code, token }).then((res) => {
+    httpPost('/api/WxLogin/savePhone', { code, token_order: token }).then((res) => {
       uni.showToast({
         icon: 'none',
         title: '绑定成功',

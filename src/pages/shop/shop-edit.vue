@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '店铺登记',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
   'mp-alipay': {
@@ -23,7 +23,7 @@
           <wd-img width="64" height="64" round :src="shopLogoUrl">
             <template #error>
               <view class="w-100% h-100% flex justify-center items-center">
-                <view class="i-ic:twotone-storefront text-64rpx text-#00A3FF"></view>
+                <view class="i-ic:twotone-storefront text-64rpx text-#23B7EB"></view>
               </view>
             </template>
           </wd-img>
@@ -267,7 +267,7 @@ function handleSubmit() {
 
         if (!shopId.value) {
           const params: any = {
-            token,
+            token_order: token,
             ...formModel.value,
           }
 
@@ -290,7 +290,7 @@ function handleSubmit() {
           })
         } else {
           const params: any = {
-            token,
+            token_order: token,
             shop_id: shopId.value,
             shop_name: formModel.value.shop_name,
             shop_logo: formModel.value.shop_logo,
@@ -314,7 +314,7 @@ function getShopInfo() {
   const token = userStore.getToken()
 
   httpPost('/api/Shop/getShopInfo', {
-    token,
+    token_order: token,
     shop_id: shopId.value,
   }).then((res) => {
     const resultData = res.data as any

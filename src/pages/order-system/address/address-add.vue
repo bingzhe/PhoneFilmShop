@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '新增地址',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -161,7 +161,7 @@ const validatorArea = (val: any) => {
 const getAddressDetail = () => {
   toast.loading('加载中...')
   httpPost('/Api/Usersinfo/getAddress', {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
   })
     .then((res: any) => {
       if (res.data && res.data.length > 0) {
@@ -220,7 +220,7 @@ const saveAddress = () => {
   toast.loading('保存中...')
 
   const params: any = {
-    token_order: getOrderToken(),
+    token: getOrderToken(),
     // address_id: addressId.value || '',
     name: formModel.value.name,
     telephone: formModel.value.telephone,

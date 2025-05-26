@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '套餐管理',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -34,7 +34,7 @@
             <view class="flex items-center flex-wrap w-210rpx">
               <view
                 v-if="index !== dataListLength - 1"
-                class="flex items-center justify-center w-45rpx h-45rpx bg-#00A3FF rounded-4rpx text-#fff mr-8rpx"
+                class="flex items-center justify-center w-45rpx h-45rpx bg-#23B7EB rounded-4rpx text-#fff mr-8rpx"
                 @click="handleArrowDown(row, index)"
               >
                 <wd-icon name="arrow-thin-down" size="30rpx"></wd-icon>
@@ -42,7 +42,7 @@
 
               <view
                 v-if="index !== 0"
-                class="flex items-center justify-center w-45rpx h-45rpx bg-#00A3FF rounded-4rpx text-#fff mr-8rpx"
+                class="flex items-center justify-center w-45rpx h-45rpx bg-#23B7EB rounded-4rpx text-#fff mr-8rpx"
                 @click="handleArrowUp(row, index)"
               >
                 <wd-icon name="arrow-thin-up" size="30rpx"></wd-icon>
@@ -167,7 +167,7 @@ const handleSubmit = () => {
         const token = userStore.getToken()
 
         const params: any = {
-          token,
+          token_order: token,
           shop_id: shopId.value,
           combo_name: formModel.combo_name,
           combo_price: formModel.combo_price,
@@ -217,7 +217,7 @@ const handleArrowDown = (row, index) => {
 
   //   调用接口更新排序
   httpPost('/api/Shop/saveShopComboSort', {
-    token,
+    token_order: token,
     shop_id: shopId.value,
     ids: ids.join(','),
     sorts: sorts.join(','),
@@ -245,7 +245,7 @@ const handleArrowUp = (row, index) => {
 
   //   调用接口更新排序
   httpPost('/api/Shop/saveShopComboSort', {
-    token,
+    token_order: token,
     shop_id: shopId.value,
     ids: ids.join(','),
     sorts: sorts.join(','),
@@ -272,7 +272,7 @@ const handleDelete = (row) => {
   toast.loading('加载中...')
   httpPost('/api/Shop/delShopCombo', {
     shop_id: shopId.value,
-    token,
+    token_order: token,
     id,
   })
     .then((res) => {
@@ -289,7 +289,7 @@ const getShopComboList = () => {
   toast.loading('加载中...')
 
   httpPost('/api/Shop/getShopComboList', {
-    token,
+    token_order: token,
     shop_id: shopId.value,
   })
     .then((res) => {

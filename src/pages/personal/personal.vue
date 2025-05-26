@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '我',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -43,14 +43,14 @@
       <!--  -->
       <view class="p-64rpx flex flex-col items-center" @click="goShop" v-if="!!userInfo.shop_id">
         <view>
-          <view class="i-ic-twotone-storefront text-#00A3FF text-48rpx"></view>
+          <view class="i-ic-twotone-storefront text-#23B7EB text-48rpx"></view>
         </view>
         <view class="text-32rpx text-#666666">我的店铺</view>
       </view>
       <!--  -->
       <view class="p-32rpx flex flex-col items-center" @click="goShopEdit" v-if="!userInfo.shop_id">
         <view>
-          <view class="i-ic:baseline-drive-file-rename-outline text-#00A3FF text-48rpx"></view>
+          <view class="i-ic:baseline-drive-file-rename-outline text-#23B7EB text-48rpx"></view>
         </view>
         <view class="text-32rpx text-#666666">店铺登记</view>
       </view>
@@ -64,22 +64,22 @@
       <view class="p-32rpx flex justify-between">
         <view class="p-32rpx flex flex-col items-center" @click="goPersonalEdit">
           <view>
-            <view class="i-mingcute:profile-line text-#00A3FF text-48rpx"></view>
+            <view class="i-mingcute:profile-line text-#23B7EB text-48rpx"></view>
           </view>
           <view class="text-32rpx text-#666666">个人信息</view>
         </view>
         <view class="p-32rpx flex flex-col items-center" @click="goShopList">
           <view>
-            <view class="i-ic-twotone-storefront text-#00A3FF text-48rpx"></view>
+            <view class="i-ic-twotone-storefront text-#23B7EB text-48rpx"></view>
           </view>
           <view class="text-32rpx text-#666666">购买过的店铺</view>
         </view>
       </view>
     </view>
 
-    <view class="p-32rpx">
+    <!-- <view class="p-32rpx">
       <wd-button :block="true" @click="logout" size="large">返回首页</wd-button>
-    </view>
+    </view> -->
 
     <complete-userinfo-tip type="personal" />
   </view>

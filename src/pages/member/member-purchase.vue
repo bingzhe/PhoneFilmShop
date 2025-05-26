@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '申请会员',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -40,7 +40,7 @@ const timer = ref(0)
 
 const getUsersNotice = async () => {
   const res = await httpPost('/api/UsersInfo/getUsersNotice', {
-    token: userInfo.value.token,
+    token_order: userInfo.value.token,
     shop_id: shopId.value,
   })
 

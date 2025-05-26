@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '门店会员',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -126,7 +126,7 @@ type ResDataType = {
 const getShopMemberList = () => {
   toast.loading('加载中...')
   httpPost(`/api/Shop/getShopUsers`, {
-    token: userInfo.value.token,
+    token_order: userInfo.value.token,
     shop_id: shopId.value,
     page: page.value,
     size: size.value,

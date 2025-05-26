@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '订单详情',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -218,7 +218,7 @@ const getOrderDetail = async () => {
   try {
     const res = await httpPost('/Api/Order/GetOrderInfo', {
       order_id: orderId.value,
-      token_order: getOrderToken(),
+      token: getOrderToken(),
     })
     orderInfo.value = res.data
   } catch (error) {
@@ -242,7 +242,7 @@ const cancelOrder = () => {
         try {
           const result = await httpPost('/Api/Order/QuxiaoOrder', {
             order_id: orderId.value,
-            token_order: getOrderToken(),
+            token: getOrderToken(),
           })
           uni.showToast({
             title: '订单取消成功',

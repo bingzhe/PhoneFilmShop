@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '我的套餐',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -21,7 +21,7 @@
               <view>核销次数：{{ row.use_num }}次</view>
               <view>
                 剩余次数：
-                <text class="font-bold text-#00A3FF">{{ row.spare_num }}次</text>
+                <text class="font-bold text-#23B7EB">{{ row.spare_num }}次</text>
               </view>
               <view>最后核销时间：{{ row.use_time_str }}</view>
             </view>
@@ -54,7 +54,7 @@ const getMyComboList = async () => {
   try {
     toast.loading('加载中...')
     const res = await httpPost('/api/UsersInfo/getUsersComboList', {
-      token: userInfo.value.token,
+      token_order: userInfo.value.token,
       shop_id: shopId.value,
     })
 

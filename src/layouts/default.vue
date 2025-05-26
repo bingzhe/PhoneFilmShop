@@ -10,7 +10,7 @@
 import type { ConfigProviderThemeVars } from 'wot-design-uni'
 
 const themeVars: ConfigProviderThemeVars = {
-  colorTheme: '#00A3FF',
+  colorTheme: '#23B7EB',
   // buttonPrimaryBgColor: '#07c160',
   // buttonPrimaryColor: '#07c160',
 }

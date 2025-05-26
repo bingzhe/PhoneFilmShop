@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '店铺详情',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#23B7EB',
     navigationBarTextStyle: 'white',
   },
 }
@@ -15,7 +15,7 @@
       <wd-img width="180rpx" height="180rpx" round :src="shopLogoUrl">
         <template #error>
           <view class="w-100% h-100% flex justify-center items-center">
-            <view class="i-ic:twotone-storefront text-80rpx text-#00A3FF"></view>
+            <view class="i-ic:twotone-storefront text-80rpx text-#23B7EB"></view>
           </view>
         </template>
       </wd-img>
@@ -74,7 +74,7 @@ function getShopInfo() {
   const token = userStore.getToken()
 
   httpPost('/api/Shop/getShopInfo', {
-    token,
+    token_order: token,
     shop_id: shopId.value,
   }).then((res) => {
     const resultData = res.data as any
