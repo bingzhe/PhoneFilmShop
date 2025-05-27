@@ -106,11 +106,6 @@ const goodsId = ref('')
 // 购买数量
 const buyNumber = ref(1)
 
-// 弹窗相关
-const showQuantityPopup = ref(false)
-const selectedQuantity = ref(0)
-const currentProduct = ref<any>(null)
-
 // 标签页配置
 const tabs = ref([
   {
@@ -224,7 +219,6 @@ const getGoodsDetail = async (id) => {
     goodsInfo.pics = goodsInfo.img_list?.map((item) => `${baseUrl}${item}`)
 
     goodsDetail.value = goodsInfo
-    currentProduct.value = goodsInfo
   } catch (error) {
     console.error(error)
     toast.error('获取商品信息失败')

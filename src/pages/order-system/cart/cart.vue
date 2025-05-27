@@ -12,69 +12,28 @@
 <template>
   <view class="container">
     <view v-if="cartList.length > 0" class="cart-list">
-      <!-- 分类商品列表 -->
-      <view class="category-section" v-for="(category, index) in cartList" :key="index">
-        <view class="category-title">{{ category.category_name }}</view>
+      <!-- 商品块 -->
+      <view class="goods-item" v-for="item in cartList" :key="item.cart_id">
+        <view class="goods-checkbox" @click.stop>
+          <wd-checkbox size="large" v-model="item.checked" @change="updateTotalPrice"></wd-checkbox>
+        </view>
+        <image :src="item.pic" class="goods-image" @click="toggleItemChecked(item)"></image>
+        <view class="goods-content" @click="toggleItemChecked(item)">
+          <view class="goods-name mb-20rpx">{{ item.goods_name }}</view>
 
-        <!-- 商品块 -->
-        <view class="goods-item" v-for="(item, itemIndex) in category.list" :key="itemIndex">
-          <view class="goods-checkbox" @click.stop>
-            <wd-checkbox
-              size="large"
-              v-model="item.checked"
-              @change="updateTotalPrice"
-            ></wd-checkbox>
-          </view>
-          <view class="goods-content" @click="toggleItemChecked(item)">
-            <view class="goods-name mb-20rpx">{{ item.goods_name }}</view>
-            <view class="goods-spec" v-if="item.spec_name">
-              {{ item.spec_name }}
+          <view class="goods-bottom">
+            <view class="goods-price">¥{{ item.goods_price }}</view>
+            <view class="goods-count" @click.stop>
+              <wd-input-number
+                v-model="item.goods_num"
+                :min="1"
+                @change="updateGoodsNum(item)"
+              ></wd-input-number>
             </view>
-            <view class="goods-bottom">
-              <view class="goods-price">¥{{ item.goods_price }}</view>
-              <view class="goods-count" @click.stop>
-                <wd-input-number
-                  v-model="item.goods_num"
-                  :min="1"
-                  @change="updateGoodsNum(item)"
-                ></wd-input-number>
-              </view>
-            </view>
-          </view>
-          <view class="goods-delete" @click.stop="removeCartItem(item.cart_id)">
-            <wd-icon name="delete" size="22px"></wd-icon>
           </view>
         </view>
-
-        <!-- 包装选择 -->
-        <view v-if="category.bao_list && category.bao_list.length > 0" class="package-section">
-          <view class="package-title">选择包装</view>
-          <view class="package-list">
-            <view
-              v-for="(pack, packIndex) in category.bao_list"
-              :key="packIndex"
-              :class="[
-                'package-item',
-                category.bao && category.bao.goods_id === pack.goods_id
-                  ? 'package-item-active'
-                  : '',
-              ]"
-              @click="selectPackage(category, pack)"
-            >
-              <view class="package-img" v-if="pack.full_goods_img" @click.stop>
-                <wd-img
-                  :enable-preview="true"
-                  width="80rpx"
-                  height="80rpx"
-                  :src="pack.full_goods_img"
-                ></wd-img>
-              </view>
-              <view class="package-info">
-                <view class="package-name">{{ pack.goods_name }}</view>
-                <view class="package-price">¥{{ pack.goods_price }}</view>
-              </view>
-            </view>
-          </view>
+        <view class="goods-delete" @click.stop="removeCartItem(item.cart_id)">
+          <wd-icon name="delete" size="22px"></wd-icon>
         </view>
       </view>
     </view>
@@ -95,9 +54,14 @@
         <text>合计：</text>
         <text class="price">¥{{ totalPrice.toFixed(2) }}</text>
       </view>
-      <wd-button type="primary" round :disabled="selectedCount === 0" @click="submitOrder">
-        结算({{ selectedCount }})
-      </wd-button>
+      <view class="action-buttons">
+        <wd-button type="error" :disabled="selectedCount === 0" @click="batchDeleteItems">
+          删除
+        </wd-button>
+        <wd-button type="primary" round :disabled="selectedCount === 0" @click="submitOrder">
+          结算({{ selectedCount }})
+        </wd-button>
+      </view>
     </view>
 
     <OrderTabbar />
@@ -132,27 +96,6 @@ const selectedCartIds = ref<number[]>([])
 // 监听屏幕安全区域变化
 const safeAreaInsetBottom = ref(0)
 
-// // 存储选中的商品到本地
-// const saveSelectedItems = () => {
-//   try {
-//     uni.setStorageSync('selectedCartIds', JSON.stringify(selectedCartIds.value))
-//   } catch (e) {
-//     console.error('保存选中商品失败', e)
-//   }
-// }
-
-// // 从本地获取选中的商品
-// const getSelectedItems = () => {
-//   try {
-//     const saved = uni.getStorageSync('selectedCartIds')
-//     if (saved) {
-//       selectedCartIds.value = JSON.parse(saved)
-//     }
-//   } catch (e) {
-//     console.error('获取选中商品失败', e)
-//   }
-// }
-
 // 获取安全区域高度
 const getSafeArea = () => {
   try {
@@ -165,21 +108,6 @@ const getSafeArea = () => {
   }
 }
 
-// 监听屏幕旋转等事件
-// let resizeObserver: any = null
-// const setupResizeObserver = () => {
-//   try {
-//     if (typeof window !== 'undefined' && window.ResizeObserver) {
-//       resizeObserver = new ResizeObserver(() => {
-//         getSafeArea()
-//       })
-//       resizeObserver.observe(document.documentElement)
-//     }
-//   } catch (e) {
-//     console.error('监听屏幕变化失败', e)
-//   }
-// }
-
 // 获取购物车列表
 const getCart = () => {
   cartLoading.value = true
@@ -188,37 +116,25 @@ const getCart = () => {
     token: getOrderToken(),
   })
     .then((res) => {
-      const data = res.data || {}
+      console.log('getCart', res)
+      const data = res.data || []
 
-      const values = Object.values(data)
-      // 初始化选中状态
-      values.forEach((category: any) => {
-        if (category.list) {
-          category.list.forEach((item: any) => {
-            // 如果商品ID在已选择列表中，则设置为选中状态
-            item.checked = selectedCartIds.value.includes(item.cart_id)
-          })
+      data.forEach((item: any) => {
+        item.checked = true
+
+        const select = cartList.value.find((goods) => goods.cart_id === item.cart_id)
+        if (select) {
+          item.checked = select.checked
         }
-        // 初始化packList数组和选中的包装
-        // bao的数据结构
-        // cart_id: 11
-        // category_id: 33
-        // category_name: "九强高铝防静电"
-        // goods_id: 2193
-        // goods_img: null
-        // goods_name: "直屏钢化膜九强高铝防静电九强高铝（5合1裸片）包装"
-        // goods_num: 1
-        // goods_price: "1.30"
-        // is_bao: 1
-        // price: 1.3
-        // users_id: 106
-        category.bao = category.bao || null
-        ;(category.bao_list || []).forEach((pack: any) => {
-          pack.full_goods_img = pack.goods_img ? baseUrl + pack.goods_img : ''
-        })
+
+        // 处理商品图片路径
+
+        if (item.goods_img) {
+          item.pic = `${baseUrl}${item.goods_img}`
+        }
       })
 
-      cartList.value = values
+      cartList.value = data
       updateTotalPrice()
     })
     .finally(() => {
@@ -246,46 +162,6 @@ const updateGoodsNum = (item: any) => {
     })
 }
 
-// 更新包装
-const handlePackage = (category: any, pack: any, isUpdate = false) => {
-  const params: any = {
-    token: getOrderToken(),
-    goods_num: 1,
-    goods_id: pack.goods_id,
-  }
-
-  // 如果是更新已有包装，添加cart_id参数
-  if (isUpdate && category.bao && category.bao.cart_id) {
-    params.cart_id = category.bao.cart_id
-  }
-
-  httpPost('/api/Order/CreateCart', params)
-    .then(() => {
-      // 更新成功后更新本地数据
-      getCart()
-    })
-    .catch((err) => {
-      toast.error(err || '操作失败')
-    })
-}
-
-// 删除包装
-const removePackage = (category: any) => {
-  if (!category.bao || !category.bao.cart_id) return
-
-  httpPost('/api/Order/DelCart', {
-    token: getOrderToken(),
-    cart_list: category.bao.cart_id,
-  })
-    .then(() => {
-      // 删除成功后刷新购物车
-      getCart()
-    })
-    .catch((err) => {
-      toast.error(err || '删除失败')
-    })
-}
-
 // 删除购物车商品
 const removeCartItem = (cartId: number) => {
   uni.showModal({
@@ -305,32 +181,51 @@ const removeCartItem = (cartId: number) => {
   })
 }
 
+// 批量删除选中的商品
+const batchDeleteItems = () => {
+  if (selectedCartIds.value.length === 0) {
+    toast.warning('请选择要删除的商品')
+    return
+  }
+
+  uni.showModal({
+    title: '提示',
+    content: `确定要删除选中的${selectedCartIds.value.length}件商品吗？`,
+    success: (res) => {
+      if (res.confirm) {
+        httpPost('/api/Order/DelCart', {
+          token: getOrderToken(),
+          cart_list: selectedCartIds.value.join(','),
+        })
+          .then(() => {
+            toast.success('删除成功')
+            getCart()
+          })
+          .catch((err) => {
+            toast.error('删除失败，请重试')
+            console.error(err)
+          })
+      }
+    },
+  })
+}
+
 // 更新总价和选中商品数量
 const updateTotalPrice = () => {
   let price = 0
   let count = 0
   selectedCartIds.value = [] // 重置选中项
 
-  cartList.value.forEach((category) => {
+  cartList.value.forEach((cart) => {
     // 计算当前分类下选中商品的总数量
     let categorySelectedCount = 0
-
-    if (category.list) {
-      category.list.forEach((item: any) => {
-        if (item.checked) {
-          price += Number(item.goods_price) * Number(item.goods_num)
-          count += 1
-          // 更新选中的商品ID列表
-          selectedCartIds.value.push(item.cart_id)
-          // 累加该分类下选中商品的数量
-          categorySelectedCount += Number(item.goods_num)
-        }
-      })
-    }
-
-    // 如果有选中的包装，计入总价 (包装价格 = 包装单价 × 分类下选中商品总数量)
-    if (category.bao && categorySelectedCount > 0) {
-      price += Number(category.bao.goods_price) * categorySelectedCount
+    if (cart.checked) {
+      price += Number(cart.goods_price) * Number(cart.goods_num)
+      count += 1
+      // 更新选中的商品ID列表
+      selectedCartIds.value.push(cart.cart_id)
+      // 累加该分类下选中商品的数量
+      categorySelectedCount += Number(cart.goods_num)
     }
   })
 
@@ -340,11 +235,7 @@ const updateTotalPrice = () => {
   // saveSelectedItems()
 
   // 检查是否全选
-  const allSelected =
-    cartList.value.length > 0 &&
-    cartList.value.every(
-      (category) => category.list && category.list.every((item: any) => item.checked),
-    )
+  const allSelected = cartList.value.length > 0 && cartList.value.every((cart) => cart.checked)
   isAllSelected.value = allSelected
 }
 
@@ -355,12 +246,8 @@ const resetCart = () => {
 
 // 全选/取消全选
 const selectAll = () => {
-  cartList.value.forEach((category) => {
-    if (category.list) {
-      category.list.forEach((item: any) => {
-        item.checked = isAllSelected.value
-      })
-    }
+  cartList.value.forEach((item) => {
+    item.checked = isAllSelected.value
   })
   updateTotalPrice()
 }
@@ -375,8 +262,7 @@ const goToCategory = () => {
 // 提交订单
 const submitOrder = () => {
   const selectedItems = cartList.value
-    .filter((category) => category.list)
-    .flatMap((category) => category.list.filter((item: any) => item.checked))
+    .filter((cart) => cart.checked)
     .map((item: any) => item.cart_id)
 
   if (selectedItems.length === 0) {
@@ -390,14 +276,6 @@ const submitOrder = () => {
   //     (category) => category.list && category.list.some((item) => item.checked),
   //   ),
   // )
-  const hasBao = cartList.value
-    .filter((category) => category.list && category.list.some((item) => item.checked))
-    .every((category) => category.bao && category.bao.goods_id)
-
-  if (!hasBao) {
-    toast.warning('每个分类需要选择对应的包装')
-    return
-  }
 
   const url = `/pages/order-system/order/confirm-order?cart_ids=${selectedItems.join(',')}`
 
@@ -410,20 +288,6 @@ const submitOrder = () => {
 const toggleItemChecked = (item: any) => {
   item.checked = !item.checked
   updateTotalPrice()
-}
-
-// 选择包装
-const selectPackage = (category: any, pack: any) => {
-  if (category.bao && category.bao.goods_id === pack.goods_id) {
-    // 取消选择，调用删除接口
-    removePackage(category)
-  } else if (category.bao) {
-    // 已有包装，更换为新包装
-    handlePackage(category, pack, true)
-  } else {
-    // 选择新包装
-    handlePackage(category, pack)
-  }
 }
 
 onMounted(() => {
@@ -483,10 +347,12 @@ onBeforeUnmount(() => {
 }
 
 .goods-checkbox {
+  flex-shrink: 0; /* 防止图片容器被压缩 */
   margin-right: 20rpx;
 }
 
 .goods-image {
+  flex-shrink: 0; /* 防止图片容器被压缩 */
   width: 160rpx;
   height: 160rpx;
   margin-right: 20rpx;
@@ -505,7 +371,7 @@ onBeforeUnmount(() => {
 
 .goods-name {
   display: -webkit-box;
-  width: calc(100% - 100rpx);
+  width: calc(100% - 120rpx);
   overflow: hidden;
   font-size: 30rpx;
   line-height: 1.4;
@@ -590,6 +456,12 @@ onBeforeUnmount(() => {
 .price {
   font-weight: bold;
   color: #ff4400;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10rpx;
+  align-items: center;
 }
 
 .package-section {
