@@ -290,7 +290,7 @@ const getGoodsList = async (init?: boolean) => {
       _list.forEach((item) => {
         item.selectList = item.spec_list.filter((spec) => spec.is_checked === 1)
         item.spec_list = item.spec_list.filter((spec) => spec.is_checked !== 1)
-        item.expand = false
+        item.expand = true
       })
 
       total.value = data.count

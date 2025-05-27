@@ -12,7 +12,7 @@
 <template>
   <view class="order-detail">
     <view v-if="loading" class="loading-box">
-      <wd-loading color="#00a3ff" />
+      <wd-loading color="#23B7EB" />
     </view>
 
     <template v-else-if="orderInfo">
@@ -23,9 +23,9 @@
       </view>
 
       <!-- 收货信息 -->
-      <!-- <view class="info-card">
+      <view class="info-card">
         <view class="card-title">
-          <wd-icon name="location" color="#00a3ff" size="36rpx" />
+          <wd-icon name="location" color="#23B7EB" size="36rpx" />
           <text>收货信息</text>
         </view>
         <view class="address-info">
@@ -34,12 +34,12 @@
             {{ orderInfo.province }}{{ orderInfo.city }}{{ orderInfo.area }}{{ orderInfo.address }}
           </view>
         </view>
-      </view> -->
+      </view>
 
       <!-- 订单信息 -->
       <view class="info-card">
         <view class="card-title">
-          <wd-icon name="document" color="#00a3ff" size="36rpx" />
+          <wd-icon name="document" color="#23B7EB" size="36rpx" />
           <text>订单信息</text>
         </view>
         <view class="info-item">
@@ -49,10 +49,6 @@
         <view class="info-item">
           <text class="item-label">下单时间</text>
           <text class="item-value">{{ orderInfo.ctime }}</text>
-        </view>
-        <view class="info-item">
-          <text class="item-label">客户信息</text>
-          <text class="item-value">{{ orderInfo.user_code + '-' + orderInfo.nikename }}</text>
         </view>
         <view class="info-item" v-if="orderInfo.pay_time">
           <text class="item-label">付款时间</text>
@@ -86,46 +82,25 @@
       <!-- 商品信息 -->
       <view class="info-card">
         <view class="card-title">
-          <wd-icon name="cart" color="#00a3ff" size="36rpx" />
+          <wd-icon name="cart" color="#23B7EB" size="36rpx" />
           <text>商品信息</text>
         </view>
 
         <!-- 商品列表格式 -->
         <view class="goods-container">
-          <view
-            v-for="(category, cateIndex) in orderInfo.goods_list"
-            :key="cateIndex"
-            class="category-section"
-          >
-            <view class="category-header">
-              <view class="category-tag"></view>
-              <view class="category-title">
-                {{ category.category_name }}
-                <view class="category-stats">
-                  <text class="category-count">总数量: {{ category.all_num }}</text>
-                  <text class="category-price">总价: ¥{{ category.all_price }}</text>
-                </view>
-              </view>
-            </view>
-
-            <!-- 商品列表 -->
-            <view class="goods-list">
-              <view v-for="(item, itemIndex) in category.list" :key="itemIndex" class="goods-item">
-                <view class="goods-content">
-                  <view class="goods-name">{{ item.goods_name }}</view>
-                  <view class="goods-bottom">
-                    <view class="goods-price">¥{{ item.goods_price }}</view>
-                    <view class="goods-count">x{{ item.goods_num }}</view>
-                  </view>
-                </view>
-              </view>
-
-              <!-- 包装信息 -->
-              <view v-if="category.bao" class="package-item">
-                <view class="package-name">包装信息</view>
-                <view class="package-detail">
-                  {{ category.bao.goods_name }}
-                  <text class="package-price">¥{{ category.bao.goods_price }}</text>
+          <!-- 商品列表 -->
+          <view class="goods-list">
+            <view
+              v-for="(item, itemIndex) in orderInfo.goods_list"
+              :key="itemIndex"
+              class="goods-item"
+            >
+              <image :src="item.pic" class="goods-image"></image>
+              <view class="goods-content">
+                <view class="goods-name">{{ item.goods_name }}</view>
+                <view class="goods-bottom">
+                  <view class="goods-price">¥{{ item.goods_price }}</view>
+                  <view class="goods-count">x{{ item.goods_num }}</view>
                 </view>
               </view>
             </view>
@@ -135,7 +110,7 @@
         <view class="price-detail">
           <view class="price-item">
             <text>商品总数</text>
-            <text>{{ orderInfo.all_num }}</text>
+            <text>{{ orderInfo.total_goods_count }}</text>
           </view>
           <view class="price-item">
             <text>商品总价</text>
@@ -154,8 +129,11 @@
 
       <!-- 底部操作按钮 -->
       <view class="footer-actions">
-        <view v-if="orderInfo.status === 1" class="action-btn cancel-btn" @click="cancelOrder">
+        <view v-if="orderInfo.status === 0" class="action-btn cancel-btn" @click="cancelOrder">
           取消订单
+        </view>
+        <view v-if="orderInfo.status === 0" class="action-btn pay-btn" @click="payOrder">
+          立即付款
         </view>
       </view>
     </template>
@@ -164,6 +142,30 @@
       <image class="empty-img" src="/static/images/empty.png" mode="aspectFit"></image>
       <view class="empty-text">暂无订单数据</view>
     </view>
+
+    <!-- 支付方式弹窗 -->
+    <wd-popup v-model="showPaymentPopup" position="bottom" round>
+      <view class="payment-popup">
+        <view class="payment-popup-header">
+          <text class="payment-popup-title">请选择支付方式</text>
+          <wd-icon name="close" size="20px" @click="closePaymentPopup"></wd-icon>
+        </view>
+        <view class="payment-popup-content">
+          <wd-radio-group v-model="selectedPayment">
+            <wd-radio value="2">微信支付</wd-radio>
+          </wd-radio-group>
+
+          <view class="payment-amount">
+            <text>支付金额：</text>
+            <text class="payment-price">¥{{ currentOrderPrice.toFixed(2) }}</text>
+          </view>
+        </view>
+        <view class="payment-popup-footer">
+          <wd-button plain @click="closePaymentPopup">取消</wd-button>
+          <wd-button type="primary" @click="confirmPayment">确定</wd-button>
+        </view>
+      </view>
+    </wd-popup>
   </view>
 </template>
 
@@ -178,6 +180,12 @@ import { getOrderToken } from '@/utils/orderToken'
 const toast = useToast()
 const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
+const baseUrl = import.meta.env.VITE_SERVER_BASEURL
+
+// 支付相关
+const showPaymentPopup = ref(false)
+const selectedPayment = ref('2')
+const currentOrderPrice = ref(0)
 
 // 数据相关
 const orderId = ref('')
@@ -186,15 +194,14 @@ const loading = ref(false)
 
 // 状态文本映射
 const statusTextMap = {
-  1: '待确认',
-  2: '待发货',
-  3: '已发货',
-  4: '已完成',
+  '0': '待付款',
+  '2': '待发货',
+  '3': '待收货',
+  '4': '已完成',
 }
-
 // 状态描述映射
 const statusDescMap = {
-  1: '订单已提交，等待商家确认',
+  0: '订单已提交，请及时付款',
   2: '商家已确认订单，等待发货',
   3: '商家已发货，等待收货',
   4: '订单已完成',
@@ -221,6 +228,18 @@ const getOrderDetail = async () => {
       token: getOrderToken(),
     })
     orderInfo.value = res.data
+
+    // 计算订单商品总数
+    orderInfo.value.total_goods_count = orderInfo.value.goods_list.reduce(
+      (total: number, goods: any) => {
+        return total + (Number(goods.goods_num) || 0)
+      },
+      0,
+    )
+
+    orderInfo.value.goods_list.forEach((item: any) => {
+      item.pic = `${baseUrl}${item.goods_img}`
+    })
   } catch (error) {
     console.error('获取订单详情失败', error)
     uni.showToast({
@@ -275,6 +294,60 @@ const copyText = (text: string) => {
   })
 }
 
+// 立即付款
+const payOrder = () => {
+  currentOrderPrice.value = Number(orderInfo.value.price)
+  showPaymentPopup.value = true
+}
+
+// 关闭支付弹窗
+const closePaymentPopup = () => {
+  showPaymentPopup.value = false
+}
+
+// 确认支付
+const confirmPayment = () => {
+  toast.loading('支付处理中...')
+
+  const params = {
+    token: getOrderToken(),
+    order_no: orderInfo.value.order_no,
+    pay_type: selectedPayment.value,
+  }
+
+  httpPost('/api/OrderPay/goodsOrderPay', params)
+    .then((res: any) => {
+      console.log('支付成功', res)
+
+      const result = JSON.parse(res.data)
+      // 发起支付
+      wx.requestPayment({
+        timeStamp: result.timeStamp,
+        nonceStr: result.nonceStr,
+        package: result.package,
+        signType: result.signType,
+        paySign: result.paySign,
+        fail: function (err: any) {
+          console.error(err)
+          toast.error('支付失败')
+        },
+        success: function () {
+          // 提示支付成功
+          toast.success('支付成功')
+          // 刷新订单详情
+          getOrderDetail()
+        },
+      })
+    })
+    .catch((err) => {
+      toast.error(err || '支付失败')
+    })
+    .finally(() => {
+      toast.close()
+      closePaymentPopup()
+    })
+}
+
 // 页面加载获取参数
 onLoad((options) => {
   if (options.order_id) {
@@ -322,7 +395,7 @@ onLoad((options) => {
 .status-card {
   padding: 40rpx;
   color: white;
-  background-color: #00a3ff;
+  background-color: #23b7eb;
 }
 
 .status-title {
@@ -403,8 +476,8 @@ onLoad((options) => {
   padding: 4rpx 12rpx;
   margin-left: 20rpx;
   font-size: 24rpx;
-  color: #00a3ff;
-  border: 1rpx solid #00a3ff;
+  color: #23b7eb;
+  border: 1rpx solid #23b7eb;
   border-radius: 20rpx;
 }
 /* 商品列表样式 */
@@ -434,7 +507,7 @@ onLoad((options) => {
   width: 6rpx;
   height: 30rpx;
   margin-right: 12rpx;
-  background-color: #00a3ff;
+  background-color: #23b7eb;
   border-radius: 3rpx;
 }
 
@@ -474,6 +547,8 @@ onLoad((options) => {
 
 .goods-item {
   position: relative;
+  display: flex;
+  align-items: center;
   padding: 15rpx 10rpx;
   border-bottom: 1rpx dashed #eee;
 
@@ -482,8 +557,18 @@ onLoad((options) => {
   }
 }
 
+.goods-image {
+  flex-shrink: 0;
+  width: 120rpx;
+  height: 120rpx;
+  margin-right: 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+}
+
 .goods-content {
   display: flex;
+  flex: 1;
   flex-direction: column;
 }
 
@@ -497,6 +582,7 @@ onLoad((options) => {
   color: #333;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  word-break: break-all;
 }
 
 .goods-bottom {
@@ -524,7 +610,7 @@ onLoad((options) => {
   padding: 15rpx 10rpx;
   margin: 15rpx 0 10rpx;
   background-color: #fff;
-  border-left: 4rpx solid #00a3ff;
+  border-left: 4rpx solid #23b7eb;
   border-radius: 8rpx;
 }
 
@@ -598,8 +684,84 @@ onLoad((options) => {
 }
 
 .cancel-btn {
+  margin-right: 20rpx;
   color: #666;
   background-color: white;
   border: 1rpx solid #ddd;
+}
+
+.pay-btn {
+  color: #fff;
+  background-color: #23b7eb;
+  border: 1rpx solid #23b7eb;
+}
+/* 支付弹窗样式 */
+.payment-popup {
+  padding: 30rpx;
+}
+
+.payment-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20rpx;
+  margin-bottom: 20rpx;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.payment-popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.payment-popup-content {
+  padding: 20rpx 0;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+}
+
+.payment-method-left {
+  display: flex;
+  align-items: center;
+}
+
+.wechat-icon {
+  margin-right: 20rpx;
+  color: #07c160;
+}
+
+.payment-method-name {
+  font-size: 30rpx;
+}
+
+.payment-amount {
+  display: flex;
+  justify-content: space-between;
+  padding: 30rpx 0;
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  border-top: 1px solid #f5f5f5;
+}
+
+.payment-price {
+  font-weight: bold;
+  color: #ff4400;
+}
+
+.payment-popup-footer {
+  display: flex;
+  gap: 20rpx;
+  justify-content: space-between;
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.payment-popup-footer .wd-button {
+  flex: 1;
 }
 </style>

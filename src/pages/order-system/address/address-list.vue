@@ -156,9 +156,13 @@ const handleEdit = (item: any) => {
 const handleSelectAddress = (item: any) => {
   if (isSelectMode.value) {
     // 如果是选择模式，则触发选择事件
-    if (eventChannel.value) {
-      eventChannel.value.emit('selectAddress', item)
+
+    const pages = getCurrentPages()
+    const prevPage = pages[pages.length - 2]
+    if (prevPage) {
+      prevPage.$vm.setAddress(item)
     }
+
     uni.navigateBack()
   }
 }
@@ -192,7 +196,8 @@ onLoad((options) => {
   getSafeArea()
 
   // 检查是否是选择模式
-  if (options.select === '1') {
+  // eslint-disable-next-line eqeqeq
+  if (options.select == '1') {
     isSelectMode.value = true
   }
 

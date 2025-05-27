@@ -10,9 +10,9 @@
 </route>
 
 <template>
-  <view class="container">
+  <view class="page-container">
     <!-- 地址模块 -->
-    <!-- <view class="address-block" @click="navigateToAddress">
+    <view class="address-block" @click="navigateToAddress">
       <view v-if="defaultAddress" class="address-info">
         <view class="address-header">
           <view class="address-name">{{ defaultAddress.name }}</view>
@@ -29,33 +29,19 @@
       <view class="address-right">
         <wd-icon name="arrow-right" size="18px"></wd-icon>
       </view>
-    </view> -->
+    </view>
 
     <!-- 商品信息模块 -->
     <view v-if="cartCategories.length > 0" class="goods-block">
-      <!-- 分类商品列表 -->
-      <view class="category-section" v-for="(category, index) in cartCategories" :key="index">
-        <view class="category-title">{{ category.category_name }}</view>
-
-        <!-- 商品列表 -->
-        <view class="goods-list">
-          <view class="goods-item" v-for="(item, itemIndex) in category.list" :key="itemIndex">
-            <view class="goods-content">
-              <view class="goods-name">{{ item.goods_name }}</view>
-              <view class="goods-spec" v-if="item.spec_name">{{ item.spec_name }}</view>
-              <view class="goods-bottom">
-                <view class="goods-price">¥{{ item.goods_price }}</view>
-                <view class="goods-count">x{{ item.goods_num }}</view>
-              </view>
-            </view>
-          </view>
-
-          <!-- 包装信息 -->
-          <view v-if="category.bao" class="package-item">
-            <view class="package-name">包装信息</view>
-            <view class="package-detail">
-              {{ category.bao.goods_name }}
-              <text class="package-price">¥{{ category.bao.goods_price }}</text>
+      <!-- 商品列表 -->
+      <view class="goods-list">
+        <view class="goods-item" v-for="item in cartCategories" :key="item.cart_id">
+          <image :src="item.pic" class="goods-image"></image>
+          <view class="goods-content">
+            <view class="goods-name">{{ item.goods_name }}</view>
+            <view class="goods-bottom">
+              <view class="goods-price">¥{{ item.goods_price }}</view>
+              <view class="goods-count">x{{ item.goods_num }}</view>
             </view>
           </view>
         </view>
@@ -65,37 +51,53 @@
     <!-- 汇总信息模块 -->
     <view class="summary-block">
       <view class="price-item">
-        <text>商品金额</text>
-        <text>¥{{ goodsPrice.toFixed(2) }}</text>
-      </view>
-      <view class="price-item">
-        <text>包装费用</text>
-        <text>¥{{ packagePrice.toFixed(2) }}</text>
-      </view>
-      <view class="price-item total-price">
-        <text>订单总计</text>
-        <text>¥{{ totalPrice.toFixed(2) }}</text>
+        <text>配送方式</text>
+        <text>快递</text>
       </view>
     </view>
 
     <!-- 添加备注 -->
-    <view class="remark-block">
+    <!-- <view class="remark-block">
       <view class="remark-title">添加备注</view>
       <view class="remark-input">
         <textarea class="remark-textarea" placeholder="请输入备注" v-model="remark"></textarea>
       </view>
-    </view>
+    </view> -->
 
     <!-- 底部结算栏 -->
     <view class="order-footer">
       <view class="total-price">
         <text>合计：</text>
-        <text class="price">¥{{ totalPrice.toFixed(2) }}</text>
+        <text class="price">¥{{ goodsPriceValue.toFixed(2) }}</text>
       </view>
       <wd-button type="primary" round :disabled="!canSubmit" @click="submitOrder">
         提交订单
       </wd-button>
     </view>
+
+    <!-- 支付方式弹窗 -->
+    <wd-popup v-model="showPaymentPopup" position="bottom" round>
+      <view class="payment-popup">
+        <view class="payment-popup-header">
+          <text class="payment-popup-title">请选择支付方式</text>
+          <wd-icon name="close" size="20px" @click="closePaymentPopup"></wd-icon>
+        </view>
+        <view class="payment-popup-content">
+          <wd-radio-group v-model="selectedPayment">
+            <wd-radio value="2">微信支付</wd-radio>
+          </wd-radio-group>
+
+          <view class="payment-amount">
+            <text>支付金额：</text>
+            <text class="payment-price">¥{{ goodsPriceValue.toFixed(2) }}</text>
+          </view>
+        </view>
+        <view class="payment-popup-footer">
+          <wd-button plain @click="closePaymentPopup">取消</wd-button>
+          <wd-button type="primary" @click="confirmPayment">确定</wd-button>
+        </view>
+      </view>
+    </wd-popup>
   </view>
 </template>
 
@@ -113,6 +115,7 @@ import { getOrderToken } from '@/utils/orderToken'
 const toast = useToast()
 const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
+const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 
 // 监听屏幕安全区域变化
 const safeAreaInsetBottom = ref(0)
@@ -136,8 +139,14 @@ const defaultAddress = ref<any>(null)
 // 保存筛选后的购物车分类
 const cartCategories = ref<any[]>([])
 
+const orderNo = ref('')
+
 // 备注
-const remark = ref('')
+// const remark = ref('')
+
+// 支付相关
+const showPaymentPopup = ref(false)
+const selectedPayment = ref('2')
 
 // 获取购物车列表
 const getCartList = () => {
@@ -146,40 +155,24 @@ const getCartList = () => {
     token: getOrderToken(),
   })
     .then((res) => {
-      const data = res.data || {}
+      const data = res.data || []
 
       // 如果有选中的商品
       if (cartIds.value.length > 0) {
         // 筛选出有选中商品的分类
         const filteredCategories: any[] = []
 
-        // 遍历所有分类
-        Object.values(data).forEach((category: any) => {
-          if (category.list && category.list.length > 0) {
-            // 筛选该分类中被选中的商品
-            const selectedItems = category.list.filter((item: any) =>
-              cartIds.value.includes(item.cart_id.toString()),
-            )
+        data.forEach((cart: any) => {
+          cart.pic = `${baseUrl}${cart.goods_img}`
 
-            // 如果有选中的商品，保留该分类
-            if (selectedItems.length > 0) {
-              // 创建分类的副本
-              const selectedCategory = {
-                category_id: category.category_id,
-                category_name: category.category_name,
-                list: selectedItems,
-                bao: category.bao,
-              }
-
-              filteredCategories.push(selectedCategory)
-            }
+          // 筛选该分类中被选中的商品
+          if (cartIds.value.includes(cart.cart_id.toString())) {
+            filteredCategories.push(cart)
           }
         })
 
         // 更新筛选后的分类数据
         cartCategories.value = filteredCategories
-
-        console.log(cartCategories.value)
 
         // 重新计算价格
         calculatePrices()
@@ -193,45 +186,17 @@ const getCartList = () => {
 // 计算总价方法
 const calculatePrices = () => {
   let goodsTotal = 0
-  let packageTotal = 0
 
-  // 计算商品和包装总价
-  cartCategories.value.forEach((category) => {
-    // 计算当前分类下选中商品的总数量
-    let categorySelectedCount = 0
-    // 计算商品价格
-    category.list.forEach((item) => {
-      goodsTotal += Number(item.goods_price) * Number(item.goods_num)
-      // 累加该分类下选中商品的数量
-      categorySelectedCount += Number(item.goods_num)
-    })
-
-    // 计算包装价格
-    if (category.bao) {
-      packageTotal += Number(category.bao.goods_price) * categorySelectedCount
-    }
+  // 计算商品价格
+  cartCategories.value.forEach((item) => {
+    goodsTotal += Number(item.goods_price) * Number(item.goods_num)
   })
 
   goodsPriceValue.value = goodsTotal
-  packagePriceValue.value = packageTotal
 }
 
 // 存储计算后的价格
 const goodsPriceValue = ref(0)
-const packagePriceValue = ref(0)
-
-// 价格计算属性
-const goodsPrice = computed(() => {
-  return goodsPriceValue.value
-})
-
-const packagePrice = computed(() => {
-  return packagePriceValue.value
-})
-
-const totalPrice = computed(() => {
-  return goodsPrice.value + packagePrice.value
-})
 
 // 是否可以提交订单
 const canSubmit = computed(() => {
@@ -239,63 +204,117 @@ const canSubmit = computed(() => {
 })
 
 // 获取默认地址
-// const getDefaultAddress = () => {
-//   httpPost('/Api/Usersinfo/getDefaultAddress', {
-//     token: getOrderToken(),
-//   })
-//     .then((res) => {
-//       if (res.data) {
-//         defaultAddress.value = res.data
-//       }
-//     })
-//     .catch((err) => {
-//       console.error('获取默认地址失败', err)
-//     })
-// }
+const getDefaultAddress = () => {
+  httpPost('/Api/Usersinfo/getDefaultAddress', {
+    token: getOrderToken(),
+  })
+    .then((res) => {
+      if (res.data) {
+        defaultAddress.value = res.data
+      }
+    })
+    .catch((err) => {
+      console.error('获取默认地址失败', err)
+    })
+}
 
 // 跳转到地址选择页面
-// const navigateToAddress = () => {
-//   uni.navigateTo({
-//     url: '/pages/order-system/address/address-list?select=1',
-//     events: {
-//       // 监听地址选择事件
-//       selectAddress: function (address: any) {
-//         defaultAddress.value = address
-//       },
-//     },
-//   })
-// }
+const navigateToAddress = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/address/address-list?select=1',
+  })
+}
+
+// 设置选择的地址
+const setAddress = (address: any) => {
+  defaultAddress.value = address
+}
+
+// 关闭支付弹窗
+const closePaymentPopup = () => {
+  showPaymentPopup.value = false
+  // 跳转到订单列表
+  setTimeout(() => {
+    uni.redirectTo({
+      url: '/pages/order-system/order/order-list',
+    })
+  }, 300)
+}
+
+// 确认支付
+const confirmPayment = () => {
+  toast.loading('支付处理中...')
+
+  const params = {
+    token: getOrderToken(),
+    order_no: orderNo.value,
+    pay_type: selectedPayment.value,
+  }
+
+  httpPost('/api/OrderPay/goodsOrderPay', params)
+    .then((res: any) => {
+      console.log('支付成功', res)
+
+      const result = JSON.parse(res.data)
+      // 发起支付
+      wx.requestPayment({
+        timeStamp: result.timeStamp,
+        nonceStr: result.nonceStr,
+        package: result.package,
+        signType: result.signType,
+        paySign: result.paySign,
+        fail: function (err: any) {
+          console.error(err)
+          toast.error('支付失败')
+
+          setTimeout(() => {
+            uni.redirectTo({
+              url: '/pages/order-system/order/order-list',
+            })
+          }, 1000)
+        },
+        success: function () {
+          // 提示支付成功
+          toast.success('支付成功')
+
+          // 跳转到订单列表
+          setTimeout(() => {
+            uni.redirectTo({
+              url: '/pages/order-system/order/order-list',
+            })
+          }, 1000)
+        },
+      })
+    })
+    .catch((err) => {
+      toast.error(err || '支付失败')
+    })
+}
 
 // 提交订单
 const submitOrder = () => {
-  // if (!defaultAddress.value) {
-  //   toast.warning('请选择收货地址')
-  //   return
-  // }
+  if (!defaultAddress.value) {
+    toast.warning('请选择收货地址')
+    return
+  }
 
   toast.loading('提交订单中...')
   const cartIdList = []
-  cartCategories.value.forEach((category) => {
-    category.list.forEach((item) => {
-      cartIdList.push(item.cart_id)
-    })
-
-    if (category.bao) {
-      cartIdList.push(category.bao.cart_id)
-    }
+  cartCategories.value.forEach((cart) => {
+    cartIdList.push(cart.cart_id)
   })
   console.log(cartIdList)
   httpPost('/api/Order/CreateOrder', {
     token: getOrderToken(),
     cart_list: cartIdList.join(','),
-    order_price: totalPrice.value.toFixed(2),
-    // address_id: defaultAddress.value.address_id,
+    order_price: goodsPriceValue.value.toFixed(2),
+    pay_price: goodsPriceValue.value.toFixed(2),
+    address_id: defaultAddress.value.address_id,
     delivery_type: 0,
-    remark: remark.value,
+    // remark: remark.value,
   })
     .then((res: any) => {
       // 调用上个页面的resetCart
-
       const pages = getCurrentPages()
       const prevPage = pages[pages.length - 2]
       if (prevPage) {
@@ -303,13 +322,14 @@ const submitOrder = () => {
       }
 
       toast.success('订单提交成功')
-      const orderId = res.data?.order_id
-      // 跳转到订单详情或支付页面
+      console.log('提交订单', res)
+      orderNo.value = res.data?.order_no
+
+      // 显示支付弹窗
       setTimeout(() => {
-        uni.redirectTo({
-          url: `/pages/order-system/order/order-detail?order_id=${orderId}`,
-        })
-      }, 1500)
+        showPaymentPopup.value = true
+        toast.close()
+      }, 300)
     })
     .catch((err) => {
       toast.error(err || '提交订单失败')
@@ -319,8 +339,12 @@ const submitOrder = () => {
     })
 }
 
+defineExpose({
+  setAddress,
+})
+
 onMounted(() => {
-  getSafeArea() // 获取安全区域
+  // getSafeArea() // 获取安全区域
 })
 
 onLoad((options: any) => {
@@ -328,7 +352,7 @@ onLoad((options: any) => {
   if (options.cart_ids) {
     cartIds.value = options.cart_ids.split(',')
     getCartList()
-    // getDefaultAddress()
+    getDefaultAddress()
   } else {
     toast.error('参数错误')
     setTimeout(() => {
@@ -339,7 +363,7 @@ onLoad((options: any) => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.page-container {
   box-sizing: border-box;
   min-height: 100vh;
   padding-top: 20rpx;
@@ -428,7 +452,9 @@ onLoad((options: any) => {
 
 .goods-item {
   position: relative;
-  padding: 20rpx 0;
+  display: flex;
+  align-items: center;
+  padding: 20rpx 20rpx;
   border-bottom: 1rpx solid #f5f5f5;
 }
 
@@ -436,8 +462,17 @@ onLoad((options: any) => {
   border-bottom: none;
 }
 
+.goods-image {
+  flex-shrink: 0;
+  width: 120rpx;
+  height: 120rpx;
+  margin-right: 20rpx;
+  border-radius: 8rpx;
+}
+
 .goods-content {
   display: flex;
+  flex: 1;
   flex-direction: column;
 }
 
@@ -451,6 +486,7 @@ onLoad((options: any) => {
   color: #333;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  word-break: break-all;
 }
 
 .goods-spec {
@@ -573,5 +609,75 @@ onLoad((options: any) => {
   padding: 20rpx;
   border: 1rpx solid #f5f5f5;
   border-radius: 12rpx;
+}
+
+// 支付弹窗样式
+.payment-popup {
+  padding: 30rpx;
+}
+
+.payment-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20rpx;
+  margin-bottom: 20rpx;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.payment-popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.payment-popup-content {
+  padding: 20rpx 0;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+}
+
+.payment-method-left {
+  display: flex;
+  align-items: center;
+}
+
+.wechat-icon {
+  margin-right: 20rpx;
+  color: #07c160;
+}
+
+.payment-method-name {
+  font-size: 30rpx;
+}
+
+.payment-amount {
+  display: flex;
+  justify-content: space-between;
+  padding: 30rpx 0;
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  border-top: 1px solid #f5f5f5;
+}
+
+.payment-price {
+  font-weight: bold;
+  color: #ff4400;
+}
+
+.payment-popup-footer {
+  display: flex;
+  gap: 20rpx;
+  justify-content: space-between;
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.payment-popup-footer .wd-button {
+  flex: 1;
 }
 </style>

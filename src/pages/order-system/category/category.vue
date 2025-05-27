@@ -55,6 +55,11 @@
 
     <OrderTabbar />
 
+    <!-- 浮动电话图标 -->
+    <view class="floating-phone" @click="makePhoneCall">
+      <view class="i-ri:phone-fill phone-icon"></view>
+    </view>
+
     <!-- 添加数量选择弹窗 -->
     <wd-popup
       v-model="showQuantityPopup"
@@ -289,13 +294,13 @@ onReachBottom(() => {
 
 // 数量选择弹窗相关状态
 const showQuantityPopup = ref(false)
-const selectedQuantity = ref(0)
+const selectedQuantity = ref(1)
 const currentProduct = ref<any>(null)
 
 // 打开数量选择弹窗
 const onAddToCart = (product) => {
   currentProduct.value = product
-  selectedQuantity.value = 0 // 重置数量为1
+  selectedQuantity.value = 1 // 重置数量为1
   showQuantityPopup.value = true
 }
 
@@ -347,6 +352,20 @@ const confirmAddToCart = () => {
 
 const handleQuantityChange = (value) => {
   console.log(value)
+}
+
+// 添加浮动电话图标功能
+const makePhoneCall = () => {
+  // 实现拨打电话的逻辑
+  uni.makePhoneCall({
+    phoneNumber: '15206354555',
+    success: () => {
+      console.log('拨打电话成功')
+    },
+    fail: (err) => {
+      console.error('拨打电话失败', err)
+    },
+  })
 }
 </script>
 
@@ -414,5 +433,25 @@ page {
   z-index: 10;
   height: calc(100vh - 40px); /* 减去搜索栏的高度 */
   overflow-y: auto;
+}
+/* 浮动电话图标样式 */
+.floating-phone {
+  position: fixed;
+  right: 30rpx;
+  bottom: 200rpx;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100rpx;
+  height: 100rpx;
+  background-color: #23b7eb;
+  border-radius: 50%;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
+}
+
+.phone-icon {
+  font-size: 50rpx;
+  color: #fff;
 }
 </style>

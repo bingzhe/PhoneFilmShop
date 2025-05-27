@@ -14,11 +14,11 @@
             {{ product.cate_name }}
           </view>
         </view>
-        <view class="mb-10rpx">
+        <!-- <view class="mb-10rpx">
           <view class="text-10px font-bold mr-10rpx" :style="'color: #' + product.colour + ';'">
             {{ product.goods_name }}
           </view>
-        </view>
+        </view> -->
         <view class="flex flex-wrap">
           <view
             class="bg-#fa4126 color-#fff mr-10rpx mb-10rpx m-rd-4rpx text-12px pt-5rpx pb-5rpx pl-10rpx pr-12rpx"
@@ -39,15 +39,15 @@
           </view>
         </view>
 
-        <view class="text-14px color-#fa4126">
-          <text>零售指导价：¥{{ product.price }}元</text>
+        <view class="text-14px color-#fa4126 mb-20rpx flex justify-end">
+          <text>¥{{ product.price }}元</text>
         </view>
       </view>
     </view>
-    <view class="text-center" @click="toggleExpand">
+    <!-- <view class="text-center" @click="toggleExpand">
       <wd-icon v-if="!product.expand" name="arrow-down" size="32rpx" color="#999999"></wd-icon>
       <wd-icon v-if="product.expand" name="arrow-up" size="32rpx" color="#999999"></wd-icon>
-    </view>
+    </view> -->
   </view>
 </template>
 

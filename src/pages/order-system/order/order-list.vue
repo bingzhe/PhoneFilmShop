@@ -47,51 +47,23 @@
                 {{ getStatusText(order.status) }}
               </view>
             </view>
-            <view class="order-header-bottom">
-              <view class="order-no">客户信息：{{ order.user_code + '-' + order.nikename }}</view>
-            </view>
           </view>
 
           <!-- 分类商品列表 -->
           <view class="goods-container">
-            <view
-              v-for="(category, cateIndex) in order.goods_list"
-              :key="cateIndex"
-              class="category-section"
-            >
-              <view class="category-header">
-                <view class="category-tag"></view>
-                <view class="category-title">
-                  {{ category.category_name }}
-                  <view class="category-stats">
-                    <text class="category-count">总数量: {{ category.all_num }}</text>
-                    <text class="category-price">总价: ¥{{ category.all_price }}</text>
-                  </view>
-                </view>
-              </view>
-
-              <!-- 商品列表 -->
-              <view class="goods-list">
-                <view
-                  v-for="(item, itemIndex) in category.list"
-                  :key="itemIndex"
-                  class="goods-item"
-                >
-                  <view class="goods-content">
-                    <view class="goods-name">{{ item.goods_name }}</view>
-                    <view class="goods-bottom">
-                      <view class="goods-price">¥{{ item.goods_price }}</view>
-                      <view class="goods-count">x{{ item.goods_num }}</view>
-                    </view>
-                  </view>
-                </view>
-
-                <!-- 包装信息 -->
-                <view v-if="category.bao" class="package-item">
-                  <view class="package-name">包装信息</view>
-                  <view class="package-detail">
-                    {{ category.bao.goods_name }}
-                    <text class="package-price">¥{{ category.bao.goods_price }}</text>
+            <!-- 商品列表 -->
+            <view class="goods-list">
+              <view
+                v-for="(item, itemIndex) in order.goods_list"
+                :key="itemIndex"
+                class="goods-item"
+              >
+                <image class="goods-image" :src="item.pic" mode="aspectFill"></image>
+                <view class="goods-content">
+                  <view class="goods-name">{{ item.goods_name }}</view>
+                  <view class="goods-bottom">
+                    <view class="goods-price">¥{{ item.goods_price }}</view>
+                    <view class="goods-count">x{{ item.goods_num }}</view>
                   </view>
                 </view>
               </view>
@@ -100,17 +72,28 @@
 
           <view class="order-footer">
             <view class="order-total">
-              <text class="total-price">总数量：{{ order.all_num }} 合计：¥{{ order.price }}</text>
+              <text class="total-price">
+                总数量：{{ order.total_goods_count }} 合计：¥{{ order.price }}
+              </text>
             </view>
 
             <view class="order-actions">
               <view
-                v-if="order.status === 1"
+                v-if="order.status === 0"
                 class="action-btn cancel-btn"
                 @click.stop="cancelOrder(order.order_id)"
               >
                 取消订单
               </view>
+
+              <view
+                v-if="order.status === 0"
+                class="action-btn detail-btn"
+                @click.stop="payOrder(order)"
+              >
+                立即付款
+              </view>
+
               <view class="action-btn detail-btn">查看详情</view>
             </view>
           </view>
@@ -118,6 +101,30 @@
       </view>
     </view>
   </view>
+
+  <!-- 支付方式弹窗 -->
+  <wd-popup v-model="showPaymentPopup" position="bottom" round>
+    <view class="payment-popup">
+      <view class="payment-popup-header">
+        <text class="payment-popup-title">请选择支付方式</text>
+        <wd-icon name="close" size="20px" @click="closePaymentPopup"></wd-icon>
+      </view>
+      <view class="payment-popup-content">
+        <wd-radio-group v-model="selectedPayment">
+          <wd-radio value="2">微信支付</wd-radio>
+        </wd-radio-group>
+
+        <view class="payment-amount">
+          <text>支付金额：</text>
+          <text class="payment-price">¥{{ currentOrderPrice.toFixed(2) }}</text>
+        </view>
+      </view>
+      <view class="payment-popup-footer">
+        <wd-button plain @click="closePaymentPopup">取消</wd-button>
+        <wd-button type="primary" @click="confirmPayment">确定</wd-button>
+      </view>
+    </view>
+  </wd-popup>
 </template>
 
 <script lang="ts" setup>
@@ -130,26 +137,34 @@ import { getOrderToken } from '@/utils/orderToken'
 const toast = useToast()
 const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
+const baseUrl = import.meta.env.VITE_SERVER_BASEURL
+
+// 支付相关
+const showPaymentPopup = ref(false)
+const selectedPayment = ref('2')
+const currentOrderNo = ref('')
+const currentOrderPrice = ref(0)
 
 // 订单状态列表
 const statusList = [
-  { label: '全部', value: 0 },
-  { label: '待确认', value: 1 },
+  { label: '全部', value: 9999 },
+  { label: '待付款', value: 0 },
+  // { label: '待确认', value: 1 },
   { label: '待发货', value: 2 },
-  { label: '已发货', value: 3 },
+  { label: '待收货', value: 3 },
   { label: '已完成', value: 4 },
 ]
 
 // 状态文本映射
 const statusTextMap = {
-  '1': '待确认',
+  '0': '待付款',
   '2': '待发货',
-  '3': '已发货',
+  '3': '待收货',
   '4': '已完成',
 }
 
 // 数据相关
-const currentStatus = ref(0)
+const currentStatus = ref(9999)
 const orderList = ref<any[]>([])
 const loading = ref(false)
 
@@ -160,36 +175,6 @@ const switchStatus = (status: number) => {
   getOrderList()
 }
 
-// 订单中商品的数据接口
-// goods_list  {
-//   33: {
-//     category_id: 33,
-//     category_name: '九强高铝防静电',
-//     bao: {
-//       category_id: 33,
-//       category_name: '九强高铝防静电',
-//       goods_id: 2193,
-//       goods_name: '直屏钢化膜九强高铝防静电九强高铝（5合1裸片）包装',
-//       goods_num: 1,
-//       goods_price: '1.30',
-//       is_bao: 1,
-//       price: 1.3,
-//     },
-//     list: [
-//       {
-//         category_id: 33,
-//         category_name: '九强高铝防静电',
-//         goods_id: 1080,
-//         goods_name: '直屏钢化膜九强高铝防静电OPPO R17',
-//         goods_num: 4,
-//         goods_price: '1.30',
-//         is_bao: 0,
-//         price: 5.2,
-//       },
-//     ],
-//   },
-// }
-
 // 获取订单列表
 const getOrderList = async () => {
   loading.value = true
@@ -198,12 +183,25 @@ const getOrderList = async () => {
       token: getOrderToken(),
     }
 
-    if (currentStatus.value !== 0) {
+    // page: 1,
+    // pageSize: 20,
+
+    if (currentStatus.value !== 9999) {
       params.status = currentStatus.value
     }
 
     const res = await httpPost<any>('/Api/Order/GetOrderList', params)
     orderList.value = res.data || []
+
+    orderList.value.forEach((item) => {
+      // 计算订单商品总数
+      item.total_goods_count = item.goods_list.reduce((total: number, goods: any) => {
+        return total + (Number(goods.goods_num) || 0)
+      }, 0)
+      item.goods_list.forEach((goods: any) => {
+        goods.pic = `${baseUrl}${goods.goods_img}`
+      })
+    })
   } catch (error) {
     console.error('获取订单列表失败', error)
     uni.showToast({
@@ -250,6 +248,61 @@ const cancelOrder = async (orderId: string) => {
   })
 }
 
+// 立即付款
+const payOrder = (order: any) => {
+  currentOrderNo.value = order.order_no
+  currentOrderPrice.value = Number(order.price)
+  showPaymentPopup.value = true
+}
+
+// 关闭支付弹窗
+const closePaymentPopup = () => {
+  showPaymentPopup.value = false
+}
+
+// 确认支付
+const confirmPayment = () => {
+  toast.loading('支付处理中...')
+
+  const params = {
+    token: getOrderToken(),
+    order_no: currentOrderNo.value,
+    pay_type: selectedPayment.value,
+  }
+
+  httpPost('/api/OrderPay/goodsOrderPay', params)
+    .then((res: any) => {
+      console.log('支付成功', res)
+
+      const result = JSON.parse(res.data)
+      // 发起支付
+      wx.requestPayment({
+        timeStamp: result.timeStamp,
+        nonceStr: result.nonceStr,
+        package: result.package,
+        signType: result.signType,
+        paySign: result.paySign,
+        fail: function (err: any) {
+          console.error(err)
+          toast.error('支付失败')
+        },
+        success: function () {
+          // 提示支付成功
+          toast.success('支付成功')
+          // 刷新订单列表
+          getOrderList()
+        },
+      })
+    })
+    .catch((err) => {
+      toast.error(err || '支付失败')
+    })
+    .finally(() => {
+      toast.close()
+      closePaymentPopup()
+    })
+}
+
 // 获取订单状态文本
 const getStatusText = (status: number) => {
   return statusTextMap[status] || '未知状态'
@@ -263,6 +316,13 @@ const getTotalCount = (products: any[]) => {
 // 页面加载
 onShow(() => {
   getOrderList()
+})
+
+// 处理页面参数
+onLoad((options) => {
+  if (options.status) {
+    currentStatus.value = Number(options.status)
+  }
 })
 </script>
 
@@ -445,6 +505,8 @@ onShow(() => {
 
 .goods-item {
   position: relative;
+  display: flex;
+  align-items: center;
   padding: 15rpx 10rpx;
   border-bottom: 1rpx dashed #eee;
 
@@ -453,8 +515,18 @@ onShow(() => {
   }
 }
 
+.goods-image {
+  flex-shrink: 0;
+  width: 120rpx;
+  height: 120rpx;
+  margin-right: 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+}
+
 .goods-content {
   display: flex;
+  flex: 1;
   flex-direction: column;
 }
 
@@ -467,7 +539,8 @@ onShow(() => {
   line-height: 1.4;
   color: #333;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
+  word-break: break-all;
 }
 
 .goods-bottom {
@@ -555,5 +628,74 @@ onShow(() => {
   color: white;
   background-color: #00a3ff;
   border: none;
+}
+/* 支付弹窗样式 */
+.payment-popup {
+  padding: 30rpx;
+}
+
+.payment-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20rpx;
+  margin-bottom: 20rpx;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.payment-popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.payment-popup-content {
+  padding: 20rpx 0;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+}
+
+.payment-method-left {
+  display: flex;
+  align-items: center;
+}
+
+.wechat-icon {
+  margin-right: 20rpx;
+  color: #07c160;
+}
+
+.payment-method-name {
+  font-size: 30rpx;
+}
+
+.payment-amount {
+  display: flex;
+  justify-content: space-between;
+  padding: 30rpx 0;
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  border-top: 1px solid #f5f5f5;
+}
+
+.payment-price {
+  font-weight: bold;
+  color: #ff4400;
+}
+
+.payment-popup-footer {
+  display: flex;
+  gap: 20rpx;
+  justify-content: space-between;
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.payment-popup-footer .wd-button {
+  flex: 1;
 }
 </style>

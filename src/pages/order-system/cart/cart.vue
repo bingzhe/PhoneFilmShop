@@ -10,7 +10,7 @@
 </route>
 
 <template>
-  <view class="container">
+  <view class="page-container">
     <view v-if="cartList.length > 0" class="cart-list">
       <!-- 商品块 -->
       <view class="goods-item" v-for="item in cartList" :key="item.cart_id">
@@ -128,10 +128,7 @@ const getCart = () => {
         }
 
         // 处理商品图片路径
-
-        if (item.goods_img) {
-          item.pic = `${baseUrl}${item.goods_img}`
-        }
+        item.pic = `${baseUrl}${item.goods_img}`
       })
 
       cartList.value = data
@@ -310,7 +307,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.page-container {
   box-sizing: border-box;
   min-height: 100vh;
   padding-bottom: 150rpx;
@@ -371,13 +368,14 @@ onBeforeUnmount(() => {
 
 .goods-name {
   display: -webkit-box;
-  width: calc(100% - 120rpx);
+  width: calc(100% - 44rpx);
   overflow: hidden;
   font-size: 30rpx;
   line-height: 1.4;
   color: #333;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  word-break: break-all;
 }
 
 .goods-spec {
@@ -462,6 +460,10 @@ onBeforeUnmount(() => {
   display: flex;
   gap: 10rpx;
   align-items: center;
+}
+
+::v-deep .wd-button.is-medium.is-round {
+  min-width: 88px !important;
 }
 
 .package-section {
