@@ -11,11 +11,13 @@
 
 <template>
   <view class="login-page">
-    <view class="logo-container">
+    <wd-loading v-if="loading" size="60px" />
+
+    <view v-if="!loading" class="logo-container">
       <image class="logo-image" src="/static/images/search-btn.jpg" mode="aspectFill"></image>
     </view>
 
-    <view class="login-wrapper">
+    <view v-if="!loading" class="login-wrapper">
       <input
         class="login-input"
         placeholder="手机号"
@@ -53,6 +55,7 @@ const username = ref('')
 const password = ref('')
 const checked = ref(false)
 const openid = ref('')
+const loading = ref(true)
 
 onMounted(async () => {
   // 获取订单令牌
@@ -65,6 +68,7 @@ onMounted(async () => {
     })
   }
 
+  loading.value = false
   await getRegisterOpenid()
 })
 

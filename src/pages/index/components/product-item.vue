@@ -30,7 +30,7 @@
         </view>
         <view v-if="product.expand" class="flex flex-wrap overflow-auto h-fit">
           <view
-            class="text-12px font-bold pl10rpx pr10rpx pb5rpx pt5rpx bg-#f1eee9 mr10rpx mb10rpx b-rd-8rpx"
+            class="shadow-md text-12px font-bold pl10rpx pr10rpx pb5rpx pt5rpx bg-#f1eee9 mr10rpx mb10rpx b-rd-8rpx"
             :class="{ 'bg-fa4126 color-#fff': modal.is_checked == 1 }"
             v-for="(modal, j) in product.spec_list"
             :key="j"

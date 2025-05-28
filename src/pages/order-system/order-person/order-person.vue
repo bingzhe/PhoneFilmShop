@@ -196,7 +196,7 @@ const logout = () => {
 
   // 延迟跳转到登录页
   setTimeout(() => {
-    uni.switchTab({
+    uni.reLaunch({
       url: '/pages/start/start',
     })
   }, 1500)
