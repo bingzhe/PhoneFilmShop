@@ -83,6 +83,34 @@
           </view>
         </view>
 
+        <wd-cell title="推广员" v-if="userInfo.is_yewu == 1">
+          <template #icon>
+            <view class="i-ri:user-line cell-icon"></view>
+          </template>
+        </wd-cell>
+
+        <!-- 推广数据展示区 -->
+        <view class="promotion-stats" v-if="userInfo.is_yewu == 1">
+          <view class="stat-item" @click="goToPerformanceList(1)">
+            <view class="stat-value">{{ performance.yao_num }}</view>
+            <view class="stat-label">累计客户</view>
+          </view>
+          <view class="stat-item" @click="goToPerformanceList(2)">
+            <view class="stat-value">{{ performance.all_performance }}</view>
+            <view class="stat-label">总业绩</view>
+          </view>
+          <view class="stat-item" @click="goToPerformanceList(3)">
+            <view class="stat-value">{{ performance.performance }}</view>
+            <view class="stat-label">本月业绩</view>
+          </view>
+        </view>
+
+        <wd-cell title="邀请ID" :value="userInfo.invitation_id" v-if="userInfo.is_yewu == 1">
+          <template #icon>
+            <view class="i-ri:pass-valid-line cell-icon"></view>
+          </template>
+        </wd-cell>
+
         <wd-cell title="地址管理" is-link @click="goToAddressList">
           <template #icon>
             <view class="i-ri:map-pin-line cell-icon"></view>
@@ -120,12 +148,26 @@ const userInfo = ref<{
   user_code: string
   level: number
   avatar: string
+  invitation_id: string
+  is_yewu: number
 }>({
   nikename: '',
   username: '',
   user_code: '',
   level: 1,
   avatar: '',
+  invitation_id: '',
+  is_yewu: 0,
+})
+
+const performance = ref<{
+  yao_num: number
+  all_performance: number
+  performance: number
+}>({
+  yao_num: 0, // 累计客户
+  all_performance: 0, // 总业绩
+  performance: 0, // 本月业绩
 })
 
 const avatarUrl = computed(() => {
@@ -149,9 +191,23 @@ const getUserInfo = async () => {
     level: number
     user_code: string
     avatar: string
+    invitation_id: string
+    is_yewu: number
   }
-
   // uni.setStorageSync('userLevel', userInfo.value.level)
+}
+
+const getPerformance = async () => {
+  const postData = {
+    token: getOrderToken(),
+  }
+  const result = await httpPost('/api/usersinfo/getPerformance', postData)
+
+  performance.value = result.data as {
+    yao_num: number
+    all_performance: number
+    performance: number
+  }
 }
 
 const goPersonalEdit = () => {
@@ -171,6 +227,12 @@ const goToOrderList = () => {
 const goToOrderStatus = (status: number) => {
   uni.navigateTo({
     url: `/pages/order-system/order/order-list?status=${status}`,
+  })
+}
+
+const goToPerformanceList = (type: number) => {
+  uni.navigateTo({
+    url: `/pages/order-system/performance-list/performance-list?type=${type}`,
   })
 }
 
@@ -211,6 +273,7 @@ const logout = () => {
 
 onShow(() => {
   getUserInfo()
+  getPerformance()
 })
 </script>
 
@@ -293,5 +356,32 @@ onShow(() => {
 .shortcut-text {
   font-size: 26rpx;
   color: #333;
+}
+
+.promotion-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 30rpx 20rpx;
+  background-color: #fff;
+  border-top: 1px solid #f5f5f5;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 33.33%;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #23b7eb;
+}
+
+.stat-label {
+  margin-top: 10rpx;
+  font-size: 26rpx;
+  color: #666;
 }
 </style>

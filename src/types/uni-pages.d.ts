@@ -42,6 +42,7 @@ interface NavigateToOptions {
        "/pages/order-system/order-person/change-password" |
        "/pages/order-system/order-person/order-person" |
        "/pages/order-system/order-person/order-personal-edit" |
+       "/pages/order-system/performance-list/performance-list" |
        "/pages/order-system/register/register";
 }
 interface RedirectToOptions extends NavigateToOptions {}

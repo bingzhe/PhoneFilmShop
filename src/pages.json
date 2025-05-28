@@ -73,7 +73,9 @@
       "path": "pages/index/index",
       "type": "page",
       "style": {
-        "navigationBarTitleText": ""
+        "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#23B7EB",
+        "navigationBarTextStyle": "white"
       }
     },
     {
@@ -414,6 +416,16 @@
       "layout": "default",
       "style": {
         "navigationBarTitleText": "个人信息",
+        "navigationBarBackgroundColor": "#23B7EB",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/performance-list/performance-list",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "业绩列表",
         "navigationBarBackgroundColor": "#23B7EB",
         "navigationBarTextStyle": "white"
       }

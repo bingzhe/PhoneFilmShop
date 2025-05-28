@@ -143,10 +143,7 @@ const getPhoneNumber = (e: any) => {
 
   if (code) {
     httpPost('/api/WxLogin/savePhone', { code, token_order: token }).then((res) => {
-      uni.showToast({
-        icon: 'none',
-        title: '绑定成功',
-      })
+      toast.success('绑定成功')
       getUserInfo()
     })
   }

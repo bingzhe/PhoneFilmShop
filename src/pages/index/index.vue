@@ -4,6 +4,8 @@
   style: {
     // navigationStyle: 'custom',
     navigationBarTitleText: '',
+    navigationBarBackgroundColor: '#23B7EB',
+    navigationBarTextStyle: 'white',
   },
 }
 </route>
@@ -27,20 +29,28 @@
 
     <view v-if="phoneModal" class="flex justify-between items-center p-10rpx pb-10rpx bg-#fff">
       <view class="flex items-center color-#2051d1">
-        <text
+        <!-- <text
           class="text-12px bg-#5ac3f3 color-#fff pl-10rpx pr-10rpx pt-5rpx pb-5rpx b-rd-6rpx mr-10rpx"
         >
           本机
-        </text>
-        <text class="text-12px font-bold">{{ phoneModal }}</text>
+        </text> -->
+        <view class="i-ic:baseline-phone-iphone text-#23B7EB text-48rpx"></view>
+        <text class="text-12px font-bold text-#23B7EB">{{ phoneModal }}</text>
       </view>
       <view class="flex">
-        <wd-button
+        <!-- <wd-button
           @click="handleSearchNative"
           custom-class="important-bg-#5ac3f3 important-h-60rpx important-line-height-60rpx"
         >
           本机查找
-        </wd-button>
+        </wd-button> -->
+        <wd-img
+          src="/static/images/search-btn.jpg"
+          width="70rpx"
+          height="70rpx"
+          round
+          @click="handleSearchNative"
+        ></wd-img>
       </view>
     </view>
 
