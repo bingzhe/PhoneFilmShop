@@ -24,7 +24,7 @@
       :list="swiperList"
       :autoplay="swiperAutoPlay"
       :current="0"
-      height="120"
+      height="240rpx"
     ></wd-swiper>
 
     <view v-if="phoneModal" class="flex justify-between items-center p-10rpx pb-10rpx bg-#fff">
@@ -35,7 +35,7 @@
           本机
         </text> -->
         <view class="i-ic:baseline-phone-iphone text-#23B7EB text-48rpx"></view>
-        <text class="text-12px font-bold text-#23B7EB">{{ phoneModal }}</text>
+        <text class="text-14px font-bold text-#23B7EB">{{ phoneModal }}</text>
       </view>
       <view class="flex">
         <!-- <wd-button
@@ -55,15 +55,24 @@
     </view>
 
     <wd-sticky :offset-top="0" :z-index="99">
-      <wd-search
-        placeholder="请输入手机型号"
-        v-model="searchValue"
-        cancel-txt="搜索"
-        custom-class="important-pt10rpx important-pb10rpx w-700rpx"
-        @search="handleSearch"
-        @cancel="handleSearch"
-        @change="handleSearchChange"
-      />
+      <view class="flex items-center justify-center mb-10rpx">
+        <wd-search
+          placeholder="请输入手机型号"
+          v-model="searchValue"
+          cancel-txt="搜索"
+          custom-class="important-pt10rpx important-pb10rpx w-700rpx custom-search"
+          :placeholder-left="true"
+          @search="handleSearch"
+          @cancel="handleSearch"
+          @change="handleSearchChange"
+        >
+          <template #suffix>
+            <wd-button @click="handleSearch" :round="false" custom-class="custom-search-btn">
+              搜索
+            </wd-button>
+          </template>
+        </wd-search>
+      </view>
 
       <CateMenu
         v-show="!showSearchPanel"
@@ -398,5 +407,16 @@ page {
 }
 :deep(.wd-sidebar) {
   width: 180rpx !important;
+}
+
+.custom-search {
+  padding: 0px !important;
+  background: #f5f5f5 !important;
+  border: 1px solid #23b7eb !important;
+  border-radius: 8rpx !important;
+}
+
+.custom-search-btn {
+  border-radius: 0 4rpx 4rpx 0 !important;
 }
 </style>
