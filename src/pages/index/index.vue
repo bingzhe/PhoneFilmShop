@@ -214,11 +214,11 @@ const getNewProduct = async () => {
   }).then((res) => {
     const data = res.data
 
-    productionShow.value = true
-
     if (!data) {
       return
     }
+
+    productionShow.value = true
 
     productBg.value = data.bg_img
     productContent.value = data.content
