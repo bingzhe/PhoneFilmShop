@@ -35,7 +35,7 @@ onLoad(async (options) => {
     // await wxLogin()
     // await getUserInfo()
 
-    getProjectName()
+    // getProjectName()
 
     if (scene) {
       const sceneDecodeURI = decodeURIComponent(scene)

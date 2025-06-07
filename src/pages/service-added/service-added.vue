@@ -12,7 +12,7 @@
 <template>
   <view class="p-64rpx">
     <view>
-      <wd-button
+      <!-- <wd-button
         block
         size="large"
         type="success"
@@ -20,8 +20,8 @@
         @click="handleMemberSystem"
       >
         会员系统
-      </wd-button>
-      <wd-button
+      </wd-button> -->
+      <!-- <wd-button
         block
         size="large"
         type="warning"
@@ -29,7 +29,7 @@
         @click="handleFilm"
       >
         贴膜教程
-      </wd-button>
+      </wd-button> -->
       <wd-button
         block
         size="large"

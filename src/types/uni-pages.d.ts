@@ -8,32 +8,16 @@ interface NavigateToOptions {
        "/pages/about/about" |
        "/pages/feedback/feedback" |
        "/pages/index/index" |
-       "/pages/member/member-audit" |
-       "/pages/member/member-combo-list" |
-       "/pages/member/member-combo-log" |
-       "/pages/member/member-combo-qr" |
-       "/pages/member/member-purchase" |
-       "/pages/member/member-shop-list" |
        "/pages/order-system-home/order-system-home" |
        "/pages/personal/personal-edit" |
        "/pages/personal/personal" |
        "/pages/service-added/service-added" |
-       "/pages/shop/shop-combo-check" |
-       "/pages/shop/shop-combo-log" |
-       "/pages/shop/shop-combo-temp" |
-       "/pages/shop/shop-combo" |
-       "/pages/shop/shop-edit" |
-       "/pages/shop/shop-info" |
-       "/pages/shop/shop-member-list" |
-       "/pages/shop/shop-staff" |
-       "/pages/shop/shop" |
-       "/pages/shop-info/shop-info" |
        "/pages/video-course/video-course";
 }
 interface RedirectToOptions extends NavigateToOptions {}
 
 interface SwitchTabOptions {
-  url: "/pages/index/index" | "/pages/order-system-home/order-system-home" | "/pages/service-added/service-added"
+  url: "/pages/index/index" | "/pages/service-added/service-added"
 }
 
 type ReLaunchOptions = NavigateToOptions | SwitchTabOptions;
