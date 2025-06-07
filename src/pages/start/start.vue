@@ -32,8 +32,8 @@ onLoad(async (options) => {
     const scene = options.scene
     console.log('scene', scene)
 
-    await wxLogin()
-    await getUserInfo()
+    // await wxLogin()
+    // await getUserInfo()
 
     getProjectName()
 

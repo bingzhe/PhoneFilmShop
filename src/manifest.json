@@ -1,5 +1,5 @@
 {
-  "name": "科迪亚",
+  "name": "和兴找膜",
   "appid": "__UNI__64B3A63",
   "description": "",
   "versionName": "1.0.0",
@@ -83,7 +83,7 @@
   },
   "quickapp": {},
   "mp-weixin": {
-    "appid": "wx08525ddabf8590cf",
+    "appid": "wx157122f47fc97d44",
     "setting": {
       "urlCheck": false
     },
