@@ -6,13 +6,9 @@
 interface NavigateToOptions {
   url: "/pages/start/start" |
        "/pages/about/about" |
-       "/pages/feedback/feedback" |
        "/pages/index/index" |
        "/pages/order-system-home/order-system-home" |
-       "/pages/personal/personal-edit" |
-       "/pages/personal/personal" |
-       "/pages/service-added/service-added" |
-       "/pages/video-course/video-course";
+       "/pages/service-added/service-added";
 }
 interface RedirectToOptions extends NavigateToOptions {}
 

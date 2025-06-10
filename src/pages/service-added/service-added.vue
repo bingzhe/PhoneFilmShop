@@ -30,7 +30,7 @@
       >
         贴膜教程
       </wd-button> -->
-      <wd-button
+      <!-- <wd-button
         block
         size="large"
         type="primary"
@@ -38,7 +38,7 @@
         @click="handleFeedback"
       >
         意见反馈
-      </wd-button>
+      </wd-button> -->
 
       <wd-button
         block

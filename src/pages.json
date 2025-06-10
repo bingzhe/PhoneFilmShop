@@ -55,15 +55,6 @@
       }
     },
     {
-      "path": "pages/feedback/feedback",
-      "type": "page",
-      "style": {
-        "navigationBarTitleText": "反馈",
-        "navigationBarBackgroundColor": "#00A3FF",
-        "navigationBarTextStyle": "white"
-      }
-    },
-    {
       "path": "pages/index/index",
       "type": "page",
       "style": {
@@ -81,26 +72,6 @@
       }
     },
     {
-      "path": "pages/personal/personal-edit",
-      "type": "page",
-      "layout": "default",
-      "style": {
-        "navigationBarTitleText": "个人信息",
-        "navigationBarBackgroundColor": "#00A3FF",
-        "navigationBarTextStyle": "white"
-      }
-    },
-    {
-      "path": "pages/personal/personal",
-      "type": "page",
-      "layout": "default",
-      "style": {
-        "navigationBarTitleText": "我",
-        "navigationBarBackgroundColor": "#00A3FF",
-        "navigationBarTextStyle": "white"
-      }
-    },
-    {
       "path": "pages/service-added/service-added",
       "type": "page",
       "layout": "default",
@@ -108,13 +79,6 @@
         "navigationBarTitleText": "增值服务",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
-      }
-    },
-    {
-      "path": "pages/video-course/video-course",
-      "type": "page",
-      "style": {
-        "navigationBarTitleText": "教程"
       }
     }
   ],
