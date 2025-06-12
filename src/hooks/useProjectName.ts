@@ -1,5 +1,5 @@
 // 全局状态
-const projectName = ref('歌宸型号搜索')
+const projectName = ref('琢膜')
 
 export function useProjectName() {
   // 本地状态

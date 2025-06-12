@@ -24,7 +24,6 @@
         />
       </view>
     </wd-sticky>
-
     <view class="flex min-h-100vh">
       <view class="category-left-container">
         <SliderMenu
@@ -53,12 +52,12 @@
       </view>
     </view>
 
-    <OrderTabbar />
+    <!-- <OrderTabbar /> -->
 
     <!-- 浮动电话图标 -->
-    <view class="floating-phone" @click="makePhoneCall">
+    <!-- <view class="floating-phone" @click="makePhoneCall">
       <view class="i-ri:phone-fill phone-icon"></view>
-    </view>
+    </view> -->
 
     <!-- 添加数量选择弹窗 -->
     <wd-popup
@@ -107,7 +106,7 @@ import SliderMenu from './components/slider-menu.vue'
 import ProductItem from './components/product-item.vue'
 import { useToast } from 'wot-design-uni'
 import { useUserStore } from '@/store'
-import OrderTabbar from '../components/order-tabbar.vue'
+// import OrderTabbar from '../components/order-tabbar.vue'
 import { getOrderToken } from '@/utils/orderToken'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
@@ -150,15 +149,29 @@ const userLevel = ref(1)
 
 // 输入框查找
 const handleSearch = () => {
-  if (searchValue.value) {
-    uni.navigateTo({
-      url: `/pages/order-system/goods-search-list/goods-search-list?name=${searchValue.value}`,
-    })
-  } else {
-    uni.navigateTo({
-      url: '/pages/order-system/goods-search-list/goods-search-list',
-    })
-  }
+  // const token = getOrderToken()
+  // // console.log('token', token)
+  // if (!token) {
+  //   toast.warning('请先登录')
+  //   // 没有登录跳转到登录
+  //   setTimeout(() => {
+  //     uni.reLaunch({
+  //       url: '/pages/mall-login/mall-login',
+  //     })
+  //   }, 1000)
+  //   return
+  // }
+  // if (searchValue.value) {
+  //   uni.navigateTo({
+  //     url: `/pages/order-system/goods-search-list/goods-search-list?name=${searchValue.value}`,
+  //   })
+  // } else {
+  //   uni.navigateTo({
+  //     url: '/pages/order-system/goods-search-list/goods-search-list',
+  //   })
+  // }
+
+  getGoodsList(true)
 }
 
 const getFirstCateList = async () => {
@@ -232,6 +245,10 @@ const getGoodsList = async (init?: boolean) => {
   if (secondCateId.value) {
     params.category_id = secondCateId.value
   }
+
+  if (searchValue.value) {
+    params.name = searchValue.value
+  }
   // else if (firstCateId.value) {
   //   // 1是一级菜单的全部分类
   //   // eslint-disable-next-line eqeqeq
@@ -253,6 +270,7 @@ const getGoodsList = async (init?: boolean) => {
 
       _list.forEach((item) => {
         item.goods_img_full = `${baseUrl}${item.goods_img}?w=100&h=100`
+        item.expand = false
         // item.selectList = item.spec_list.filter((spec) => spec.is_checked === 1)
         // item.spec_list = item.spec_list.filter((spec) => spec.is_checked !== 1)
         // item.expand = false
@@ -299,6 +317,20 @@ const currentProduct = ref<any>(null)
 
 // 打开数量选择弹窗
 const onAddToCart = (product) => {
+  const token = getOrderToken()
+  // console.log('token', token)
+  if (!token) {
+    toast.warning('请先登录')
+
+    // 没有登录跳转到登录
+    setTimeout(() => {
+      uni.reLaunch({
+        url: '/pages/mall-login/mall-login',
+      })
+    }, 1000)
+    return
+  }
+
   currentProduct.value = product
   selectedQuantity.value = 1 // 重置数量为1
   showQuantityPopup.value = true
@@ -438,7 +470,7 @@ page {
 .floating-phone {
   position: fixed;
   right: 30rpx;
-  bottom: 200rpx;
+  bottom: 100rpx;
   z-index: 20;
   display: flex;
   align-items: center;

@@ -25,13 +25,6 @@
 
       <input
         class="loginInput"
-        placeholder="邀请ID"
-        placeholder-class="placeholderClass"
-        v-model="formModel.invitation_id"
-      />
-
-      <input
-        class="loginInput"
         type="password"
         placeholder="密码"
         placeholder-class="placeholderClass"
@@ -39,6 +32,13 @@
       />
 
       <input
+        class="loginInput"
+        placeholder="邀请ID"
+        placeholder-class="placeholderClass"
+        v-model="formModel.invitation_id"
+      />
+
+      <!-- <input
         class="loginInput"
         placeholder="公司名"
         placeholder-class="placeholderClass"
@@ -67,7 +67,7 @@
         placeholder="详细地址"
         placeholder-class="placeholderClass"
         v-model="formModel.address"
-      />
+      /> -->
 
       <view class="login_button" @click="registerAction">注册</view>
     </view>
@@ -83,45 +83,45 @@ import { httpPost } from '@/utils/http'
 
 const formModel = ref({
   username: '',
-  invitation_id: '',
   password: '',
-  company_name: '',
-  name: '',
-  area_value: [],
-  province_name: '',
-  province_id: '',
-  city_name: '',
-  city_id: '',
-  area_name: '',
-  area_id: '',
-  address: '',
+  invitation_id: '',
+  // company_name: '',
+  // name: '',
+  // area_value: [],
+  // province_name: '',
+  // province_id: '',
+  // city_name: '',
+  // city_id: '',
+  // area_name: '',
+  // area_id: '',
+  // address: '',
 })
 
-const { colPickerData, findChildrenByCode } = useColPickerData()
+// const { colPickerData, findChildrenByCode } = useColPickerData()
 const toast = useToast()
 
 // 数据
 const openid = ref('')
 
-const area = ref<any[]>([])
+// const area = ref<any[]>([])
 
-const columnChange = async ({ selectedItem, resolve, finish }) => {
-  // 模拟异步请求
-  await sleep(0.1)
-  const areaData = findChildrenByCode(colPickerData, selectedItem.value)
-  if (areaData && areaData.length) {
-    resolve(
-      areaData.map((item) => {
-        return {
-          value: item.value,
-          label: item.text,
-        }
-      }),
-    )
-  } else {
-    finish()
-  }
-}
+// const columnChange = async ({ selectedItem, resolve, finish }) => {
+//   // 模拟异步请求
+//   await sleep(0.1)
+//   const areaData = findChildrenByCode(colPickerData, selectedItem.value)
+//   if (areaData && areaData.length) {
+//     resolve(
+//       areaData.map((item) => {
+//         return {
+//           value: item.value,
+//           label: item.text,
+//         }
+//       }),
+//     )
+//   } else {
+//     finish()
+//   }
+// }
 
 // 获取OpenID
 const getRegisterOpenid = async () => {
@@ -142,47 +142,47 @@ const registerAction = async () => {
     return
   }
 
-  if (!formModel.value.invitation_id) {
-    toast.warning('请输入邀请ID')
-    return
-  }
-
   if (!formModel.value.password) {
     toast.warning('请输入密码')
     return
   }
 
-  if (!formModel.value.company_name) {
-    toast.warning('请输入公司名')
+  if (!formModel.value.invitation_id) {
+    toast.warning('请输入邀请ID')
     return
   }
 
-  if (!formModel.value.name) {
-    toast.warning('请输入姓名')
-    return
-  }
+  // if (!formModel.value.company_name) {
+  //   toast.warning('请输入公司名')
+  //   return
+  // }
 
-  if (formModel.value.area_value.length === 0) {
-    toast.warning('请选择省市区')
-    return
-  }
+  // if (!formModel.value.name) {
+  //   toast.warning('请输入姓名')
+  //   return
+  // }
 
-  if (!formModel.value.address) {
-    toast.warning('请输入详细地址')
-    return
-  }
+  // if (formModel.value.area_value.length === 0) {
+  //   toast.warning('请选择省市区')
+  //   return
+  // }
+
+  // if (!formModel.value.address) {
+  //   toast.warning('请输入详细地址')
+  //   return
+  // }
 
   const params = {
     openid: openid.value,
     username: formModel.value.username,
     password: formModel.value.password,
     invitation_id: formModel.value.invitation_id,
-    name: formModel.value.name,
-    company_name: formModel.value.company_name,
-    address: formModel.value.address,
-    province: formModel.value.province_name,
-    city: formModel.value.city_name,
-    area: formModel.value.area_name,
+    // name: formModel.value.name,
+    // company_name: formModel.value.company_name,
+    // address: formModel.value.address,
+    // province: formModel.value.province_name,
+    // city: formModel.value.city_name,
+    // area: formModel.value.area_name,
   }
 
   // console.log(params)
@@ -221,14 +221,14 @@ function sleep(second: number = 1) {
   })
 }
 
-function handleAreaConfirm({ value, selectedItems }) {
-  formModel.value.province_name = selectedItems[0].label
-  formModel.value.province_id = selectedItems[0].value
-  formModel.value.city_name = selectedItems[1].label
-  formModel.value.city_id = selectedItems[1].value
-  formModel.value.area_name = selectedItems[2].label
-  formModel.value.area_id = selectedItems[2].value
-}
+// function handleAreaConfirm({ value, selectedItems }) {
+//   formModel.value.province_name = selectedItems[0].label
+//   formModel.value.province_id = selectedItems[0].value
+//   formModel.value.city_name = selectedItems[1].label
+//   formModel.value.city_id = selectedItems[1].value
+//   formModel.value.area_name = selectedItems[2].label
+//   formModel.value.area_id = selectedItems[2].value
+// }
 
 // 生命周期
 onMounted(() => {
@@ -248,18 +248,18 @@ page {
 }
 
 .logo-container {
-  padding-top: 10%;
+  padding-top: 15%;
   text-align: center;
 }
 
 .logo-image {
-  width: 100rpx;
-  height: 100rpx;
+  width: 200rpx;
+  height: 200rpx;
   border-radius: 50%;
 }
 
 .login-wrapper {
-  margin-top: 5%;
+  margin-top: 15%;
 }
 
 .loginInput {
@@ -270,7 +270,7 @@ page {
   width: 600rpx;
   height: 88rpx;
   padding: 0rpx 40rpx;
-  margin: 0 auto 20rpx;
+  margin: 0 auto 40rpx;
   font-size: 30rpx;
   background: #eaf0f8;
   border-radius: 10rpx;

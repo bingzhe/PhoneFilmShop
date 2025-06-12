@@ -64,12 +64,12 @@
       </view>
     </view>
 
-    <OrderTabbar />
+    <!-- <OrderTabbar /> -->
   </view>
 </template>
 
 <script lang="ts" setup>
-import OrderTabbar from '../components/order-tabbar.vue'
+// import OrderTabbar from '../components/order-tabbar.vue'
 import { httpPost } from '@/utils/http'
 import { useUserStore } from '@/store'
 import { useToast } from 'wot-design-uni'
@@ -251,7 +251,7 @@ const selectAll = () => {
 
 // 跳转到分类页
 const goToCategory = () => {
-  uni.redirectTo({
+  uni.switchTab({
     url: '/pages/order-system/category/category',
   })
 }
@@ -287,7 +287,22 @@ const toggleItemChecked = (item: any) => {
   updateTotalPrice()
 }
 
-onMounted(() => {
+onShow(() => {
+  // 获取订单令牌
+  const token = getOrderToken()
+  // console.log('token', token)
+  if (!token) {
+    toast.warning('请先登录')
+
+    // 没有登录跳转到登录
+    setTimeout(() => {
+      uni.reLaunch({
+        url: '/pages/mall-login/mall-login',
+      })
+    }, 1000)
+    return
+  }
+
   // 获取本地存储的选中商品
   // getSelectedItems()
   getCart()
@@ -428,7 +443,7 @@ onBeforeUnmount(() => {
   position: fixed;
   right: 0;
   /* 固定设置Tabbar高度为50px */
-  bottom: 50px;
+  bottom: 0;
   left: 0;
   z-index: 9;
   display: flex;
@@ -436,7 +451,7 @@ onBeforeUnmount(() => {
   height: 100rpx;
   padding: 0 20rpx;
   /* 安全区域padding */
-  padding-bottom: v-bind('safeAreaInsetBottom + "px"');
+  // padding-bottom: v-bind('safeAreaInsetBottom + "px"');
   background-color: #fff;
   box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
 }

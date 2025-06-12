@@ -120,27 +120,29 @@
     </view>
 
     <!-- 退出登录按钮 -->
-    <view class="logout-button-container">
+    <!-- <view class="logout-button-container">
       <wd-button size="large" @click="logout" class="logout-button">
         <view class="flex items-center justify-center">
           <view class="i-ri:logout-box-line mr-8rpx"></view>
           <text>退出商城</text>
         </view>
       </wd-button>
-    </view>
+    </view> -->
 
-    <OrderTabbar />
+    <!-- <OrderTabbar /> -->
   </view>
 </template>
 
 <script lang="ts" setup>
 import { httpPost } from '@/utils/http'
-import OrderTabbar from '../components/order-tabbar.vue'
+// import OrderTabbar from '../components/order-tabbar.vue'
 // import { useUserStore } from '@/store'
 import { getOrderToken } from '@/utils/orderToken'
+import { useToast } from 'wot-design-uni'
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 
 // const userStore = useUserStore()
+const toast = useToast()
 
 const userInfo = ref<{
   nikename: string
@@ -272,6 +274,21 @@ const logout = () => {
 }
 
 onShow(() => {
+  // 获取订单令牌
+  const token = getOrderToken()
+  // console.log('token', token)
+  if (!token) {
+    toast.warning('请先登录')
+
+    // 没有登录跳转到登录
+    setTimeout(() => {
+      uni.reLaunch({
+        url: '/pages/mall-login/mall-login',
+      })
+    }, 1000)
+    return
+  }
+
   getUserInfo()
   getPerformance()
 })

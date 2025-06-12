@@ -7,28 +7,11 @@ interface NavigateToOptions {
   url: "/pages/start/start" |
        "/pages/about/about" |
        "/pages/feedback/feedback" |
-       "/pages/index/index" |
-       "/pages/mall-home/mall-home" |
-       "/pages/member/member-audit" |
-       "/pages/member/member-combo-list" |
-       "/pages/member/member-combo-log" |
-       "/pages/member/member-combo-qr" |
-       "/pages/member/member-purchase" |
-       "/pages/member/member-shop-list" |
+       "/pages/mall-login/mall-login" |
        "/pages/order-system-home/order-system-home" |
        "/pages/personal/personal-edit" |
        "/pages/personal/personal" |
        "/pages/service-added/service-added" |
-       "/pages/shop/shop-combo-check" |
-       "/pages/shop/shop-combo-log" |
-       "/pages/shop/shop-combo-temp" |
-       "/pages/shop/shop-combo" |
-       "/pages/shop/shop-edit" |
-       "/pages/shop/shop-info" |
-       "/pages/shop/shop-member-list" |
-       "/pages/shop/shop-staff" |
-       "/pages/shop/shop" |
-       "/pages/shop-info/shop-info" |
        "/pages/video-course/video-course" |
        "/pages/order-system/address/address-add" |
        "/pages/order-system/address/address-list" |
@@ -48,7 +31,7 @@ interface NavigateToOptions {
 interface RedirectToOptions extends NavigateToOptions {}
 
 interface SwitchTabOptions {
-  url: "/pages/index/index" | "/pages/personal/personal" | "/pages/mall-home/mall-home"
+  url: "/pages/order-system/category/category" | "/pages/order-system/cart/cart" | "/pages/order-system/order-person/order-person"
 }
 
 type ReLaunchOptions = NavigateToOptions | SwitchTabOptions;

@@ -32,8 +32,8 @@ onLoad(async (options) => {
     const scene = options.scene
     console.log('scene', scene)
 
-    await wxLogin()
-    await getUserInfo()
+    // await wxLogin()
+    // await getUserInfo()
 
     wxLoginOrder()
 
@@ -65,7 +65,7 @@ onLoad(async (options) => {
       })
     } else {
       uni.switchTab({
-        url: '/pages/index/index',
+        url: '/pages/order-system/category/category',
       })
     }
   } catch (error) {

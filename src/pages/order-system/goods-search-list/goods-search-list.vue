@@ -49,12 +49,13 @@
         v-for="item in goods"
         :key="item.goods_id"
       >
-        <navigator :url="item.goodsUrl">
-          <image class="flex-shrink-0 w-220rpx h-220rpx" mode="aspectFill" :src="item.pic"></image>
-        </navigator>
+        <!-- <navigator :url="item.goodsUrl"> -->
+        <image class="flex-shrink-0 w-220rpx h-220rpx" mode="aspectFill" :src="item.pic"></image>
+        <!-- </navigator> -->
         <view class="flex flex-col justify-between w-full p-16rpx pr-32rpx pl-24rpx">
           <view class="mb-10rpx text-30rpx text-#333 ellipsis-text">
-            <navigator :url="item.goodsUrl">{{ item.goods_name }}</navigator>
+            <!-- <navigator :url="item.goodsUrl">{{ item.goods_name }}</navigator> -->
+            {{ item.goods_name }}
           </view>
           <view class="flex items-center justify-between">
             <view class="text-34rpx font-500 text-#ff3b30">
@@ -88,12 +89,13 @@
         v-for="item in goods"
         :key="item.goods_id"
       >
-        <navigator :url="item.goodsUrl">
-          <image class="w-345rpx h-345rpx" mode="aspectFill" :src="item.pic"></image>
-        </navigator>
+        <!-- <navigator :url="item.goodsUrl"> -->
+        <image class="w-345rpx h-345rpx" mode="aspectFill" :src="item.pic"></image>
+        <!-- </navigator> -->
         <view class="box-border w-345rpx p-16rpx">
           <view class="h-70rpx text-28rpx text-#333 ellipsis-text">
-            <navigator :url="item.goodsUrl">{{ item.goods_name }}</navigator>
+            <!-- <navigator :url="item.goodsUrl">{{ item.goods_name }}</navigator> -->
+            {{ item.goods_name }}
           </view>
           <view class="flex items-center justify-between">
             <view class="mt-10rpx text-32rpx font-500 text-#ff3b30">
