@@ -94,6 +94,14 @@
                 立即付款
               </view>
 
+              <view
+                v-if="order.status === 3"
+                class="action-btn detail-btn"
+                @click.stop="confirmOrder(order.order_id)"
+              >
+                确认收货
+              </view>
+
               <view class="action-btn detail-btn">查看详情</view>
             </view>
           </view>
@@ -232,16 +240,31 @@ const cancelOrder = async (orderId: string) => {
             order_id: orderId,
             token: getOrderToken(),
           })
-          uni.showToast({
-            title: '订单取消成功',
-            icon: 'success',
-          })
+          toast.success('订单取消成功')
           getOrderList()
         } catch (error) {
-          uni.showToast({
-            title: '订单取消失败',
-            icon: 'error',
+          toast.error('订单取消失败')
+        }
+      }
+    },
+  })
+}
+
+const confirmOrder = async (orderId: string) => {
+  uni.showModal({
+    title: '提示',
+    content: '确定要确认收货吗？',
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          const result = await httpPost('/Api/UsersInfo/receipt', {
+            order_id: orderId,
+            token: getOrderToken(),
           })
+          toast.success('订单确认收货成功')
+          getOrderList()
+        } catch (error) {
+          toast.error('订单确认收货失败')
         }
       }
     },

@@ -111,6 +111,18 @@
           </template>
         </wd-cell>
 
+        <wd-cell title="我的余额" is-link @click="goToBalanceList" v-if="userInfo.is_yewu == 1">
+          <template #icon>
+            <view class="i-ri:money-dollar-box-line cell-icon"></view>
+          </template>
+        </wd-cell>
+
+        <wd-cell title="提现绑定" is-link @click="goToWithdrawBind" v-if="userInfo.is_yewu == 1">
+          <template #icon>
+            <view class="i-mingcute:bank-card-line cell-icon"></view>
+          </template>
+        </wd-cell>
+
         <wd-cell title="地址管理" is-link @click="goToAddressList">
           <template #icon>
             <view class="i-ri:map-pin-line cell-icon"></view>
@@ -249,6 +261,20 @@ const handleChangePassword = () => {
 const goToAddressList = () => {
   uni.navigateTo({
     url: '/pages/order-system/address/address-list',
+  })
+}
+
+// 跳转到余额列表
+const goToBalanceList = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/person-balance/person-balance',
+  })
+}
+
+// 跳转到提现绑定
+const goToWithdrawBind = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/withdraw-bind/withdraw-bind',
   })
 }
 

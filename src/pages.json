@@ -256,11 +256,41 @@
       }
     },
     {
+      "path": "pages/order-system/person-balance/person-balance",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "我的余额",
+        "navigationBarBackgroundColor": "#23B7EB",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/order-system/register/register",
       "type": "page",
       "layout": "default",
       "style": {
         "navigationBarTitleText": "注册",
+        "navigationBarBackgroundColor": "#23B7EB",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/withdraw-bind/withdraw-bind",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "提现绑定",
+        "navigationBarBackgroundColor": "#23B7EB",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/withdraw-opr/withdraw-opr",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "提现",
         "navigationBarBackgroundColor": "#23B7EB",
         "navigationBarTextStyle": "white"
       }

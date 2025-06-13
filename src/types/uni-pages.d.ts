@@ -26,7 +26,10 @@ interface NavigateToOptions {
        "/pages/order-system/order-person/order-person" |
        "/pages/order-system/order-person/order-personal-edit" |
        "/pages/order-system/performance-list/performance-list" |
-       "/pages/order-system/register/register";
+       "/pages/order-system/person-balance/person-balance" |
+       "/pages/order-system/register/register" |
+       "/pages/order-system/withdraw-bind/withdraw-bind" |
+       "/pages/order-system/withdraw-opr/withdraw-opr";
 }
 interface RedirectToOptions extends NavigateToOptions {}
 
