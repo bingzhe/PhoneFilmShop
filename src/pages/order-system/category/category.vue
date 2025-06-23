@@ -300,7 +300,7 @@ onLoad(async () => {
 })
 
 onReachBottom(() => {
-  if (list.value.length >= total.value && page.value !== 1) {
+  if (list.value.length >= total.value) {
     return
   }
   page.value = page.value + 1

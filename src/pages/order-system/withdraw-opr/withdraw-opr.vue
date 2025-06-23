@@ -25,7 +25,6 @@
             prop="real_name"
             placeholder="请先绑定真实姓名"
             readonly
-            disabled
           />
           <wd-input
             v-model="formData.bank_code"
@@ -33,7 +32,6 @@
             prop="bank_code"
             placeholder="请先绑定银行卡号"
             readonly
-            disabled
           />
           <wd-input
             v-model="formData.bank_address"
@@ -41,7 +39,6 @@
             prop="bank_address"
             placeholder="请先绑定开户行"
             readonly
-            disabled
           />
           <wd-input
             v-model="formData.withdraw_price"
@@ -51,6 +48,14 @@
             clearable
             type="number"
             class="mt-16rpx"
+          />
+          <wd-input v-model="showCommission" label="提现手续费费率" prop="commission" readonly />
+          <wd-input v-model="formData.commission" label="提现手续费" prop="commission" readonly />
+          <wd-input
+            v-model="formData.real_withdraw_price"
+            label="实际提现金额"
+            prop="real_withdraw_price"
+            readonly
           />
         </wd-cell-group>
         <view class="mt-32rpx">
@@ -64,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { useToast } from 'wot-design-uni'
 import { httpPost } from '@/utils/http'
 import { getOrderToken } from '@/utils/orderToken'
@@ -79,6 +84,13 @@ const formData = reactive({
   bank_code: '',
   bank_address: '',
   withdraw_price: '',
+  commission: 0,
+  real_withdraw_price: 0,
+})
+
+const commission = ref(0)
+const showCommission = computed(() => {
+  return commission.value + '%'
 })
 
 const rules: any = {
@@ -114,6 +126,26 @@ const getUserInfo = async () => {
     balance.value = data.balance !== undefined ? String(data.balance) : '0.00'
   }
 }
+// Api/UsersWithdraw/getWithdrawConfig
+const getWithdrawConfig = async () => {
+  const res = await httpPost('/Api/UsersWithdraw/getWithdrawConfig', {
+    token: getOrderToken(),
+  })
+  if (res.code === 200) {
+    commission.value = Number(res.data)
+  }
+}
+
+watch(
+  () => formData.withdraw_price,
+  (newVal) => {
+    formData.commission = (Number(newVal) * commission.value) / 100
+    formData.real_withdraw_price = Number(newVal) - formData.commission
+  },
+  {
+    immediate: true,
+  },
+)
 
 const submitForm = () => {
   formRef.value.validate().then(({ valid, errors }) => {
@@ -154,5 +186,6 @@ const submitForm = () => {
 
 onMounted(() => {
   getUserInfo()
+  getWithdrawConfig()
 })
 </script>

@@ -33,6 +33,12 @@ export default defineUniPages({
         text: '分类',
       },
       {
+        iconPath: 'static/tabbar/sale-off.png',
+        selectedIconPath: 'static/tabbar/sale-on.png',
+        pagePath: 'pages/order-system/goos-sales-promotion/goos-sales-promotion',
+        text: '促销',
+      },
+      {
         iconPath: 'static/tabbar/cart-off.png',
         selectedIconPath: 'static/tabbar/cart-on.png',
         pagePath: 'pages/order-system/cart/cart',

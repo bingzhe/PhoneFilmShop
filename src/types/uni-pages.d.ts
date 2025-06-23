@@ -19,6 +19,7 @@ interface NavigateToOptions {
        "/pages/order-system/category/category" |
        "/pages/order-system/goods-detail/goods-detail" |
        "/pages/order-system/goods-search-list/goods-search-list" |
+       "/pages/order-system/goos-sales-promotion/goos-sales-promotion" |
        "/pages/order-system/order/confirm-order" |
        "/pages/order-system/order/order-detail" |
        "/pages/order-system/order/order-list" |
@@ -34,7 +35,7 @@ interface NavigateToOptions {
 interface RedirectToOptions extends NavigateToOptions {}
 
 interface SwitchTabOptions {
-  url: "/pages/order-system/category/category" | "/pages/order-system/cart/cart" | "/pages/order-system/order-person/order-person"
+  url: "/pages/order-system/category/category" | "/pages/order-system/goos-sales-promotion/goos-sales-promotion" | "/pages/order-system/cart/cart" | "/pages/order-system/order-person/order-person"
 }
 
 type ReLaunchOptions = NavigateToOptions | SwitchTabOptions;

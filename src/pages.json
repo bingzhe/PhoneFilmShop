@@ -30,6 +30,12 @@
         "text": "分类"
       },
       {
+        "iconPath": "static/tabbar/sale-off.png",
+        "selectedIconPath": "static/tabbar/sale-on.png",
+        "pagePath": "pages/order-system/goos-sales-promotion/goos-sales-promotion",
+        "text": "促销"
+      },
+      {
         "iconPath": "static/tabbar/cart-off.png",
         "selectedIconPath": "static/tabbar/cart-on.png",
         "pagePath": "pages/order-system/cart/cart",
@@ -183,6 +189,17 @@
         "navigationBarTitleText": "商品列表",
         "navigationBarBackgroundColor": "#23B7EB",
         "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/goos-sales-promotion/goos-sales-promotion",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "促销",
+        "navigationBarBackgroundColor": "#23B7EB",
+        "navigationBarTextStyle": "white",
+        "enablePullDownRefresh": true
       }
     },
     {
