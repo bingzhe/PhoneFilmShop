@@ -17,10 +17,10 @@
           </view>
         </view>
         <view class="flex items-end gap-2 mb-10rpx">
-          <view class="text-14px color-#fa4126 line-through">
+          <view class="text-14px color-#fa4126 font-bold">
             <text>¥{{ product.goods_price }}</text>
           </view>
-          <view class="text-12px color-#666 font-bold">
+          <view class="text-12px color-#666 line-through">
             <text>¥{{ product.yuan_price }}</text>
           </view>
         </view>
