@@ -56,9 +56,9 @@
     <OrderTabbar />
 
     <!-- 浮动电话图标 -->
-    <view class="floating-phone" @click="makePhoneCall">
+    <!-- <view class="floating-phone" @click="makePhoneCall">
       <view class="i-ri:phone-fill phone-icon"></view>
-    </view>
+    </view> -->
 
     <!-- 添加数量选择弹窗 -->
     <wd-popup
