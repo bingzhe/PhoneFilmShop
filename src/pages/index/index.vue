@@ -19,6 +19,7 @@
       custom-class="important-b-rd-0"
     />
 
+    <view v-if="swiperList.length == 0" class="h-[240rpx] w-750rpx"></view>
     <wd-swiper
       v-if="swiperList.length > 0"
       :list="swiperList"
