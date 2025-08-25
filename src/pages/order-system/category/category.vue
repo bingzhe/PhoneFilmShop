@@ -53,7 +53,7 @@
       </view>
     </view>
 
-    <OrderTabbar />
+    <!-- <OrderTabbar /> -->
 
     <!-- 浮动电话图标 -->
     <!-- <view class="floating-phone" @click="makePhoneCall">

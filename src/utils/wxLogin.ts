@@ -69,6 +69,9 @@ export const wxLoginOrder = async () => {
 
     if (openid) {
       clearOrderToken()
+      uni.reLaunch({
+        url: `/pages/order-system-home/order-system-home`,
+      })
       return false
     } else if (token) {
       const userResult = await httpPost<any>('/api/UsersInfo/index', { token })
@@ -82,6 +85,10 @@ export const wxLoginOrder = async () => {
       } else {
         clearOrderToken()
       }
+
+      uni.switchTab({
+        url: '/pages/order-system/category/category',
+      })
     }
   } catch (error) {
     console.error('wxLoginOrder error->', error)

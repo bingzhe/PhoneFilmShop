@@ -326,10 +326,16 @@ const submitOrder = () => {
       orderNo.value = res.data?.order_no
 
       // 显示支付弹窗
+      // setTimeout(() => {
+      //   showPaymentPopup.value = true
+      //   toast.close()
+      // }, 300)
+
       setTimeout(() => {
-        showPaymentPopup.value = true
-        toast.close()
-      }, 300)
+        uni.redirectTo({
+          url: '/pages/order-system/order/order-list',
+        })
+      }, 1000)
     })
     .catch((err) => {
       toast.error(err || '提交订单失败')

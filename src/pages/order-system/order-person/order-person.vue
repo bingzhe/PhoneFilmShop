@@ -61,7 +61,7 @@
             <view class="shortcut-icon">
               <view class="i-ri:bill-line"></view>
             </view>
-            <text class="shortcut-text">待付款</text>
+            <text class="shortcut-text">待确认</text>
           </view>
           <view class="shortcut-item" @click="goToOrderStatus(2)">
             <view class="shortcut-icon">
@@ -129,7 +129,7 @@
       </wd-button>
     </view>
 
-    <OrderTabbar />
+    <!-- <OrderTabbar /> -->
   </view>
 </template>
 
@@ -251,11 +251,17 @@ const goToAddressList = () => {
 }
 
 // 退出登录
-const logout = () => {
+const logout = async () => {
   // 清除登录相关的存储
   // uni.removeStorageSync('orderToken')
   // uni.removeStorageSync('userLevel')
 
+  const postData = {
+    token: getOrderToken(),
+  }
+  const result = await httpPost('/api/Login/loginOut', postData)
+
+  console.log(result)
   // 延迟跳转到登录页
   setTimeout(() => {
     uni.reLaunch({

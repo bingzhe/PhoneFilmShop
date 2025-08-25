@@ -86,13 +86,13 @@
                 取消订单
               </view>
 
-              <view
+              <!-- <view
                 v-if="order.status === 0"
                 class="action-btn detail-btn"
                 @click.stop="payOrder(order)"
               >
                 立即付款
-              </view>
+              </view> -->
 
               <view class="action-btn detail-btn">查看详情</view>
             </view>
@@ -148,7 +148,8 @@ const currentOrderPrice = ref(0)
 // 订单状态列表
 const statusList = [
   { label: '全部', value: 9999 },
-  { label: '待付款', value: 0 },
+  { label: '待确认', value: 0 },
+  // { label: '待付款', value: 0 },
   // { label: '待确认', value: 1 },
   { label: '待发货', value: 2 },
   { label: '待收货', value: 3 },
@@ -157,7 +158,7 @@ const statusList = [
 
 // 状态文本映射
 const statusTextMap = {
-  '0': '待付款',
+  '0': '待确认',
   '2': '待发货',
   '3': '待收货',
   '4': '已完成',

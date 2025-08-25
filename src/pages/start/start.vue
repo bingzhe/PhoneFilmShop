@@ -32,42 +32,42 @@ onLoad(async (options) => {
     const scene = options.scene
     console.log('scene', scene)
 
-    await wxLogin()
-    await getUserInfo()
+    // await wxLogin()
+    // await getUserInfo()
 
     wxLoginOrder()
 
     getProjectName()
 
-    if (scene) {
-      const sceneDecodeURI = decodeURIComponent(scene)
-      console.log('sceneDecodeURI', sceneDecodeURI)
+    // if (scene) {
+    //   const sceneDecodeURI = decodeURIComponent(scene)
+    //   console.log('sceneDecodeURI', sceneDecodeURI)
 
-      // ?shopld:4
-      const parseParams = (str: string) => {
-        const params: any = {}
-        str.split('&').forEach((pair) => {
-          const cleanPair = pair.replace(/^\?/, '')
-          const [key, value] = cleanPair.split('=')
-          if (key) params[key] = value || ''
-        })
-        return params
-      }
-      const params = parseParams(sceneDecodeURI)
-      console.log('params', params)
+    //   // ?shopld:4
+    //   const parseParams = (str: string) => {
+    //     const params: any = {}
+    //     str.split('&').forEach((pair) => {
+    //       const cleanPair = pair.replace(/^\?/, '')
+    //       const [key, value] = cleanPair.split('=')
+    //       if (key) params[key] = value || ''
+    //     })
+    //     return params
+    //   }
+    //   const params = parseParams(sceneDecodeURI)
+    //   console.log('params', params)
 
-      const shopId = params.shopId
+    //   const shopId = params.shopId
 
-      console.log('shopId', shopId)
+    //   console.log('shopId', shopId)
 
-      uni.reLaunch({
-        url: `/pages/shop/shop?shopId=${shopId}`,
-      })
-    } else {
-      uni.switchTab({
-        url: '/pages/index/index',
-      })
-    }
+    //   uni.reLaunch({
+    //     url: `/pages/shop/shop?shopId=${shopId}`,
+    //   })
+    // } else {
+    //   uni.switchTab({
+    //     url: '/pages/order-system/category/category',
+    //   })
+    // }
   } catch (error) {
     console.log(error)
   }

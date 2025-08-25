@@ -132,9 +132,9 @@
         <view v-if="orderInfo.status === 0" class="action-btn cancel-btn" @click="cancelOrder">
           取消订单
         </view>
-        <view v-if="orderInfo.status === 0" class="action-btn pay-btn" @click="payOrder">
+        <!-- <view v-if="orderInfo.status === 0" class="action-btn pay-btn" @click="payOrder">
           立即付款
-        </view>
+        </view> -->
       </view>
     </template>
 
@@ -194,14 +194,16 @@ const loading = ref(false)
 
 // 状态文本映射
 const statusTextMap = {
-  '0': '待付款',
+  // '0': '待付款',
+  '0': '待确认',
   '2': '待发货',
   '3': '待收货',
   '4': '已完成',
 }
 // 状态描述映射
 const statusDescMap = {
-  0: '订单已提交，请及时付款',
+  // 0: '订单已提交，请及时付款',
+  0: '订单已提交，请等待确认',
   2: '商家已确认订单，等待发货',
   3: '商家已发货，等待收货',
   4: '订单已完成',

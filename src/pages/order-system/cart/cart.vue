@@ -64,7 +64,7 @@
       </view>
     </view>
 
-    <OrderTabbar />
+    <!-- <OrderTabbar /> -->
   </view>
 </template>
 
@@ -251,7 +251,7 @@ const selectAll = () => {
 
 // 跳转到分类页
 const goToCategory = () => {
-  uni.redirectTo({
+  uni.switchTab({
     url: '/pages/order-system/category/category',
   })
 }
@@ -290,9 +290,13 @@ const toggleItemChecked = (item: any) => {
 onMounted(() => {
   // 获取本地存储的选中商品
   // getSelectedItems()
-  getCart()
-  getSafeArea()
+  // getCart()
+  // getSafeArea()
   // setupResizeObserver()
+})
+
+onShow(() => {
+  getCart()
 })
 
 defineExpose({
@@ -428,7 +432,8 @@ onBeforeUnmount(() => {
   position: fixed;
   right: 0;
   /* 固定设置Tabbar高度为50px */
-  bottom: 50px;
+  //bottom: 50px;
+  bottom: 0;
   left: 0;
   z-index: 9;
   display: flex;

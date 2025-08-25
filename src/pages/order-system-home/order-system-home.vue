@@ -73,6 +73,7 @@ import { useToast, useMessage } from 'wot-design-uni'
 import { httpPost } from '@/utils/http'
 import { getOrderToken, setOrderToken } from '@/utils/orderToken'
 import { saveUsername, getLastUsername } from '@/utils/userStorage'
+import { getWxLoginCode } from '@/utils/wxLogin'
 
 // 表单引用
 const formRef = ref()
@@ -80,11 +81,31 @@ const formRef = ref()
 // 提示组件
 const toast = useToast()
 
+const wxopenid = ref('')
+
 // 表单数据
 const formData = reactive({
   username: '',
   password: '',
 })
+
+const wxLoginOrder = async () => {
+  try {
+    const { code } = await getWxLoginCode()
+
+    const openIdResult = await httpPost<any>('/api/WxLogin/getOpenid', { code, is_order: 1 })
+
+    const token = openIdResult.data
+    const openid = openIdResult.data.openid
+
+    if (openid) {
+      wxopenid.value = openid
+    }
+  } catch (error) {
+    console.error('wxLoginOrder error->', error)
+    throw new Error('商城微信登录失败')
+  }
+}
 
 // 登录处理
 const handleLogin = () => {
@@ -95,6 +116,7 @@ const handleLogin = () => {
       httpPost('/Api/Login/Login', {
         username: formData.username,
         password: formData.password,
+        weapp_openid: wxopenid.value,
       })
         .then((res: any) => {
           toast.close()
@@ -128,19 +150,19 @@ const handleLogin = () => {
 
 onMounted(() => {
   // 获取订单令牌
-  const token = getOrderToken()
-  if (token) {
-    // 登录成功后跳转到订单系统
-    uni.reLaunch({
-      url: '/pages/order-system/category/category',
-    })
-  } else {
-    // 如果没有token，尝试从本地存储获取上次登录的用户名
-    const username = getLastUsername()
-    if (username) {
-      formData.username = username
-    }
+  // const token = getOrderToken()
+  // if (token) {
+  //   // 登录成功后跳转到订单系统
+  //   uni.reLaunch({
+  //     url: '/pages/order-system/category/category',
+  //   })
+  // } else {
+  // 如果没有token，尝试从本地存储获取上次登录的用户名
+  const username = getLastUsername()
+  if (username) {
+    formData.username = username
   }
+  // }
 })
 
 onShow(() => {
@@ -148,6 +170,8 @@ onShow(() => {
   if (username) {
     formData.username = username
   }
+
+  wxLoginOrder()
 })
 </script>
 
