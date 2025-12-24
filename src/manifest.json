@@ -1,5 +1,5 @@
 {
-  "name": "型号搜索",
+  "name": "鼎唯",
   "appid": "__UNI__64B3A63",
   "description": "",
   "versionName": "1.0.0",
@@ -83,7 +83,7 @@
   },
   "quickapp": {},
   "mp-weixin": {
-    "appid": "wx332f42e738ce785b",
+    "appid": "wx47532f66d899e9af",
     "setting": {
       "urlCheck": false
     },
