@@ -17,7 +17,7 @@
         <view class="mb-10rpx">
           <view class="text-10px font-bold mr-10rpx" :style="'color: #' + product.colour + ';'">
             <!-- {{ product.goods_name }} -->
-            GoldenArmorHero-HD
+            ZYONS-HD
           </view>
         </view>
         <view class="flex flex-wrap">

@@ -3,7 +3,7 @@
 {
   style: {
     navigationStyle: 'custom',
-    navigationBarTitleText: 'Golden armor hero',
+    navigationBarTitleText: 'ZYONS',
   },
 }
 </route>
