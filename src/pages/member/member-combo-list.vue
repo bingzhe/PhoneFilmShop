@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '我的套餐',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTextStyle: 'white',
   },
 }
@@ -21,7 +21,7 @@
               <view>核销次数：{{ row.use_num }}次</view>
               <view>
                 剩余次数：
-                <text class="font-bold text-#00A3FF">{{ row.spare_num }}次</text>
+                <text class="font-bold text-#003DA5">{{ row.spare_num }}次</text>
               </view>
               <view>最后核销时间：{{ row.use_time_str }}</view>
             </view>

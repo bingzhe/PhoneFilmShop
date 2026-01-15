@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '订单系统',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTextStyle: 'white',
   },
 }

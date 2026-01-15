@@ -37,6 +37,6 @@ const onChange = ({ value, label }) => {
 /* 添加这段样式后，默认 Button 底色会变成绿色 */
 :root,
 page {
-  --wd-sidebar-active-color: #5ac3f3;
+  --wd-sidebar-active-color: #003da5;
 }
 </style>

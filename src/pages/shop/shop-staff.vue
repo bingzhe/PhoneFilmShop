@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '店员管理',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTextStyle: 'white',
   },
 }
@@ -18,7 +18,7 @@
             <wd-img width="48" height="48" round :src="row.avatarUrl">
               <template #error>
                 <view class="w-100% h-100% flex justify-center items-center">
-                  <view class="i-carbon:user-avatar-filled text-64rpx text-#00A3FF"></view>
+                  <view class="i-carbon:user-avatar-filled text-64rpx text-#003DA5"></view>
                 </view>
               </template>
             </wd-img>

@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '店铺登记',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTextStyle: 'white',
   },
   'mp-alipay': {
@@ -23,7 +23,7 @@
           <wd-img width="64" height="64" round :src="shopLogoUrl">
             <template #error>
               <view class="w-100% h-100% flex justify-center items-center">
-                <view class="i-ic:twotone-storefront text-64rpx text-#00A3FF"></view>
+                <view class="i-ic:twotone-storefront text-64rpx text-#003DA5"></view>
               </view>
             </template>
           </wd-img>

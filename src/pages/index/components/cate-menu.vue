@@ -7,7 +7,7 @@
         @click="onMenuItemClick(item)"
         style="display: inline-block"
         class="min-w-120rpx h-68rpx text-12px font-bold pl20rpx pr20rpx text-center line-height-68rpx color-#000"
-        :class="{ 'important-bg-#5ac3f3 color-#fff': item.cate_id == firstCateId }"
+        :class="{ 'important-bg-#003da5 important-color-#fff': item.cate_id == firstCateId }"
       >
         {{ item.cate_name }}
       </view>

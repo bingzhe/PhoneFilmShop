@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '会员贴膜核销',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTextStyle: 'white',
   },
 }
@@ -29,7 +29,7 @@
         <wd-img width="80rpx" height="80rpx" round :src="shopLogoUrl">
           <template #error>
             <view class="w-100% h-100% flex justify-center items-center">
-              <view class="i-ic:twotone-storefront text-80rpx text-#00A3FF"></view>
+              <view class="i-ic:twotone-storefront text-80rpx text-#003DA5"></view>
             </view>
           </template>
         </wd-img>
@@ -40,7 +40,7 @@
         <!-- <wd-img width="80rpx" height="80rpx" round :src="avatarUrl">
           <template #error>
             <view class="w-100% h-100% flex justify-center items-center">
-              <view class="i-carbon:user-avatar-filled text-80rpx text-#00A3FF"></view>
+              <view class="i-carbon:user-avatar-filled text-80rpx text-#003DA5"></view>
             </view>
           </template>
         </wd-img> -->

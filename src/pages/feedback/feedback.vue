@@ -4,7 +4,7 @@
   style: {
     // navigationStyle: 'custom',
     navigationBarTitleText: '反馈',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTextStyle: 'white',
   },
 }

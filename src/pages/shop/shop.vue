@@ -2,7 +2,7 @@
 {
   layout: 'default',
   style: {
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTitleText: '',
     navigationBarTextStyle: 'white',
     enablePullDownRefresh: false,
@@ -17,13 +17,13 @@
 
 <template>
   <view class="">
-    <view class="bg-#00A3FF pl-32rpx pr-32rpx pb-16rpx flex w-750rpx box-border">
+    <view class="bg-#003DA5 pl-32rpx pr-32rpx pb-16rpx flex w-750rpx box-border">
       <view class="mr-32rpx">
         <view class="h-140rpx w-140rpx bg-#fff rounded-70rpx flex justify-center items-center">
           <wd-img width="64" height="64" round :src="shopLogoUrl">
             <template #error>
               <view class="w-100% h-100% flex justify-center items-center">
-                <view class="i-ic:twotone-storefront text-64rpx text-#00A3FF"></view>
+                <view class="i-ic:twotone-storefront text-64rpx text-#003DA5"></view>
               </view>
             </template>
           </wd-img>
@@ -73,7 +73,7 @@
         class="mt-32rpx ml-24rpx mr-24rpx mb-24rpx bg-white rounded-32rpx h-300rpx"
       >
         <view
-          class="bg-#00A3FF text-white text-28rpx mr-24rpx ml-24rpx text-center rounded-b-32rpx pt-8rpx pb-8rpx"
+          class="bg-#003DA5 text-white text-28rpx mr-24rpx ml-24rpx text-center rounded-b-32rpx pt-8rpx pb-8rpx"
         >
           您好，尊贵的会员
         </view>
@@ -81,7 +81,7 @@
           class="flex justify-around items-center h-170rpx border-b-#eee border-b-1 border-l-0 border-r-0 border-t-0 border-solid"
         >
           <view class="flex flex-col items-center">
-            <view class="text-48rpx text-#00A3FF font-bold">{{ comboSpareNumTotal }}</view>
+            <view class="text-48rpx text-#003DA5 font-bold">{{ comboSpareNumTotal }}</view>
             <view class="text-28rpx text-#666">剩余贴膜次数</view>
           </view>
         </view>
@@ -101,14 +101,14 @@
           <view class="text-24rpx text-#fff">我要核销</view>
         </view>
         <view
-          class="w-223rpx bg-#00A3FF h-140rpx rounded-16rpx flex flex-col justify-center items-center"
+          class="w-223rpx bg-#003DA5 h-140rpx rounded-16rpx flex flex-col justify-center items-center"
           @click="jumperPage('/pages/member/member-combo-log')"
         >
           <view class="i-ic:outline-document-scanner text-48rpx text-#fff mb-8rpx"></view>
           <view class="text-24rpx text-#fff">核销记录</view>
         </view>
         <view
-          class="w-223rpx bg-#00A3FF h-140rpx rounded-16rpx flex flex-col justify-center items-center"
+          class="w-223rpx bg-#003DA5 h-140rpx rounded-16rpx flex flex-col justify-center items-center"
           @click="jumperPage('/pages/member/member-combo-list')"
         >
           <view class="i-ic:outline-document-scanner text-48rpx text-#fff mb-8rpx"></view>

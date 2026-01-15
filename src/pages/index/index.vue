@@ -28,7 +28,7 @@
     <view v-if="phoneModal" class="flex justify-between items-center p-10rpx pb-10rpx bg-#fff">
       <view class="flex items-center color-#2051d1">
         <!-- <text
-          class="text-12px bg-#5ac3f3 color-#fff pl-10rpx pr-10rpx pt-5rpx pb-5rpx b-rd-6rpx mr-10rpx"
+          class="text-12px bg-#003da5 color-#fff pl-10rpx pr-10rpx pt-5rpx pb-5rpx b-rd-6rpx mr-10rpx"
         >
           Native
         </text> -->
@@ -37,7 +37,7 @@
       <view class="flex">
         <wd-button
           @click="handleSearchNative"
-          custom-class="important-bg-#5ac3f3 important-h-60rpx important-line-height-60rpx"
+          custom-class="important-bg-#003da5 important-h-60rpx important-line-height-60rpx"
           icon="search"
         >
           <!-- Search -->
@@ -425,8 +425,8 @@ onReachBottom(() => {
 <style>
 :root,
 page {
-  --wot-search-cancel-color: #5ac3f3;
-  --wd-sidebar-active-color: #5ac3f3;
+  --wot-search-cancel-color: #003da5;
+  --wd-sidebar-active-color: #003da5;
 }
 
 .main-title-color {

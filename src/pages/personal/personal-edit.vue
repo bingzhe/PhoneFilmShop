@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '个人信息',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTextStyle: 'white',
   },
 }

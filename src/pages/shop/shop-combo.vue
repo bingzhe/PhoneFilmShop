@@ -3,7 +3,7 @@
   layout: 'default',
   style: {
     navigationBarTitleText: '套餐管理',
-    navigationBarBackgroundColor: '#00A3FF',
+    navigationBarBackgroundColor: '#003DA5',
     navigationBarTextStyle: 'white',
   },
 }
@@ -27,7 +27,7 @@
             <view class="flex items-center flex-wrap w-210rpx">
               <view
                 v-if="index !== dataListLength - 1"
-                class="flex items-center justify-center w-45rpx h-45rpx bg-#00A3FF rounded-4rpx text-#fff mr-8rpx"
+                class="flex items-center justify-center w-45rpx h-45rpx bg-#003DA5 rounded-4rpx text-#fff mr-8rpx"
                 @click="handleArrowDown(row, index)"
               >
                 <wd-icon name="arrow-thin-down" size="30rpx"></wd-icon>
@@ -35,7 +35,7 @@
 
               <view
                 v-if="index !== 0"
-                class="flex items-center justify-center w-45rpx h-45rpx bg-#00A3FF rounded-4rpx text-#fff mr-8rpx"
+                class="flex items-center justify-center w-45rpx h-45rpx bg-#003DA5 rounded-4rpx text-#fff mr-8rpx"
                 @click="handleArrowUp(row, index)"
               >
                 <wd-icon name="arrow-thin-up" size="30rpx"></wd-icon>
