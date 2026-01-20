@@ -222,35 +222,65 @@ function getViewportFingerprint() {
 // ---------- iPhone X 以后：viewport->机型段映射（只能推测） ----------
 const IPHONE_VIEWPORT_MAP = [
   // X / XS / 11 Pro
-  { w: 375, h: 812, dpr: 3, label: 'iPhone X / XS / 11 Pro' },
+  { w: 375, h: 812, dpr: 3, label: ['iPhone X', 'iPhone XS', 'iPhone 11 Pro'] },
   // XR / 11
-  { w: 414, h: 896, dpr: 2, label: 'iPhone XR / 11' },
+  { w: 414, h: 896, dpr: 2, label: ['iPhone XR', 'iPhone 11'] },
   // XS Max / 11 Pro Max
-  { w: 414, h: 896, dpr: 3, label: 'iPhone XS Max / 11 Pro Max' },
+  { w: 414, h: 896, dpr: 3, label: ['iPhone XS Max ', 'iPhone 11 Pro Max'] },
 
   // 12 mini / 13 mini
-  { w: 360, h: 780, dpr: 3, label: 'iPhone 12 mini / 13 mini' },
+  { w: 360, h: 780, dpr: 3, label: ['iPhone 12 mini', 'iPhone 13 mini'] },
 
   // 12 / 12 Pro / 13 / 13 Pro / 14
-  { w: 390, h: 844, dpr: 3, label: 'iPhone 12 / 12 Pro / 13 / 13 Pro / 14' },
+  {
+    w: 390,
+    h: 844,
+    dpr: 3,
+    label: ['iPhone 12', 'iPhone 12 Pro', 'iPhone 13', 'iPhone 13 Pro', 'iPhone 14'],
+  },
 
   // 14 Pro / 15 / 15 Pro / 16（以及同 viewport 机型）
-  { w: 393, h: 852, dpr: 3, label: 'iPhone 14 Pro / 15 / 15 Pro / 16' },
+  {
+    w: 393,
+    h: 852,
+    dpr: 3,
+    label: ['iPhone 14 Pro', 'iPhone 15', 'iPhone 15 Pro', 'iPhone 16'],
+  },
 
   // 12 Pro Max / 13 Pro Max / 14 Plus（部分大屏）
-  { w: 428, h: 926, dpr: 3, label: 'iPhone 12 Pro Max / 13 Pro Max / 14 Plus' },
+  {
+    w: 428,
+    h: 926,
+    dpr: 3,
+    label: ['iPhone 12 Pro Max', 'iPhone 13 Pro Max', 'iPhone 14 Plus'],
+  },
 
   // 14 Pro Max / 15 Plus / 15 Pro Max / 16 Plus
-  { w: 430, h: 932, dpr: 3, label: 'iPhone 14 Pro Max / 15 Plus / 15 Pro Max / 16 Plus' },
+  {
+    w: 430,
+    h: 932,
+    dpr: 3,
+    label: ['iPhone 14 Pro Max', 'iPhone 15 Plus', 'iPhone 15 Pro Max', 'iPhone 16 Plus'],
+  },
 
   // 16 Pro / 17 / 17 Pro（新一档）
-  { w: 402, h: 874, dpr: 3, label: 'iPhone 16 Pro / 17 / 17 Pro' },
+  {
+    w: 402,
+    h: 874,
+    dpr: 3,
+    label: ['iPhone 16 Pro', 'iPhone 17', 'iPhone 17 Pro'],
+  },
 
   // 16 Pro Max / 17 Pro Max
-  { w: 440, h: 956, dpr: 3, label: 'iPhone 16 Pro Max / 17 Pro Max' },
+  {
+    w: 440,
+    h: 956,
+    dpr: 3,
+    label: ['iPhone 16 Pro Max', 'iPhone 17 Pro Max'],
+  },
 
   // iPhone Air (2025)（17 Air）
-  { w: 420, h: 912, dpr: 3, label: 'iPhone Air（2025）' },
+  { w: 420, h: 912, dpr: 3, label: ['iPhone Air（2025）'] },
 ]
 
 // 容错匹配：允许 1px 误差（某些环境/缩放可能抖动）
@@ -266,8 +296,8 @@ function matchIPhoneModelByViewport() {
 
   if (matches.length) {
     return {
-      guessName: matches[0].label,
-      candidates: matches.map((x) => x.label),
+      guessName: matches[0].label[0], // 取第一个作为默认猜测
+      candidates: matches.flatMap((x) => x.label), // 扁平化数组，确保返回一维数组
       fingerprint,
       insetTop,
       insetBottom,
@@ -536,14 +566,15 @@ const getDeviceInfo = async () => {
     return
   }
 
-  // #ifdef H5
   // 微信内置浏览器：优先用 viewport 推测（解决“只拿到 iPhone”的问题）
   const fingerprint = ''
   const candidates = []
-  if (ios && isWeChatH5()) {
+  // ios && isWeChatH5()
+  if (ios) {
     const isIPhoneOnly = /iPhone/.test(model) && !/iPhone \d+/.test(model)
     if (isIPhoneOnly) {
       const { candidates: matchedModels } = matchIPhoneModelByViewport()
+      console.log(matchedModels)
       if (matchedModels.length > 0) {
         candidateModels.value = matchedModels
         showPhoneModelSelector.value = true
@@ -551,7 +582,6 @@ const getDeviceInfo = async () => {
       }
     }
   }
-  // #endif
 
   const params = {
     name: model,

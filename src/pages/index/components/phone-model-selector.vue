@@ -42,7 +42,12 @@ watch(
   () => props.showSelector,
   (newVal) => {
     show.value = newVal
+    // 确保在显示时重置选中状态
+    if (newVal) {
+      selectedModel.value = ''
+    }
   },
+  { immediate: true }, // 确保初始值也会被监听
 )
 
 const selectModel = (model: string) => {
