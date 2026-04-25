@@ -2,7 +2,7 @@
 {
   layout: 'default',
   style: {
-    navigationBarTitleText: '下单系统',
+    navigationBarTitleText: '鼎唯',
     navigationBarBackgroundColor: '#00A3FF',
     navigationBarTextStyle: 'white',
   },
@@ -13,7 +13,7 @@
   <view class="login-container">
     <view class="logo-container">
       <view class="logo">
-        <view class="title">下单系统</view>
+        <view class="title">账号登录</view>
       </view>
     </view>
 

@@ -10,9 +10,9 @@
 </route>
 <template>
   <!-- :style="{ marginTop: safeAreaInsets?.top + 'px' }" -->
-  <view class="bg-white">
+  <view class="category-page bg-white">
     <wd-sticky :offset-top="0" :z-index="19">
-      <view class="w-750rpx bg-#fff">
+      <view class="category-header">
         <wd-search
           placeholder="请输入要查询内容"
           v-model="searchValue"
@@ -22,33 +22,55 @@
           @cancel="handleSearch"
           @change="handleSearchChange"
         />
+
+        <scroll-view
+          v-if="topCates.length > 0"
+          scroll-x
+          class="top-category-scroll"
+          :show-scrollbar="false"
+        >
+          <view class="top-category-inner">
+            <view
+              v-for="(item, index) in topCates"
+              :key="index"
+              class="top-category-item"
+              :class="{ active: item.category_id == topCateId }"
+              @click="onTopCateClick(item.category_id)"
+            >
+              {{ item.cate_name }}
+            </view>
+          </view>
+        </scroll-view>
       </view>
     </wd-sticky>
 
-    <view class="flex min-h-100vh">
+    <view class="category-body">
       <view class="category-left-container">
         <SliderMenu
-          :menus="firstCates"
+          :menus="secondCates"
           :toggleCate="toggleCate"
           @slider-menu-item-click="onSliderClick"
         />
       </view>
 
-      <view class="flex-1 w-570rpx">
-        <CateMenu :menus="secondCates" :firstCateId="secondCateId" @menu-item-click="onMenuClick" />
-        <ProductItem
-          v-for="(product, index) in list"
-          :key="index"
-          :product="product"
-          @toggle-expand="onToggleExpand(product)"
-          @add-to-cart="onAddToCart(product)"
-        />
+      <view class="category-right-container">
+        <CateMenu :menus="thirdCates" :activeId="thirdCateId" @menu-item-click="onMenuClick" />
 
-        <view
-          v-if="list.length === 0 && !loading"
-          class="h-600rpx flex items-center justify-center"
-        >
-          <image class="w-300rpx h-300rpx" src="/static/images/empty.png"></image>
+        <view class="category-products">
+          <ProductItem
+            v-for="(product, index) in list"
+            :key="index"
+            :product="product"
+            @toggle-expand="onToggleExpand(product)"
+            @add-to-cart="onAddToCart(product)"
+          />
+
+          <view
+            v-if="list.length === 0 && !loading"
+            class="h-600rpx flex items-center justify-center"
+          >
+            <image class="w-300rpx h-300rpx" src="/static/images/empty.png"></image>
+          </view>
         </view>
       </view>
     </view>
@@ -128,11 +150,14 @@ defineOptions({
 })
 
 const toggleCate = ref(false)
-const firstCates = ref<any[]>([])
-const firstCateId = ref(null)
+const topCates = ref<any[]>([])
+const topCateId = ref<string | number | null>(null)
 
 const secondCates = ref<any[]>([])
-const secondCateId = ref(null)
+const secondCateId = ref<string | number | null>(null)
+
+const thirdCates = ref<any[]>([])
+const thirdCateId = ref<string | number | null>(null)
 
 const searchValue = ref('')
 
@@ -161,39 +186,84 @@ const handleSearch = () => {
   }
 }
 
-const getFirstCateList = async () => {
-  // pid: 0, level: 1
-  httpGet<any[]>('/api/Ordergoods/getCateList', {}).then((res) => {
-    firstCates.value = res.data || []
+const hasCateId = (id: string | number | null | undefined) => {
+  return id !== null && id !== undefined && id !== ''
+}
 
-    if (firstCates.value.length > 0) {
-      firstCateId.value = firstCates.value[0].category_id
-      getSecondCateList(firstCateId.value)
-    }
-  })
+const getActiveCategoryId = () => {
+  if (hasCateId(thirdCateId.value)) {
+    return thirdCateId.value
+  }
+  if (hasCateId(secondCateId.value)) {
+    return secondCateId.value
+  }
+  return topCateId.value
+}
+
+const getTopCateList = async () => {
+  const res = await httpGet<any[]>('/api/Ordergoods/getCateList', {})
+  topCates.value = res.data || []
+
+  if (topCates.value.length > 0) {
+    topCateId.value = topCates.value[0].category_id
+    await getSecondCateList(topCateId.value)
+  } else {
+    getGoodsList(true)
+  }
 }
 
 const getSecondCateList = async (cate) => {
-  httpGet<any[]>('/api/Ordergoods/getCateList', { category_id: cate }).then((res) => {
-    secondCates.value = res.data || []
+  secondCates.value = []
+  secondCateId.value = null
+  thirdCates.value = []
+  thirdCateId.value = null
 
-    if (secondCates.value.length > 0) {
-      secondCateId.value = secondCates.value[0].category_id
-    }
+  const res = await httpGet<any[]>('/api/Ordergoods/getCateList', { category_id: cate })
+  secondCates.value = res.data || []
+
+  if (secondCates.value.length > 0) {
+    secondCateId.value = secondCates.value[0].category_id
+    await getThirdCateList(secondCateId.value)
+  } else {
     getGoodsList(true)
-  })
+  }
+}
+
+const getThirdCateList = async (cate) => {
+  thirdCates.value = []
+  thirdCateId.value = null
+
+  const res = await httpGet<any[]>('/api/Ordergoods/getCateList', { category_id: cate })
+  thirdCates.value = res.data || []
+
+  if (thirdCates.value.length > 0) {
+    thirdCateId.value = thirdCates.value[0].category_id
+  }
+
+  getGoodsList(true)
+}
+
+const onTopCateClick = (id) => {
+  if (topCateId.value === id) {
+    return
+  }
+  topCateId.value = id
+  getSecondCateList(id)
 }
 
 const onMenuClick = (id) => {
-  secondCateId.value = id
+  thirdCateId.value = id
   getGoodsList(true)
 }
 
 const onSliderClick = (id) => {
-  firstCateId.value = id
-  secondCateId.value = ''
+  if (secondCateId.value === id) {
+    return
+  }
+  secondCateId.value = id
+  thirdCateId.value = null
   // toggleCate.value = !toggleCate.value
-  getSecondCateList(firstCateId.value)
+  getThirdCateList(id)
 }
 
 const handleSearchChange = async ({ value }) => {
@@ -229,8 +299,9 @@ const getGoodsList = async (init?: boolean) => {
     size: 50,
   }
 
-  if (secondCateId.value) {
-    params.category_id = secondCateId.value
+  const categoryId = getActiveCategoryId()
+  if (hasCateId(categoryId)) {
+    params.category_id = categoryId
   }
   // else if (firstCateId.value) {
   //   // 1是一级菜单的全部分类
@@ -274,7 +345,7 @@ const getGoodsList = async (init?: boolean) => {
 // 测试 uni API 自动引入
 onLoad(async () => {
   // await getUserInfo()
-  getFirstCateList()
+  getTopCateList()
 
   // uni.setNavigationBarTitle({
   //   title: projectName.value,
@@ -282,7 +353,7 @@ onLoad(async () => {
 })
 
 onReachBottom(() => {
-  if (list.value.length >= total.value && page.value !== 1) {
+  if (loading.value || list.value.length >= total.value) {
     return
   }
   page.value = page.value + 1
@@ -376,11 +447,81 @@ const makePhoneCall = () => {
 // }
 </script>
 
-<style>
+<style lang="scss">
 :root,
 page {
   --wot-search-cancel-color: #5ac3f3;
   --wd-sidebar-active-color: #5ac3f3;
+}
+
+.category-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.category-header {
+  width: 750rpx;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #eeeeee;
+}
+
+.top-category-scroll {
+  width: 750rpx;
+  height: 84rpx;
+  background-color: #ffffff;
+}
+
+.top-category-inner {
+  display: flex;
+  height: 84rpx;
+  white-space: nowrap;
+}
+
+.top-category-item {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  height: 84rpx;
+  padding: 0 32rpx;
+  font-size: 32rpx;
+  color: #333333;
+
+  &.active {
+    font-weight: 700;
+    color: #23b7eb;
+  }
+
+  &.active::after {
+    position: absolute;
+    bottom: 10rpx;
+    left: 50%;
+    width: 36rpx;
+    height: 6rpx;
+    content: '';
+    background-color: #23b7eb;
+    border-radius: 4rpx;
+    transform: translateX(-50%);
+  }
+}
+
+.category-body {
+  display: flex;
+  min-height: calc(100vh - 168rpx);
+  background-color: #ffffff;
+}
+
+.category-right-container {
+  position: relative;
+  flex: 1;
+  width: 570rpx;
+  min-width: 0;
+  background-color: #ffffff;
+}
+
+.category-products {
+  min-height: 600rpx;
 }
 
 .main-title-color {
@@ -428,11 +569,14 @@ page {
 
 .category-left-container {
   position: sticky;
-  top: 40px;
+  top: 168rpx;
   left: 0;
   z-index: 10;
-  height: calc(100vh - 40px); /* 减去搜索栏的高度 */
+  width: 180rpx;
+  height: calc(100vh - 168rpx);
   overflow-y: auto;
+  background-color: #f8f8f8;
+  border-right: 1rpx solid #eeeeee;
 }
 /* 浮动电话图标样式 */
 .floating-phone {
