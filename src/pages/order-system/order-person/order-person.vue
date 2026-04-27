@@ -59,6 +59,11 @@
             <view class="i-ri:lock-password-line cell-icon"></view>
           </template>
         </wd-cell>
+        <wd-cell title="绑定提现银行卡" is-link @click="goToWithdrawBank">
+          <template #icon>
+            <view class="i-ri:bank-card-line cell-icon"></view>
+          </template>
+        </wd-cell>
         <!-- <wd-cell title="地址管理" is-link @click="goToAddressList">
           <template #icon>
             <view class="i-ri:map-pin-line cell-icon"></view>
@@ -144,6 +149,13 @@ const goToOrderList = () => {
 const handleChangePassword = () => {
   uni.navigateTo({
     url: '/pages/order-system/order-person/change-password',
+  })
+}
+
+// 跳转到绑定提现银行卡
+const goToWithdrawBank = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/order-person/withdraw-bank',
   })
 }
 
