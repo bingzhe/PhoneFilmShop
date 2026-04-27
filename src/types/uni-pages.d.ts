@@ -38,7 +38,8 @@ interface NavigateToOptions {
        "/pages/order-system/order/order-list" |
        "/pages/order-system/order-person/change-password" |
        "/pages/order-system/order-person/order-person" |
-       "/pages/order-system/order-person/order-personal-edit";
+       "/pages/order-system/order-person/order-personal-edit" |
+       "/pages/order-system/order-person/withdraw-bank";
 }
 interface RedirectToOptions extends NavigateToOptions {}
 

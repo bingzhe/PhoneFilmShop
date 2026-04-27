@@ -387,6 +387,16 @@
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
       }
+    },
+    {
+      "path": "pages/order-system/order-person/withdraw-bank",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "绑定提现银行卡",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
     }
   ],
   "subPackages": []
