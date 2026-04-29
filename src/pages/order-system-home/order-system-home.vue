@@ -69,10 +69,11 @@
 
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
-import { useToast, useMessage } from 'wot-design-uni'
+import { useToast } from 'wot-design-uni'
 import { httpPost } from '@/utils/http'
 import { getOrderToken, setOrderToken } from '@/utils/orderToken'
 import { saveUsername, getLastUsername } from '@/utils/userStorage'
+import { getWeappOpenid } from '@/utils/wxLogin'
 
 // 表单引用
 const formRef = ref()
@@ -87,14 +88,37 @@ const formData = reactive({
 })
 
 // 登录处理
+const getOrderLoginOpenid = async () => {
+  let weappOpenid = ''
+
+  // #ifdef MP-WEIXIN
+  weappOpenid = await getWeappOpenid()
+  // #endif
+
+  return weappOpenid
+}
+
 const handleLogin = () => {
-  formRef.value.validate().then(({ valid, errors }) => {
+  formRef.value.validate().then(async ({ valid, errors }) => {
     if (valid) {
       toast.loading('登录中...')
+
+      // eslint-disable-next-line camelcase
+      let weapp_openid = ''
+      try {
+        // eslint-disable-next-line camelcase
+        weapp_openid = await getOrderLoginOpenid()
+      } catch (error) {
+        toast.close()
+        console.error('get weapp_openid failed:', error)
+        return
+      }
 
       httpPost('/Api/Login/Login', {
         username: formData.username,
         password: formData.password,
+        // eslint-disable-next-line camelcase
+        weapp_openid,
       })
         .then((res: any) => {
           toast.close()

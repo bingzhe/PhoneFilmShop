@@ -12,7 +12,7 @@
 <template>
   <view class="person-container">
     <!-- 个人信息展示区 -->
-    <view class="flex items-center p-32rpx bg-white mb-24rpx">
+    <view class="profile-card" @click="goPersonalEdit">
       <view class="mr-32rpx">
         <view class="w-[48px] h-[48px] flex justify-center items-center">
           <wd-img width="48" height="48" round src="/static/images/default_avatar.png"></wd-img>
@@ -44,6 +44,7 @@
           <text class="user-info-value">{{ userInfo.user_code || '-' }}</text>
         </view>
       </view>
+      <view class="i-ri:arrow-right-s-line profile-arrow"></view>
     </view>
 
     <!-- 功能菜单 -->
@@ -54,6 +55,11 @@
             <view class="i-ri:file-list-3-line cell-icon"></view>
           </template>
         </wd-cell>
+        <wd-cell title="我的余额" is-link @click="goToBalance">
+          <template #icon>
+            <view class="i-ri:wallet-3-line cell-icon"></view>
+          </template>
+        </wd-cell>
         <wd-cell title="修改密码" is-link @click="handleChangePassword">
           <template #icon>
             <view class="i-ri:lock-password-line cell-icon"></view>
@@ -62,6 +68,11 @@
         <wd-cell title="绑定提现银行卡" is-link @click="goToWithdrawBank">
           <template #icon>
             <view class="i-ri:bank-card-line cell-icon"></view>
+          </template>
+        </wd-cell>
+        <wd-cell title="提现申请" is-link @click="goToWithdrawApply">
+          <template #icon>
+            <view class="i-ri:wallet-3-line cell-icon"></view>
           </template>
         </wd-cell>
         <!-- <wd-cell title="地址管理" is-link @click="goToAddressList">
@@ -132,16 +143,23 @@ const getUserInfo = async () => {
   uni.setStorageSync('userLevel', userInfo.value.level)
 }
 
-// const goPersonalEdit = () => {
-//   uni.navigateTo({
-//     url: '/pages/order-system/order-person/order-personal-edit',
-//   })
-// }
+const goPersonalEdit = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/order-person/order-personal-edit',
+  })
+}
 
 // 跳转到订单列表
 const goToOrderList = () => {
   uni.navigateTo({
     url: '/pages/order-system/order/order-list',
+  })
+}
+
+// 跳转到我的余额
+const goToBalance = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/order-person/balance',
   })
 }
 
@@ -156,6 +174,13 @@ const handleChangePassword = () => {
 const goToWithdrawBank = () => {
   uni.navigateTo({
     url: '/pages/order-system/order-person/withdraw-bank',
+  })
+}
+
+// 跳转到提现申请
+const goToWithdrawApply = () => {
+  uni.navigateTo({
+    url: '/pages/order-system/order-person/withdraw-apply',
   })
 }
 
@@ -214,6 +239,20 @@ onShow(() => {
   font-size: 32rpx;
   font-weight: 500;
   color: #333;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  background-color: #ffffff;
+}
+
+.profile-arrow {
+  margin-left: 16rpx;
+  font-size: 44rpx;
+  color: #c8c9cc;
 }
 
 .menu-section {

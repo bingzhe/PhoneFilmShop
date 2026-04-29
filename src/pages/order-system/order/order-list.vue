@@ -106,6 +106,14 @@
             <view class="order-actions">
               <view
                 v-if="order.status === 1"
+                class="action-btn pay-btn"
+                :class="{ disabled: payingOrderNo === order.order_no }"
+                @click.stop="payOrder(order)"
+              >
+                {{ payingOrderNo === order.order_no ? '支付中' : '去支付' }}
+              </view>
+              <view
+                v-if="order.status === 1"
                 class="action-btn cancel-btn"
                 @click.stop="cancelOrder(order.order_id)"
               >
@@ -126,6 +134,7 @@ import { httpGet, httpPost } from '@/utils/http'
 import { useToast } from 'wot-design-uni'
 import { useUserStore } from '@/store'
 import { getOrderToken } from '@/utils/orderToken'
+import { getPaymentErrorMessage, isPaymentCancel, payGoodsOrder } from '@/utils/orderPay'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -134,7 +143,7 @@ const userInfo = computed(() => userStore.userInfo)
 // 订单状态列表
 const statusList = [
   { label: '全部', value: 0 },
-  { label: '待确认', value: 1 },
+  { label: '待支付', value: 1 },
   { label: '待发货', value: 2 },
   { label: '已发货', value: 3 },
   { label: '已完成', value: 4 },
@@ -142,7 +151,7 @@ const statusList = [
 
 // 状态文本映射
 const statusTextMap = {
-  '1': '待确认',
+  '1': '待支付',
   '2': '待发货',
   '3': '已发货',
   '4': '已完成',
@@ -152,6 +161,7 @@ const statusTextMap = {
 const currentStatus = ref(0)
 const orderList = ref<any[]>([])
 const loading = ref(false)
+const payingOrderNo = ref('')
 
 // 切换订单状态
 const switchStatus = (status: number) => {
@@ -248,6 +258,34 @@ const cancelOrder = async (orderId: string) => {
       }
     },
   })
+}
+
+const payOrder = async (order: any) => {
+  if (payingOrderNo.value) return
+
+  if (!order?.order_no) {
+    toast.error('订单编号不存在')
+    return
+  }
+
+  payingOrderNo.value = order.order_no
+  toast.loading('调起支付中...')
+
+  try {
+    await payGoodsOrder(order.order_no)
+    toast.close()
+    toast.success('支付成功')
+    getOrderList()
+  } catch (error) {
+    toast.close()
+    if (isPaymentCancel(error)) {
+      toast.warning('支付已取消')
+    } else {
+      toast.error(getPaymentErrorMessage(error))
+    }
+  } finally {
+    payingOrderNo.value = ''
+  }
 }
 
 // 获取订单状态文本
@@ -549,6 +587,16 @@ onShow(() => {
 
 .cancel-btn {
   color: #666;
+}
+
+.pay-btn {
+  color: white;
+  background-color: #ff9800;
+  border: none;
+}
+
+.pay-btn.disabled {
+  opacity: 0.65;
 }
 
 .detail-btn {

@@ -154,9 +154,15 @@
 
       <!-- 底部操作按钮 -->
       <view class="footer-actions">
-        <view v-if="orderInfo.status === 1" class="action-btn cancel-btn" @click="cancelOrder">
-          取消订单
+        <view
+          v-if="isPendingPay"
+          class="action-btn pay-btn"
+          :class="{ disabled: payingOrderNo === orderInfo.order_no }"
+          @click="payOrder"
+        >
+          {{ payingOrderNo === orderInfo.order_no ? '支付中' : '去支付' }}
         </view>
+        <view v-if="isPendingPay" class="action-btn cancel-btn" @click="cancelOrder">取消订单</view>
       </view>
     </template>
 
@@ -174,6 +180,7 @@ import { useToast } from 'wot-design-uni'
 import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/store'
 import { getOrderToken } from '@/utils/orderToken'
+import { getPaymentErrorMessage, isPaymentCancel, payGoodsOrder } from '@/utils/orderPay'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -183,10 +190,12 @@ const userInfo = computed(() => userStore.userInfo)
 const orderId = ref('')
 const orderInfo = ref<any>(null)
 const loading = ref(false)
+const payingOrderNo = ref('')
+const isPendingPay = computed(() => Number(orderInfo.value?.status) === 1)
 
 // 状态文本映射
 const statusTextMap = {
-  1: '待确认',
+  1: '待支付',
   2: '待发货',
   3: '已发货',
   4: '已完成',
@@ -194,7 +203,7 @@ const statusTextMap = {
 
 // 状态描述映射
 const statusDescMap = {
-  1: '订单已提交，等待商家确认',
+  1: '订单已提交，等待支付',
   2: '商家已确认订单，等待发货',
   3: '商家已发货，等待收货',
   4: '订单已完成',
@@ -263,6 +272,35 @@ const cancelOrder = () => {
 }
 
 // 复制文本
+const payOrder = async () => {
+  if (payingOrderNo.value) return
+
+  const orderNo = orderInfo.value?.order_no
+  if (!orderNo) {
+    toast.error('订单编号不存在')
+    return
+  }
+
+  payingOrderNo.value = orderNo
+  toast.loading('调起支付中...')
+
+  try {
+    await payGoodsOrder(orderNo)
+    toast.close()
+    toast.success('支付成功')
+    getOrderDetail()
+  } catch (error) {
+    toast.close()
+    if (isPaymentCancel(error)) {
+      toast.warning('支付已取消')
+    } else {
+      toast.error(getPaymentErrorMessage(error))
+    }
+  } finally {
+    payingOrderNo.value = ''
+  }
+}
+
 const copyText = (text: string) => {
   uni.setClipboardData({
     data: text,
@@ -585,6 +623,7 @@ onLoad((options) => {
   bottom: 0;
   left: 0;
   display: flex;
+  gap: 20rpx;
   justify-content: flex-end;
   padding: 20rpx 30rpx;
   background-color: white;
@@ -601,5 +640,15 @@ onLoad((options) => {
   color: #666;
   background-color: white;
   border: 1rpx solid #ddd;
+}
+
+.pay-btn {
+  color: white;
+  background-color: #ff9800;
+  border: 1rpx solid #ff9800;
+}
+
+.pay-btn.disabled {
+  opacity: 0.65;
 }
 </style>

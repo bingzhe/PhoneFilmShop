@@ -92,7 +92,13 @@
         <text>合计：</text>
         <text class="price">¥{{ totalPrice.toFixed(2) }}</text>
       </view>
-      <wd-button type="primary" round :disabled="!canSubmit" @click="submitOrder">
+      <wd-button
+        type="primary"
+        round
+        :disabled="!canSubmit || submitLoading"
+        :loading="submitLoading"
+        @click="submitOrder"
+      >
         提交订单
       </wd-button>
     </view>
@@ -109,6 +115,7 @@ import { httpPost } from '@/utils/http'
 import { useToast } from 'wot-design-uni'
 import { getLastPage } from '@/utils/index'
 import { getOrderToken } from '@/utils/orderToken'
+import { getPaymentErrorMessage, isPaymentCancel, payGoodsOrder } from '@/utils/orderPay'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -138,6 +145,7 @@ const cartCategories = ref<any[]>([])
 
 // 备注
 const remark = ref('')
+const submitLoading = ref(false)
 
 // 获取购物车列表
 const getCartList = () => {
@@ -266,14 +274,65 @@ const canSubmit = computed(() => {
 //   })
 // }
 
+const pickFirst = (data: any, keys: string[]) => {
+  for (const key of keys) {
+    const value = data?.[key]
+    if (value !== undefined && value !== null && value !== '') {
+      return value
+    }
+  }
+
+  return ''
+}
+
+const getCreatedOrderId = (data: any) => {
+  return (
+    pickFirst(data, ['order_id', 'orderId']) ||
+    pickFirst(data?.order, ['order_id', 'orderId']) ||
+    pickFirst(data?.info, ['order_id', 'orderId'])
+  )
+}
+
+const getCreatedOrderNo = (data: any) => {
+  return (
+    pickFirst(data, ['order_no', 'orderNo']) ||
+    pickFirst(data?.order, ['order_no', 'orderNo']) ||
+    pickFirst(data?.info, ['order_no', 'orderNo'])
+  )
+}
+
+const redirectToOrderDetail = (orderId: string) => {
+  setTimeout(() => {
+    if (orderId) {
+      uni.redirectTo({
+        url: `/pages/order-system/order/order-detail?order_id=${orderId}`,
+      })
+    } else {
+      uni.redirectTo({
+        url: '/pages/order-system/order/order-list',
+      })
+    }
+  }, 1000)
+}
+
+const resetCartPrevPage = () => {
+  const pages = getCurrentPages()
+  const prevPage = pages[pages.length - 2]
+  if (prevPage?.$vm?.resetCart) {
+    prevPage.$vm.resetCart()
+  }
+}
+
 // 提交订单
-const submitOrder = () => {
+const submitOrder = async () => {
   // if (!defaultAddress.value) {
   //   toast.warning('请选择收货地址')
   //   return
   // }
+  if (submitLoading.value) return
 
   toast.loading('提交订单中...')
+  submitLoading.value = true
   const cartIdList = []
   cartCategories.value.forEach((category) => {
     category.list.forEach((item) => {
@@ -285,38 +344,51 @@ const submitOrder = () => {
     }
   })
   console.log(cartIdList)
-  httpPost('/api/Order/CreateOrder', {
-    token_order: getOrderToken(),
-    cart_list: cartIdList.join(','),
-    order_price: totalPrice.value.toFixed(2),
-    // address_id: defaultAddress.value.address_id,
-    delivery_type: 0,
-    remark: remark.value,
-  })
-    .then((res: any) => {
-      // 调用上个页面的resetCart
-
-      const pages = getCurrentPages()
-      const prevPage = pages[pages.length - 2]
-      if (prevPage) {
-        prevPage.$vm.resetCart()
-      }
-
-      toast.success('订单提交成功')
-      const orderId = res.data?.order_id
-      // 跳转到订单详情或支付页面
-      setTimeout(() => {
-        uni.redirectTo({
-          url: `/pages/order-system/order/order-detail?order_id=${orderId}`,
-        })
-      }, 1500)
+  try {
+    const res: any = await httpPost('/api/Order/CreateOrder', {
+      token_order: getOrderToken(),
+      cart_list: cartIdList.join(','),
+      order_price: totalPrice.value.toFixed(2),
+      // address_id: defaultAddress.value.address_id,
+      delivery_type: 0,
+      remark: remark.value,
     })
-    .catch((err) => {
-      toast.error(err || '提交订单失败')
-    })
-    .finally(() => {
+
+    resetCartPrevPage()
+
+    const orderId = getCreatedOrderId(res.data)
+    const orderNo = getCreatedOrderNo(res.data)
+
+    if (!orderNo) {
       toast.close()
-    })
+      toast.success('订单提交成功')
+      redirectToOrderDetail(orderId)
+      return
+    }
+
+    toast.close()
+    toast.loading('调起支付中...')
+
+    try {
+      await payGoodsOrder(orderNo)
+      toast.close()
+      toast.success('支付成功')
+    } catch (payError) {
+      toast.close()
+      if (isPaymentCancel(payError)) {
+        toast.warning('订单已提交，支付已取消')
+      } else {
+        toast.error(getPaymentErrorMessage(payError))
+      }
+    }
+
+    redirectToOrderDetail(orderId)
+  } catch (err) {
+    toast.close()
+    toast.error(err || '提交订单失败')
+  } finally {
+    submitLoading.value = false
+  }
 }
 
 onMounted(() => {

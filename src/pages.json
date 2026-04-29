@@ -359,6 +359,16 @@
       }
     },
     {
+      "path": "pages/order-system/order-person/balance",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "我的余额",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/order-system/order-person/change-password",
       "type": "page",
       "layout": "default",
@@ -384,6 +394,16 @@
       "layout": "default",
       "style": {
         "navigationBarTitleText": "个人信息",
+        "navigationBarBackgroundColor": "#00A3FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-system/order-person/withdraw-apply",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationBarTitleText": "提现申请",
         "navigationBarBackgroundColor": "#00A3FF",
         "navigationBarTextStyle": "white"
       }
