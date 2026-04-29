@@ -47,13 +47,15 @@
       </view>
     </view>
 
-    <view v-show="!showSearchPanel" class="flex min-h-100vh">
-      <SliderMenu
-        :menus="secondCates"
-        :toggleCate="toggleCate"
-        @slider-menu-item-click="onSliderClick"
-      />
-      <view class="flex-1">
+    <view v-show="!showSearchPanel" class="goods-layout goods-layout--with-tabbar flex min-h-100vh">
+      <view class="goods-sidebar">
+        <SliderMenu
+          :menus="secondCates"
+          :toggleCate="toggleCate"
+          @slider-menu-item-click="onSliderClick"
+        />
+      </view>
+      <view class="goods-content flex-1">
         <ProductItem
           v-for="(product, index) in list"
           :key="index"
@@ -388,6 +390,29 @@ page {
 
 .main-title-color {
   color: #d14328;
+}
+
+.goods-layout {
+  align-items: flex-start;
+}
+
+.goods-sidebar {
+  position: sticky;
+  top: 148rpx;
+  z-index: 9;
+  flex-shrink: 0;
+  width: 180rpx;
+  height: calc(100vh - 148rpx);
+  overflow-y: auto;
+  background-color: #f7f8fa;
+}
+
+.goods-layout--with-tabbar .goods-sidebar {
+  height: calc(100vh - 248rpx - env(safe-area-inset-bottom));
+}
+
+.goods-content {
+  min-width: 0;
 }
 
 :deep(.wd-swiper__track) {
