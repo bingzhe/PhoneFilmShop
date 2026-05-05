@@ -59,7 +59,7 @@
           删除
         </wd-button>
         <wd-button type="primary" round :disabled="selectedCount === 0" @click="submitOrder">
-          结算({{ selectedCount }})
+          下单({{ selectedCount }})
         </wd-button>
       </view>
     </view>

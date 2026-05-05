@@ -57,12 +57,12 @@
     </view>
 
     <!-- 添加备注 -->
-    <!-- <view class="remark-block">
+    <view class="remark-block">
       <view class="remark-title">添加备注</view>
       <view class="remark-input">
         <textarea class="remark-textarea" placeholder="请输入备注" v-model="remark"></textarea>
       </view>
-    </view> -->
+    </view>
 
     <!-- 底部结算栏 -->
     <view class="order-footer">
@@ -105,7 +105,7 @@
 // 可能用到的接口
 // /api/Usersinfo/getDefaultAddress  获取用户默认地址
 // /api/Order/GetCartList 购物车列表
-// /api/Order/CreateOrder 创建购物车 参数token，cart_list，order_price，address_id
+// /api/Order/CreateOrder 创建购物车 参数token，cart_list，order_price，address_id，remark
 import { useUserStore } from '@/store'
 import { httpPost } from '@/utils/http'
 import { useToast } from 'wot-design-uni'
@@ -142,7 +142,7 @@ const cartCategories = ref<any[]>([])
 const orderNo = ref('')
 
 // 备注
-// const remark = ref('')
+const remark = ref('')
 
 // 支付相关
 const showPaymentPopup = ref(false)
@@ -311,7 +311,7 @@ const submitOrder = () => {
     pay_price: goodsPriceValue.value.toFixed(2),
     address_id: defaultAddress.value.address_id,
     delivery_type: 0,
-    // remark: remark.value,
+    remark: remark.value,
   })
     .then((res: any) => {
       // 调用上个页面的resetCart
@@ -615,6 +615,14 @@ onLoad((options: any) => {
   padding: 20rpx;
   border: 1rpx solid #f5f5f5;
   border-radius: 12rpx;
+}
+
+.remark-textarea {
+  width: 100%;
+  min-height: 120rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  color: #333;
 }
 
 // 支付弹窗样式

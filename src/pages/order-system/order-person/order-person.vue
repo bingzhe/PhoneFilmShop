@@ -116,6 +116,14 @@
             <view class="i-ri:map-pin-line cell-icon"></view>
           </template>
         </wd-cell>
+
+        <button class="contact-cell-button" open-type="contact" @contact="handleContact">
+          <wd-cell title="在线客服" is-link>
+            <template #icon>
+              <view class="i-ri:customer-service-2-line cell-icon"></view>
+            </template>
+          </wd-cell>
+        </button>
       </wd-cell-group>
     </view>
 
@@ -250,6 +258,8 @@ const goToAddressList = () => {
   })
 }
 
+const handleContact = () => {}
+
 // 退出登录
 const logout = async () => {
   // 清除登录相关的存储
@@ -318,6 +328,22 @@ onShow(() => {
   margin-right: 10rpx;
   font-size: 40rpx;
   color: #23b7eb;
+}
+
+.contact-cell-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  line-height: normal;
+  text-align: left;
+  background-color: #ffffff;
+  border: 0;
+  border-radius: 0;
+
+  &::after {
+    border: 0;
+  }
 }
 
 .logout-button-container {
