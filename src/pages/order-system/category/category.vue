@@ -54,7 +54,20 @@
       </view>
 
       <view class="category-right-container">
-        <CateMenu :menus="thirdCates" :activeId="thirdCateId" @menu-item-click="onMenuClick" />
+        <view class="category-filter-stack">
+          <CateMenu
+            :menus="thirdCates"
+            :activeId="thirdCateId"
+            :sticky="false"
+            @menu-item-click="onMenuClick"
+          />
+
+          <FourthCateMenu
+            :menus="fourthCates"
+            :activeId="fourthCateId"
+            @menu-item-click="onFourthMenuClick"
+          />
+        </view>
 
         <view class="category-products">
           <ProductItem
@@ -125,6 +138,7 @@
 <script lang="ts" setup>
 import { httpGet, httpPost } from '@/utils/http'
 import CateMenu from './components/cate-menu.vue'
+import FourthCateMenu from './components/fourth-cate-menu.vue'
 import SliderMenu from './components/slider-menu.vue'
 import ProductItem from './components/product-item.vue'
 import { useToast } from 'wot-design-uni'
@@ -159,6 +173,9 @@ const secondCateId = ref<string | number | null>(null)
 const thirdCates = ref<any[]>([])
 const thirdCateId = ref<string | number | null>(null)
 
+const fourthCates = ref<any[]>([])
+const fourthCateId = ref<string | number | null>(null)
+
 const searchValue = ref('')
 
 const showSearchPanel = ref(false)
@@ -191,6 +208,9 @@ const hasCateId = (id: string | number | null | undefined) => {
 }
 
 const getActiveCategoryId = () => {
+  if (hasCateId(fourthCateId.value)) {
+    return fourthCateId.value
+  }
   if (hasCateId(thirdCateId.value)) {
     return thirdCateId.value
   }
@@ -217,6 +237,8 @@ const getSecondCateList = async (cate) => {
   secondCateId.value = null
   thirdCates.value = []
   thirdCateId.value = null
+  fourthCates.value = []
+  fourthCateId.value = null
 
   const res = await httpGet<any[]>('/api/Ordergoods/getCateList', { category_id: cate })
   secondCates.value = res.data || []
@@ -232,12 +254,29 @@ const getSecondCateList = async (cate) => {
 const getThirdCateList = async (cate) => {
   thirdCates.value = []
   thirdCateId.value = null
+  fourthCates.value = []
+  fourthCateId.value = null
 
   const res = await httpGet<any[]>('/api/Ordergoods/getCateList', { category_id: cate })
   thirdCates.value = res.data || []
 
   if (thirdCates.value.length > 0) {
     thirdCateId.value = thirdCates.value[0].category_id
+    await getFourthCateList(thirdCateId.value)
+  } else {
+    getGoodsList(true)
+  }
+}
+
+const getFourthCateList = async (cate) => {
+  fourthCates.value = []
+  fourthCateId.value = null
+
+  const res = await httpGet<any[]>('/api/Ordergoods/getCateList', { category_id: cate })
+  fourthCates.value = res.data || []
+
+  if (fourthCates.value.length > 0) {
+    fourthCateId.value = fourthCates.value[0].category_id
   }
 
   getGoodsList(true)
@@ -252,8 +291,11 @@ const onTopCateClick = (id) => {
 }
 
 const onMenuClick = (id) => {
+  if (thirdCateId.value === id) {
+    return
+  }
   thirdCateId.value = id
-  getGoodsList(true)
+  getFourthCateList(id)
 }
 
 const onSliderClick = (id) => {
@@ -262,8 +304,18 @@ const onSliderClick = (id) => {
   }
   secondCateId.value = id
   thirdCateId.value = null
+  fourthCates.value = []
+  fourthCateId.value = null
   // toggleCate.value = !toggleCate.value
   getThirdCateList(id)
+}
+
+const onFourthMenuClick = (id) => {
+  if (fourthCateId.value === id) {
+    return
+  }
+  fourthCateId.value = id
+  getGoodsList(true)
 }
 
 const handleSearchChange = async ({ value }) => {
@@ -517,6 +569,13 @@ page {
   flex: 1;
   width: 570rpx;
   min-width: 0;
+  background-color: #ffffff;
+}
+
+.category-filter-stack {
+  position: sticky;
+  top: 168rpx;
+  z-index: 18;
   background-color: #ffffff;
 }
 

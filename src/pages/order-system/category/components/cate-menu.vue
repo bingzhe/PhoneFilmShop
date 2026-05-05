@@ -1,5 +1,5 @@
 <template>
-  <view v-if="menus.length > 0" class="series-menu">
+  <view v-if="menus.length > 0" class="series-menu" :class="{ sticky }">
     <view class="series-bar">
       <scroll-view scroll-x class="series-scroll" :show-scrollbar="false">
         <view class="series-scroll-inner">
@@ -37,10 +37,16 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps<{
-  menus: any[]
-  activeId?: string | number | null
-}>()
+const props = withDefaults(
+  defineProps<{
+    menus: any[]
+    activeId?: string | number | null
+    sticky?: boolean
+  }>(),
+  {
+    sticky: true,
+  },
+)
 
 const emits = defineEmits(['menu-item-click'])
 
@@ -65,11 +71,15 @@ const onMenuItemClick = (item) => {
 
 <style lang="scss" scoped>
 .series-menu {
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+}
+
+.series-menu.sticky {
   position: sticky;
   top: 168rpx;
   z-index: 18;
-  width: 100%;
-  background-color: #fff;
 }
 
 .series-bar {
