@@ -133,17 +133,53 @@
         <view class="py-16rpx mb-32rpx">
           <view class="flex mb-16rpx">
             <image
-              :src="currentProduct?.pic"
+              :src="popupProductImage"
               mode="aspectFill"
               class="flex-shrink-0 w-160rpx h-160rpx rounded-8rpx mr-16rpx"
             />
             <view class="text-16px flex-1 w-350rpx text-#333 break-all ellipsis-text">
               {{ currentProduct?.goods_name || '' }}
+              <view class="popup-price-row">
+                <text class="popup-price">¥{{ popupProductPrice }}</text>
+                <text class="popup-stock">库存 {{ popupProductStockText }}</text>
+              </view>
             </view>
           </view>
+
+          <view v-if="isCurrentProductMultiSpec" class="spec-section">
+            <view class="spec-title">规格</view>
+            <view class="spec-list">
+              <view
+                v-for="spec in currentProductSpecs"
+                :key="spec.id"
+                class="spec-item"
+                :class="{
+                  active: selectedSpec?.id === spec.id,
+                  disabled: Number(spec.spec_stock || 0) <= 0,
+                }"
+                @click="selectSpec(spec)"
+              >
+                <image
+                  v-if="spec.spec_img"
+                  :src="getFullImageUrl(spec.spec_img)"
+                  mode="aspectFill"
+                  class="spec-thumb"
+                />
+                <view class="spec-meta">
+                  <text class="spec-name">{{ spec.spec_name }}</text>
+                  <text class="spec-price">¥{{ spec.spec_price }}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+
           <view class="flex justify-between items-center">
             <text class="text-14px">数量：</text>
-            <wd-input-number v-model="selectedQuantity" :min="1"></wd-input-number>
+            <wd-input-number
+              v-model="selectedQuantity"
+              :min="1"
+              :max="popupProductStock || 999999"
+            ></wd-input-number>
           </view>
         </view>
 
@@ -151,7 +187,14 @@
           <wd-button type="info" class="flex-1 mr-16rpx" @click="closeQuantityPopup">
             取消
           </wd-button>
-          <wd-button type="primary" class="flex-1" @click="confirmAddToCart">加入购物车</wd-button>
+          <wd-button
+            type="primary"
+            class="flex-1"
+            :disabled="popupProductStock <= 0"
+            @click="confirmAddToCart"
+          >
+            加入购物车
+          </wd-button>
         </view>
       </view>
     </wd-popup>
@@ -189,6 +232,61 @@ onLoad((options: any) => {
 const showQuantityPopup = ref(false)
 const selectedQuantity = ref(1)
 const currentProduct = ref<any>(null)
+const selectedSpec = ref<any>(null)
+
+const getFullImageUrl = (path?: string) => {
+  if (!path) {
+    return ''
+  }
+  if (path.startsWith('http')) {
+    return path
+  }
+  return `${baseUrl}${path}`
+}
+
+const isCurrentProductMultiSpec = computed(() => {
+  return Number(currentProduct.value?.spec_type) === 1
+})
+
+const currentProductSpecs = computed(() => {
+  return currentProduct.value?.spec_list || []
+})
+
+const popupProductImage = computed(() => {
+  if (selectedSpec.value?.spec_img) {
+    return getFullImageUrl(selectedSpec.value.spec_img)
+  }
+  return currentProduct.value?.pic || getFullImageUrl(currentProduct.value?.goods_img)
+})
+
+const popupProductPrice = computed(() => {
+  return selectedSpec.value?.spec_price || currentProduct.value?.goods_price || '0.00'
+})
+
+const popupProductStock = computed(() => {
+  if (isCurrentProductMultiSpec.value) {
+    return Number(selectedSpec.value?.spec_stock || 0)
+  }
+  return Number(currentProduct.value?.stock || 0)
+})
+
+const popupProductStockText = computed(() => {
+  if (isCurrentProductMultiSpec.value && !selectedSpec.value) {
+    return '请选择规格'
+  }
+  return popupProductStock.value
+})
+
+const selectSpec = (spec) => {
+  if (Number(spec.spec_stock || 0) <= 0) {
+    toast.warning('该规格暂无库存')
+    return
+  }
+  selectedSpec.value = spec
+  if (selectedQuantity.value > Number(spec.spec_stock || 0)) {
+    selectedQuantity.value = Number(spec.spec_stock || 1)
+  }
+}
 
 // 搜索商品
 const search = async () => {
@@ -289,6 +387,7 @@ onReachBottom(() => {
 // 添加到购物车
 const addShopCar = (item: any) => {
   currentProduct.value = item
+  selectedSpec.value = null
   selectedQuantity.value = 1
   showQuantityPopup.value = true
 }
@@ -307,12 +406,26 @@ const confirmAddToCart = () => {
     return
   }
 
-  const cartList = [
-    {
-      goods_id: currentProduct.value.goods_id,
-      goods_num: selectedQuantity.value,
-    },
-  ]
+  if (isCurrentProductMultiSpec.value && !selectedSpec.value) {
+    toast.warning('请选择商品规格')
+    return
+  }
+
+  if (popupProductStock.value <= 0) {
+    toast.warning('库存不足')
+    return
+  }
+
+  const cartItem: any = {
+    goods_id: currentProduct.value.goods_id,
+    goods_num: selectedQuantity.value,
+  }
+
+  if (selectedSpec.value) {
+    cartItem.spec_id = selectedSpec.value.id
+  }
+
+  const cartList = [cartItem]
 
   httpPost('/api/Order/CreateCartBatch', {
     token: getOrderToken(),
@@ -347,5 +460,89 @@ const confirmAddToCart = () => {
   --wd-tabs-nav-color: #333;
   --wd-tabs-nav-active-color: #fa4126;
   --wd-tabs-line-color: #fa4126;
+}
+
+.popup-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18rpx;
+}
+
+.popup-price {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #e64340;
+}
+
+.popup-stock {
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.spec-section {
+  padding: 18rpx 0 28rpx;
+}
+
+.spec-title {
+  margin-bottom: 16rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.spec-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 72rpx;
+  padding: 10rpx 18rpx 10rpx 10rpx;
+  background-color: #f7f8fa;
+  border: 2rpx solid transparent;
+  border-radius: 12rpx;
+}
+
+.spec-item.active {
+  background-color: #effaff;
+  border-color: #23b7eb;
+}
+
+.spec-item.disabled {
+  opacity: 0.45;
+}
+
+.spec-thumb {
+  flex-shrink: 0;
+  width: 56rpx;
+  height: 56rpx;
+  margin-right: 12rpx;
+  border-radius: 8rpx;
+}
+
+.spec-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.spec-name {
+  max-width: 260rpx;
+  overflow: hidden;
+  font-size: 26rpx;
+  color: #333333;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spec-price {
+  margin-top: 4rpx;
+  font-size: 24rpx;
+  color: #e64340;
 }
 </style>

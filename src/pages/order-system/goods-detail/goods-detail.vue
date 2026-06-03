@@ -38,7 +38,7 @@
           height="748rpx"
           indicator-color="#fff"
           indicator-active-color="#23B7EB"
-          :list="goodsDetail.pics"
+          :list="goodsPics"
         ></wd-swiper>
       </view>
 
@@ -48,8 +48,9 @@
           <view class="flex items-center">
             <view class="text-#e64340 text-20pt ml-30rpx">
               <text class="text-12pt">¥</text>
-              {{ goodsDetail.goods_price }}
+              {{ goodsDisplayPrice }}
             </view>
+            <view class="ml-20rpx text-24rpx text-#999">库存 {{ goodsStockText }}</view>
           </view>
         </view>
         <view class="px-30rpx text-32rpx text-#000 mt-16rpx break-all">
@@ -57,11 +58,51 @@
         </view>
       </view>
 
+      <!-- 商品规格 -->
+      <view v-if="isMultiSpecGoods" class="bg-white mt-20rpx p-30rpx">
+        <view class="spec-header">
+          <text class="text-28rpx text-#333 font-600">商品规格</text>
+          <text class="text-24rpx text-#999">
+            {{ selectedSpec ? selectedSpec.spec_name : '请选择规格' }}
+          </text>
+        </view>
+        <view class="detail-spec-list">
+          <view
+            v-for="spec in goodsSpecs"
+            :key="spec.id"
+            class="detail-spec-item"
+            :class="{
+              active: selectedSpec?.id === spec.id,
+              disabled: Number(spec.spec_stock || 0) <= 0,
+            }"
+            @click="selectSpec(spec)"
+          >
+            <image
+              v-if="spec.spec_img"
+              :src="getFullImageUrl(spec.spec_img)"
+              mode="aspectFill"
+              class="detail-spec-thumb"
+            />
+            <view class="detail-spec-content">
+              <text class="detail-spec-name">{{ spec.spec_name }}</text>
+              <view class="detail-spec-sub">
+                <text>¥{{ spec.spec_price }}</text>
+                <text>库存 {{ spec.spec_stock }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
       <!-- 购买数量 -->
       <view class="bg-white mt-20rpx p-30rpx">
         <view class="flex justify-between items-center">
           <text class="text-28rpx text-#333">购买数量</text>
-          <wd-input-number v-model="buyNumber" :min="1"></wd-input-number>
+          <wd-input-number
+            v-model="buyNumber"
+            :min="1"
+            :max="goodsStock || 999999"
+          ></wd-input-number>
         </view>
       </view>
 
@@ -102,9 +143,63 @@ const tabsHeight = ref(0)
 // 商品信息
 const goodsDetail = ref<any>({})
 const goodsId = ref('')
+const selectedSpec = ref<any>(null)
 
 // 购买数量
 const buyNumber = ref(1)
+
+const getFullImageUrl = (path?: string) => {
+  if (!path) {
+    return ''
+  }
+  if (path.startsWith('http')) {
+    return path
+  }
+  return `${baseUrl}${path}`
+}
+
+const isMultiSpecGoods = computed(() => Number(goodsDetail.value?.spec_type) === 1)
+
+const goodsSpecs = computed(() => goodsDetail.value?.spec_list || [])
+
+const goodsDisplayPrice = computed(() => {
+  return selectedSpec.value?.spec_price || goodsDetail.value?.goods_price || '0.00'
+})
+
+const goodsStock = computed(() => {
+  if (isMultiSpecGoods.value) {
+    return Number(selectedSpec.value?.spec_stock || 0)
+  }
+  return Number(goodsDetail.value?.stock || 0)
+})
+
+const goodsStockText = computed(() => {
+  if (isMultiSpecGoods.value && !selectedSpec.value) {
+    return '请选择规格'
+  }
+  return goodsStock.value
+})
+
+const goodsPics = computed(() => {
+  const pics = goodsDetail.value?.pics || []
+  if (!selectedSpec.value?.spec_img) {
+    return pics
+  }
+
+  const specPic = getFullImageUrl(selectedSpec.value.spec_img)
+  return [specPic, ...pics.filter((item) => item !== specPic)]
+})
+
+const selectSpec = (spec) => {
+  if (Number(spec.spec_stock || 0) <= 0) {
+    toast.warning('该规格暂无库存')
+    return
+  }
+  selectedSpec.value = spec
+  if (buyNumber.value > Number(spec.spec_stock || 0)) {
+    buyNumber.value = Number(spec.spec_stock || 1)
+  }
+}
 
 // 标签页配置
 const tabs = ref([
@@ -216,9 +311,14 @@ const getGoodsDetail = async (id) => {
     const goodsInfo = result.data || ({} as any)
 
     // 处理图片和视频
-    goodsInfo.pics = goodsInfo.img_list?.map((item) => `${baseUrl}${item}`)
+    const detailPics = (goodsInfo.img_list || []).filter((item) => !!item)
+    if (detailPics.length === 0 && goodsInfo.goods_img) {
+      detailPics.push(goodsInfo.goods_img)
+    }
+    goodsInfo.pics = detailPics.map((item) => getFullImageUrl(item))
 
     goodsDetail.value = goodsInfo
+    selectedSpec.value = null
   } catch (error) {
     console.error(error)
     toast.error('获取商品信息失败')
@@ -236,12 +336,26 @@ const directAddToCart = () => {
 
   if (!goodsDetail.value) return
 
-  const cartList = [
-    {
-      goods_id: goodsDetail.value.goods_id,
-      goods_num: buyNumber.value,
-    },
-  ]
+  if (isMultiSpecGoods.value && !selectedSpec.value) {
+    toast.warning('请选择商品规格')
+    return
+  }
+
+  if (goodsStock.value <= 0) {
+    toast.warning('库存不足')
+    return
+  }
+
+  const cartItem: any = {
+    goods_id: goodsDetail.value.goods_id,
+    goods_num: buyNumber.value,
+  }
+
+  if (selectedSpec.value) {
+    cartItem.spec_id = selectedSpec.value.id
+  }
+
+  const cartList = [cartItem]
 
   toast.loading('添加中...')
   httpPost('/api/Order/CreateCartBatch', {
@@ -278,5 +392,72 @@ page {
 
 .quantity-popup {
   width: 600rpx;
+}
+
+.spec-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22rpx;
+}
+
+.detail-spec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.detail-spec-item {
+  display: flex;
+  align-items: center;
+  padding: 18rpx;
+  background-color: #f7f8fa;
+  border: 2rpx solid transparent;
+  border-radius: 14rpx;
+}
+
+.detail-spec-item.active {
+  background-color: #effaff;
+  border-color: #23b7eb;
+}
+
+.detail-spec-item.disabled {
+  opacity: 0.45;
+}
+
+.detail-spec-thumb {
+  flex-shrink: 0;
+  width: 92rpx;
+  height: 92rpx;
+  margin-right: 18rpx;
+  border-radius: 10rpx;
+}
+
+.detail-spec-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-spec-name {
+  display: block;
+  overflow: hidden;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-spec-sub {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.detail-spec-sub text:first-child {
+  font-weight: 700;
+  color: #e64340;
 }
 </style>
