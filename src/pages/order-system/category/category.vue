@@ -90,9 +90,19 @@
             {{ currentProduct?.code }} {{ currentProduct?.jian || '' }}
             {{ currentProduct?.goods_name || '' }}
           </view>
+          <view class="popup-order-rule mb-24rpx">
+            <text class="popup-order-rule__count">{{ currentOrderMultiple }}</text>
+            <text>PCS整倍起订</text>
+          </view>
           <view class="flex justify-between items-center">
             <text class="text-14px">数量：</text>
-            <wd-input-number v-model="selectedQuantity" :min="0"></wd-input-number>
+            <wd-input-number
+              v-model="selectedQuantity"
+              :min="currentOrderMultiple"
+              :step="currentOrderMultiple"
+              step-strictly
+              @blur="normalizeSelectedQuantity"
+            ></wd-input-number>
           </view>
         </view>
 
@@ -118,6 +128,11 @@ import { useToast } from 'wot-design-uni'
 import { useUserStore } from '@/store'
 import OrderTabbar from '../components/order-tabbar.vue'
 import { getOrderToken } from '@/utils/orderToken'
+import {
+  getOrderMultiple,
+  isValidOrderQuantity,
+  normalizeOrderQuantity,
+} from '../utils/orderQuantity'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
 const toast = useToast()
@@ -321,17 +336,25 @@ onReachBottom(() => {
 const showQuantityPopup = ref(false)
 const selectedQuantity = ref(0)
 const currentProduct = ref<any>(null)
+const currentOrderMultiple = computed(() => getOrderMultiple(currentProduct.value?.add_num))
 
 // 打开数量选择弹窗
 const onAddToCart = (product) => {
   currentProduct.value = product
-  selectedQuantity.value = 0 // 重置数量为1
+  selectedQuantity.value = getOrderMultiple(product?.add_num)
   showQuantityPopup.value = true
 }
 
 // 关闭数量选择弹窗
 const closeQuantityPopup = () => {
   showQuantityPopup.value = false
+}
+
+const normalizeSelectedQuantity = () => {
+  selectedQuantity.value = normalizeOrderQuantity(
+    selectedQuantity.value,
+    currentOrderMultiple.value,
+  )
 }
 
 const confirmAddToCartBefore = () => {
@@ -345,15 +368,18 @@ const confirmAddToCartBefore = () => {
 const confirmAddToCart = () => {
   if (!currentProduct.value) return
 
-  if (selectedQuantity.value === 0) {
-    toast.warning('请添加数量')
+  const quantity = normalizeOrderQuantity(selectedQuantity.value, currentProduct.value.add_num)
+
+  if (!isValidOrderQuantity(selectedQuantity.value, currentProduct.value.add_num)) {
+    selectedQuantity.value = quantity
+    toast.warning(`数量需按${currentOrderMultiple.value}PCS整倍起订`)
     return
   }
 
   httpPost<any[]>('/api/Order/CreateCart', {
     token_order: getOrderToken(),
     goods_id: currentProduct.value.goods_id,
-    goods_num: selectedQuantity.value,
+    goods_num: quantity,
   })
     .then((res) => {
       console.log(res)
@@ -445,6 +471,24 @@ page {
 
 .popup-content {
   padding: 16rpx 0;
+}
+
+.popup-order-rule {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 12rpx;
+  font-size: 20rpx;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #00a3ff;
+  background: rgba(0, 163, 255, 0.08);
+  border: 1rpx solid rgba(0, 163, 255, 0.22);
+  border-radius: 6rpx;
+}
+
+.popup-order-rule__count {
+  margin-right: 4rpx;
+  font-size: 28rpx;
 }
 
 .popup-footer {

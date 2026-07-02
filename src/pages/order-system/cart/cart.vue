@@ -30,12 +30,19 @@
             <view class="goods-spec" v-if="item.spec_name">
               {{ item.spec_name }}
             </view>
+            <view class="goods-order-rule">
+              <text class="goods-order-rule__count">{{ getOrderMultiple(item.add_num) }}</text>
+              <text>PCS整倍起订</text>
+            </view>
             <view class="goods-bottom">
               <view class="goods-price">¥{{ item.goods_price }}</view>
               <view class="goods-count" @click.stop>
                 <wd-input-number
                   v-model="item.goods_num"
-                  :min="1"
+                  :min="getOrderMultiple(item.add_num)"
+                  :step="getOrderMultiple(item.add_num)"
+                  step-strictly
+                  @blur="normalizeCartGoodsNum(item)"
                   @change="updateGoodsNum(item)"
                 ></wd-input-number>
               </view>
@@ -109,8 +116,13 @@ import OrderTabbar from '../components/order-tabbar.vue'
 import { httpPost } from '@/utils/http'
 import { useUserStore } from '@/store'
 import { useToast } from 'wot-design-uni'
-import { nextTick, onMounted, ref, computed, onBeforeUnmount } from 'vue'
+import { onMounted, ref, computed, onBeforeUnmount } from 'vue'
 import { getOrderToken } from '@/utils/orderToken'
+import {
+  getOrderMultiple,
+  isValidOrderQuantity,
+  normalizeOrderQuantity,
+} from '../utils/orderQuantity'
 
 const toast = useToast()
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
@@ -128,6 +140,7 @@ const totalPrice = ref(0)
 const selectedCount = ref(0)
 
 const selectedCartIds = ref<number[]>([])
+const updateGoodsNumTimers = new Map<string | number, ReturnType<typeof setTimeout>>()
 
 // 监听屏幕安全区域变化
 const safeAreaInsetBottom = ref(0)
@@ -197,6 +210,9 @@ const getCart = () => {
           category.list.forEach((item: any) => {
             // 如果商品ID在已选择列表中，则设置为选中状态
             item.checked = selectedCartIds.value.includes(item.cart_id)
+            const normalizedQuantity = normalizeOrderQuantity(item.goods_num, item.add_num)
+            item._quantityNeedsSync = Number(item.goods_num) !== normalizedQuantity
+            item.goods_num = normalizedQuantity
           })
         }
         // 初始化packList数组和选中的包装
@@ -228,22 +244,58 @@ const getCart = () => {
 }
 
 // 更新商品数量
-const updateGoodsNum = (item: any) => {
+const syncGoodsNum = (item: any) => {
+  const quantity = normalizeOrderQuantity(item.goods_num, item.add_num)
+  item.goods_num = quantity
+
   httpPost('/api/Order/CreateCart', {
     token_order: getOrderToken(),
     cart_id: item.cart_id,
-    goods_num: item.goods_num,
+    goods_num: quantity,
     goods_id: item.goods_id,
   })
     .then(() => {
+      item._quantityNeedsSync = false
       updateTotalPrice()
     })
     .catch((res) => {
+      item._quantityNeedsSync = true
       toast.error(res)
       setTimeout(() => {
         toast.close()
       }, 2000)
     })
+}
+
+const getGoodsNumTimerKey = (item: any) => item.cart_id || item.goods_id
+
+const clearGoodsNumTimer = (item: any) => {
+  const key = getGoodsNumTimerKey(item)
+  const timer = updateGoodsNumTimers.get(key)
+
+  if (timer) {
+    clearTimeout(timer)
+    updateGoodsNumTimers.delete(key)
+  }
+}
+
+const updateGoodsNum = (item: any) => {
+  item._quantityNeedsSync = true
+  updateTotalPrice()
+  clearGoodsNumTimer(item)
+
+  const key = getGoodsNumTimerKey(item)
+  const timer = setTimeout(() => {
+    updateGoodsNumTimers.delete(key)
+    syncGoodsNum(item)
+  }, 300)
+
+  updateGoodsNumTimers.set(key, timer)
+}
+
+const normalizeCartGoodsNum = (item: any) => {
+  clearGoodsNumTimer(item)
+  syncGoodsNum(item)
 }
 
 // 更新包装
@@ -374,15 +426,31 @@ const goToCategory = () => {
 
 // 提交订单
 const submitOrder = () => {
-  const selectedItems = cartList.value
+  const selectedCartItems = cartList.value
     .filter((category) => category.list)
     .flatMap((category) => category.list.filter((item: any) => item.checked))
-    .map((item: any) => item.cart_id)
 
-  if (selectedItems.length === 0) {
+  if (selectedCartItems.length === 0) {
     toast.warning('请选择要结算的商品')
     return
   }
+
+  const invalidQuantityItem = selectedCartItems.find(
+    (item: any) => item._quantityNeedsSync || !isValidOrderQuantity(item.goods_num, item.add_num),
+  )
+
+  if (invalidQuantityItem) {
+    invalidQuantityItem.goods_num = normalizeOrderQuantity(
+      invalidQuantityItem.goods_num,
+      invalidQuantityItem.add_num,
+    )
+    normalizeCartGoodsNum(invalidQuantityItem)
+    updateTotalPrice()
+    toast.warning(`${getOrderMultiple(invalidQuantityItem.add_num)}PCS整倍起订，已调整数量`)
+    return
+  }
+
+  const selectedItems = selectedCartItems.map((item: any) => item.cart_id)
 
   // 有选择的结算的商品的分类必须存在包装
   // console.log(
@@ -439,6 +507,11 @@ defineExpose({
 })
 
 onBeforeUnmount(() => {
+  updateGoodsNumTimers.forEach((timer) => {
+    clearTimeout(timer)
+  })
+  updateGoodsNumTimers.clear()
+
   // if (resizeObserver) {
   //   resizeObserver.disconnect()
   // }
@@ -518,6 +591,26 @@ onBeforeUnmount(() => {
   margin-top: 8rpx;
   font-size: 24rpx;
   color: #999;
+}
+
+.goods-order-rule {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 6rpx 12rpx;
+  margin: 12rpx 0;
+  font-size: 20rpx;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #00a3ff;
+  background: rgba(0, 163, 255, 0.08);
+  border: 1rpx solid rgba(0, 163, 255, 0.22);
+  border-radius: 6rpx;
+}
+
+.goods-order-rule__count {
+  margin-right: 4rpx;
+  font-size: 26rpx;
 }
 
 .goods-bottom {
