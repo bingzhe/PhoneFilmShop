@@ -30,7 +30,7 @@
             <view class="goods-spec" v-if="item.spec_name">
               {{ item.spec_name }}
             </view>
-            <view class="goods-order-rule">
+            <view v-if="getOrderMultiple(item.add_num) > 1" class="goods-order-rule">
               <text class="goods-order-rule__count">{{ getOrderMultiple(item.add_num) }}</text>
               <text>PCS整倍起订</text>
             </view>
@@ -446,7 +446,8 @@ const submitOrder = () => {
     )
     normalizeCartGoodsNum(invalidQuantityItem)
     updateTotalPrice()
-    toast.warning(`${getOrderMultiple(invalidQuantityItem.add_num)}PCS整倍起订，已调整数量`)
+    const orderMultiple = getOrderMultiple(invalidQuantityItem.add_num)
+    toast.warning(orderMultiple > 1 ? `${orderMultiple}PCS整倍起订，已调整数量` : '已调整数量')
     return
   }
 

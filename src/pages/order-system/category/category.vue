@@ -90,7 +90,7 @@
             {{ currentProduct?.code }} {{ currentProduct?.jian || '' }}
             {{ currentProduct?.goods_name || '' }}
           </view>
-          <view class="popup-order-rule mb-24rpx">
+          <view v-if="currentOrderMultiple > 1" class="popup-order-rule mb-24rpx">
             <text class="popup-order-rule__count">{{ currentOrderMultiple }}</text>
             <text>PCS整倍起订</text>
           </view>
@@ -372,7 +372,11 @@ const confirmAddToCart = () => {
 
   if (!isValidOrderQuantity(selectedQuantity.value, currentProduct.value.add_num)) {
     selectedQuantity.value = quantity
-    toast.warning(`数量需按${currentOrderMultiple.value}PCS整倍起订`)
+    toast.warning(
+      currentOrderMultiple.value > 1
+        ? `数量需按${currentOrderMultiple.value}PCS整倍起订`
+        : '请添加正确数量',
+    )
     return
   }
 

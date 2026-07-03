@@ -39,7 +39,7 @@
           </view>
         </view>
 
-        <view class="order-rule-tag">
+        <view v-if="orderMultiple > 1" class="order-rule-tag">
           <text class="order-rule-tag__count">{{ orderMultiple }}</text>
           <text>PCS整倍起订</text>
         </view>
