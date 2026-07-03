@@ -488,7 +488,7 @@ page {
 
 .popup-order-rule__count {
   margin-right: 4rpx;
-  font-size: 28rpx;
+  font-size: 22rpx;
 }
 
 .popup-footer {
