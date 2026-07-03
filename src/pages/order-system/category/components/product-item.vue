@@ -100,6 +100,6 @@ const addToCart = () => {
 
 .order-rule-tag__count {
   margin-right: 4rpx;
-  font-size: 28rpx;
+  font-size: 22rpx;
 }
 </style>
