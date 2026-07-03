@@ -610,7 +610,7 @@ onBeforeUnmount(() => {
 
 .goods-order-rule__count {
   margin-right: 4rpx;
-  font-size: 26rpx;
+  font-size: 22rpx;
 }
 
 .goods-bottom {
