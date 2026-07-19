@@ -53,7 +53,20 @@
           </view>
 
           <!-- 分类商品列表 -->
-          <view class="goods-container">
+          <view class="goods-toggle" @click.stop="toggleGoods(order.order_id)">
+            <view class="goods-toggle-summary">
+              <text class="goods-toggle-title">商品明细</text>
+              <text class="goods-toggle-count">
+                共 {{ order.all_num }} 件，{{ getCategoryCount(order.goods_list) }} 类
+              </text>
+            </view>
+            <view class="expand-control" :class="{ expanded: isGoodsExpanded(order.order_id) }">
+              <text>{{ isGoodsExpanded(order.order_id) ? '收起明细' : '展开明细' }}</text>
+              <view class="expand-arrow"></view>
+            </view>
+          </view>
+
+          <view v-if="isGoodsExpanded(order.order_id)" class="goods-container">
             <view
               v-for="(category, cateIndex) in order.goods_list"
               :key="cateIndex"
@@ -62,10 +75,12 @@
               <view class="category-header">
                 <view class="category-tag"></view>
                 <view class="category-title">
-                  {{ category.category_name }}
-                  <view class="category-stats">
-                    <text class="category-count">总数量: {{ category.all_num }}</text>
-                    <text class="category-price">总价: ¥{{ category.all_price }}</text>
+                  <view class="category-info">
+                    <text class="category-name">{{ category.category_name }}</text>
+                    <view class="category-stats">
+                      <text class="category-count">总数量: {{ category.all_num }}</text>
+                      <text class="category-price">总价: ¥{{ category.all_price }}</text>
+                    </view>
                   </view>
                 </view>
               </view>
@@ -162,6 +177,16 @@ const currentStatus = ref(0)
 const orderList = ref<any[]>([])
 const loading = ref(false)
 const payingOrderNo = ref('')
+const expandedOrders = ref<Record<string, boolean>>({})
+
+const isGoodsExpanded = (orderId: string | number) => !!expandedOrders.value[orderId]
+const toggleGoods = (orderId: string | number) => {
+  expandedOrders.value[orderId] = !expandedOrders.value[orderId]
+}
+const getCategoryCount = (goodsList: unknown) => {
+  if (Array.isArray(goodsList)) return goodsList.length
+  return goodsList && typeof goodsList === 'object' ? Object.keys(goodsList).length : 0
+}
 
 // 切换订单状态
 const switchStatus = (status: number) => {
@@ -416,6 +441,36 @@ onShow(() => {
   }
 }
 /* 新商品列表样式 */
+.goods-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18rpx 24rpx;
+  border-bottom: 1rpx solid #f0f3f5;
+}
+
+.goods-toggle-summary {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.goods-toggle-title {
+  flex: 0 0 auto;
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.goods-toggle-count {
+  margin-left: 14rpx;
+  overflow: hidden;
+  font-size: 23rpx;
+  color: #8a939e;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .goods-container {
   padding: 20rpx 24rpx;
   border-bottom: 1rpx solid #f5f5f5;
@@ -436,7 +491,7 @@ onShow(() => {
 .category-header {
   display: flex;
   align-items: center;
-  margin-bottom: 12rpx;
+  min-height: 58rpx;
 }
 
 .category-tag {
@@ -452,9 +507,20 @@ onShow(() => {
   flex: 1;
   align-items: center;
   justify-content: space-between;
+}
+
+.category-info {
+  min-width: 0;
+}
+
+.category-name {
+  display: block;
+  overflow: hidden;
   font-size: 26rpx;
   font-weight: bold;
   color: #333;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .category-stats {
@@ -475,8 +541,35 @@ onShow(() => {
   color: #ff4400;
 }
 
+.expand-control {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 8rpx 0 8rpx 18rpx;
+  margin-left: 12rpx;
+  font-size: 22rpx;
+  color: #00a3ff;
+}
+
+.expand-arrow {
+  width: 10rpx;
+  height: 10rpx;
+  margin: 0 4rpx 4rpx 8rpx;
+  border-right: 2rpx solid currentColor;
+  border-bottom: 2rpx solid currentColor;
+  transition: transform 0.2s ease;
+  transform: rotate(45deg);
+}
+
+.expand-control.expanded .expand-arrow {
+  margin-top: 4rpx;
+  margin-bottom: 0;
+  transform: rotate(225deg);
+}
+
 .goods-list {
   padding: 10rpx;
+  margin-top: 12rpx;
   background-color: #f9f9f9;
   border-radius: 8rpx;
 }
