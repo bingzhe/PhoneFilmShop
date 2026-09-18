@@ -1,5 +1,5 @@
 {
-  "name": "科迪亚",
+  "name": "格劳科斯数码",
   "appid": "__UNI__64B3A63",
   "description": "",
   "versionName": "1.0.0",
@@ -81,9 +81,15 @@
       "ignoreVersion": true
     }
   },
+  "app-harmony": {
+    "distribute": {}
+  },
+  "mp-harmony": {
+    "distribute": {}
+  },
   "quickapp": {},
   "mp-weixin": {
-    "appid": "wx08525ddabf8590cf",
+    "appid": "wx76e8697154f174d5",
     "setting": {
       "urlCheck": false
     },
