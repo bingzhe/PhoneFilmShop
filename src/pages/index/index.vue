@@ -390,7 +390,7 @@ page {
   top: 148rpx;
   z-index: 9;
   flex-shrink: 0;
-  width: 180rpx;
+  width: 200rpx;
   height: calc(100vh - 148rpx);
   overflow-y: auto;
   background-color: #f7f8fa;
@@ -405,9 +405,9 @@ page {
 }
 
 :deep(.wd-sidebar__padding) {
-  width: 180rpx !important;
+  width: 200rpx !important;
 }
 :deep(.wd-sidebar) {
-  width: 180rpx !important;
+  width: 200rpx !important;
 }
 </style>
