@@ -369,16 +369,16 @@ function saveImageToAlbum() {
 
 // 实际保存操作
 function saveImage(tempFilePath) {
-  wx.saveImageToPhotosAlbum({
-    filePath: tempFilePath,
-    success: () => {
-      toast.success('保存成功')
-    },
-    fail: (err) => {
-      console.error('保存失败', err)
-      toast.warning('保存失败')
-    },
-  })
+  // wx.saveImageToPhotosAlbum({
+  //   filePath: tempFilePath,
+  //   success: () => {
+  //     toast.success('保存成功')
+  //   },
+  //   fail: (err) => {
+  //     console.error('保存失败', err)
+  //     toast.warning('保存失败')
+  //   },
+  // })
 }
 
 const shopLogoUpload = () => {

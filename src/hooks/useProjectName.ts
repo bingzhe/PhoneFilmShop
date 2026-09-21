@@ -1,5 +1,5 @@
 // 全局状态
-const projectName = ref('科迪亚')
+const projectName = ref('格劳科斯数码')
 
 export function useProjectName() {
   // 本地状态
