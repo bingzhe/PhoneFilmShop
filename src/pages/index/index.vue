@@ -393,7 +393,7 @@ page {
   width: 200rpx;
   height: calc(100vh - 148rpx);
   overflow-y: auto;
-  background-color: #f7f8fa;
+  background-color: #fff;
 }
 
 .goods-content {
