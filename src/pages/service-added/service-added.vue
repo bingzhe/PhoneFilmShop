@@ -24,15 +24,6 @@
       <wd-button
         block
         size="large"
-        type="warning"
-        custom-class="mb-64rpx custom-shadow"
-        @click="handleFilm"
-      >
-        贴膜教程
-      </wd-button>
-      <wd-button
-        block
-        size="large"
         type="primary"
         custom-class="mb-64rpx custom-shadow"
         @click="handleFeedback"
@@ -58,12 +49,6 @@
 const handleFeedback = () => {
   uni.navigateTo({
     url: '/pages/feedback/feedback',
-  })
-}
-
-const handleFilm = () => {
-  uni.navigateTo({
-    url: '/pages/video-course/video-course',
   })
 }
 

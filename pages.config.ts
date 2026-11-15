@@ -39,6 +39,12 @@ export default defineUniPages({
         text: '下单系统',
       },
       {
+        iconPath: 'static/tabbar/video-course-off.png',
+        selectedIconPath: 'static/tabbar/video-course-on.png',
+        pagePath: 'pages/video-course/video-course',
+        text: '视频教程',
+      },
+      {
         iconPath: 'static/tabbar/my-off.png',
         selectedIconPath: 'static/tabbar/my-on.png',
         pagePath: 'pages/service-added/service-added',

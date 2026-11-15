@@ -3,7 +3,7 @@
 {
   style: {
     // navigationStyle: 'custom',
-    navigationBarTitleText: '教程',
+    navigationBarTitleText: '视频教程',
   },
 }
 </route>
