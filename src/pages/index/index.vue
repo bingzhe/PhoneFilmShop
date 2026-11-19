@@ -104,6 +104,13 @@
         </view>
       </view>
     </view>
+
+    <NewGoodsPopup
+      :productBg="productBg"
+      :productContent="productContent"
+      :productionShow="productionShow"
+      @close="closeNewGoodsPopup"
+    />
   </view>
 </template>
 
@@ -113,6 +120,7 @@ import { httpGet, httpPost } from '@/utils/http'
 import CateMenu from './components/cate-menu.vue'
 import SliderMenu from './components/slider-menu.vue'
 import ProductItem from './components/product-item.vue'
+import NewGoodsPopup from './components/new-goods-popup.vue'
 import { useToast } from 'wot-design-uni'
 
 const baseUrl = import.meta.env.VITE_SERVER_BASEURL
@@ -152,6 +160,10 @@ const page = ref(1)
 const total = ref(0)
 const loading = ref(false)
 
+const productBg = ref('') // 新款更新背景图
+const productContent = ref('') // 新款更新内容
+const productionShow = ref(false) // 新款更新显示
+
 // 获取通告列表
 const getNoticeList = async () => {
   httpGet<any[]>('/api/Index/getAnnouncement').then((res) => {
@@ -171,6 +183,22 @@ const getSwiperList = async () => {
     swiperList.value = list.map((item) => {
       return `${baseUrl}${item.img_url}`
     })
+  })
+}
+
+// 获取新商品
+const getNewProduct = async () => {
+  httpGet<any>('/api/Index/getNewProduct').then((res) => {
+    const data = res.data
+
+    if (!data) {
+      return
+    }
+
+    productionShow.value = true
+
+    productBg.value = data.bg_img
+    productContent.value = data.content
   })
 }
 
@@ -331,12 +359,17 @@ const getDeviceInfo = async () => {
   })
 }
 
+const closeNewGoodsPopup = () => {
+  productionShow.value = false
+}
+
 // 测试 uni API 自动引入
 onLoad(async () => {
   await getDeviceInfo()
   getNoticeList()
   getSwiperList()
   getFirstCateList()
+  getNewProduct()
 
   uni.setNavigationBarTitle({
     title: projectName.value,
